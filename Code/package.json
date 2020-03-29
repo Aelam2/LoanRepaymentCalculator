@@ -1,5 +1,0 @@
-{
-  "scripts": {
-    "dev": "concurrently \"cd BackEnd && npm run watch\" \"cd FrontEnd && npm start\" "
-  }
-}
