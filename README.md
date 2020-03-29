@@ -1,17 +1,59 @@
 # Loan Repayment Calculator
 
-## /Design
-1. Proposal_CURENT
-     - Current design documents for this application
-2. Proposal_{DATE}
-     - folders ending with a date are legacy design documents. The date is when the next design iteration began.
-3. StyleGuide
-     - Barebones ReactJS project that with example of application's style and components.
+## Running application locally
+1. Open the backend folder in a cmd terminal such as bash or cmd.
+2. Run the command "npm install"
+3. Create a new file ".env" and update the following keys
+```
+PORT=1337
+NODE_ENV=development
+CORS_WHITELIST=http://localhost:5001
 
-## /Code
+API_HOST=localhost
+API_BASEPATH=/
 
-1. /Code/FrontEnd
-     - Contains the ReactJS frontend project for this application.
+JWT_SECRET= YOUR_SECRET_HERE
 
-2. /Code/BackEnd
-     - Contains the NodeJS/ExpressJS backend project for this application.
+GOOGLE_API_KEY= YOUR_GOOGLE_API_KEY_HERE
+GOOGLE_OAUTH_CLIENT_ID= YOUR_GOOGLE_CLIENT_KEY_HERE
+GOOGLE_OAUTH_CLIENT_SECRET= YOUR_GOOGLE_SECRET_KEY_HERE
+
+FACEBOOK_OAUTH_CLIENT_ID= YOUR_FACEBOOK_CLIENT_KEY_HERE
+FACEBOOK_OAUTH_CLIENT_SECRET= YOUR_FACEBOOK_SECRET_KEY_HERE
+
+DB_HOST= YOUR_KEY
+DB_NAME= YOUR_KEY
+DB_PORT= YOUR_KEY
+DB_INSTANCE_NAME= YOUR_KEY
+DB_USERNAME= YOUR_KEY
+DB_PASSWORD= YOUR_KEY
+```
+4. Run the commnad "npm run db:migrate" to initiallize you're database.
+5. Run the command "npm run watch" and the backend should start successfully
+
+6. Open the frontend folder in a cmd terminal. This is a basic Create-React-App and can be started as such
+7. Run "npm install"
+8. Run "npm start"
+
+## File Structure
+### /backend
+1. /backend/design
+    - Updated design documents for Database and Service endpoints.
+2. /backend/dist
+    - build folder
+3. /backend/src
+    - soruce files that are compiled by babel into dist folder
+4. /backend/patches
+    - Files here are related to [Patch-Package](https://www.npmjs.com/package/patch-package)
+    - Updates node_modules during post-install script
+5. /backend/test
+
+### /frontend
+1. /frontend/design
+    - Updated design documents for user interface and interactions.
+2. /frontend/public
+3. /frontend/src
+    - ReactJS source files.
+
+### /style_guide
+1. Barebones ReactJS project that with example of application's style and components.
