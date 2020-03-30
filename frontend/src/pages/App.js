@@ -2,6 +2,9 @@ import React from "react";
 import { Route, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { compose } from "redux";
+import * as actions from "actions/UserActions";
+
+import { message } from "antd";
 
 import LayoutAuthorized from "components/LayoutAuthorized";
 import LayoutUnAuthorized from "components/LayoutUnAuthorized";
@@ -22,18 +25,27 @@ class App extends React.Component {
   };
 
   componentDidUpdate = prevProps => {
+    console.log(prevProps.isAuthenticated, this.props.isAuthenticated);
     if (prevProps.isAuthenticated === true && this.props.isAuthenticated === false) {
       this.props.history.push("/user/sign-in");
     }
+
+    if (prevProps.isAuthenticated === false && this.props.isAuthenticated === true) {
+      this.props.history.push("/");
+    }
+  };
+
+  signOutUser = async () => {
+    let result = await this.props.signOutUser();
+    if (result) message.success("Sign out successful!");
   };
 
   render() {
     let { isAuthenticated, token } = this.props;
-    console.log(isAuthenticated, token);
 
     if (isAuthenticated || token) {
       return (
-        <LayoutAuthorized>
+        <LayoutAuthorized onSignOut={this.signOutUser}>
           <Route path="/" component={DashboardPage} />
           <Route path="/payment-schedule" component={PaymentSchedulePage} />
           <Route path="/resources" component={ResourcesPage} />
@@ -58,4 +70,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default compose(connect(mapStateToProps, null))(withRouter(App));
+export default compose(connect(mapStateToProps, actions))(withRouter(App));

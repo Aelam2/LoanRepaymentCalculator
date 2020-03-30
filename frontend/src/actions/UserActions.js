@@ -1,6 +1,7 @@
 import axios from "axios";
 import { USER_SIGN_UP_SUCCESS, USER_SIGN_UP_LOADING, USER_SIGN_UP_ERROR } from "./types";
 import { USER_SIGN_IN_SUCCESS, USER_SIGN_IN_LOADING, USER_SIGN_IN_ERROR } from "./types";
+import { USER_SIGN_OUT_SUCCESS } from "./types";
 
 export const localSignUp = data => {
   return async dispatch => {
@@ -16,11 +17,13 @@ export const localSignUp = data => {
 
       // If successful, set token into localstorage for later user
       localStorage.setItem("JWT_TOKEN", res.data.token);
+      return true;
     } catch (err) {
       console.error("Sign-Up error! ===>", err.message);
 
       // On error set sign-up error state to true
       dispatch({ type: USER_SIGN_UP_ERROR, payload: true });
+      return false;
     }
   };
 };
@@ -39,11 +42,13 @@ export const localSignIn = data => {
 
       // If successful, set token into localstorage for later user
       localStorage.setItem("JWT_TOKEN", res.data.token);
+      return true;
     } catch (err) {
       console.error("Sign-Up error! ===>", err.message);
 
       // On error set sign-in error state to true
       dispatch({ type: USER_SIGN_IN_ERROR, payload: true });
+      return false;
     }
   };
 };
@@ -62,11 +67,13 @@ export const oAuthGoogleSignIn = data => {
 
       // If successful, set token into localstorage for later user
       localStorage.setItem("JWT_TOKEN", res.data.token);
+      return true;
     } catch (err) {
       console.error("Sign-Up error! ===>", err.message);
 
       // On error set sign-in error state to true
       dispatch({ type: USER_SIGN_IN_ERROR, payload: true });
+      return false;
     }
   };
 };
@@ -85,11 +92,21 @@ export const oAuthFacebookSignIn = data => {
 
       // If successful, set token into localstorage for later user
       localStorage.setItem("JWT_TOKEN", res.data.token);
+      return true;
     } catch (err) {
       console.error("Sign-Up error! ===>", err.message);
 
       // On error set sign-in error state to true
       dispatch({ type: USER_SIGN_IN_ERROR, payload: true });
+      return false;
     }
+  };
+};
+
+export const signOutUser = () => {
+  return dispatch => {
+    localStorage.removeItem("JWT_TOKEN");
+    dispatch({ type: USER_SIGN_OUT_SUCCESS, payload: "" });
+    return true;
   };
 };

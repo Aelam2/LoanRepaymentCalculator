@@ -9,7 +9,7 @@ const { Header, Content, Sider } = Layout;
 
 class LayoutAuthorized extends React.Component {
   render() {
-    let { children } = this.props;
+    let { children, onSignOut } = this.props;
     return (
       <Layout className={styles.layout}>
         <Header className={styles.header}>
@@ -28,9 +28,11 @@ class LayoutAuthorized extends React.Component {
             <Menu.Item key="3">
               <FormattedMessage id="layout.authorized.Resources" defaultMessage="Resources" />
             </Menu.Item>
-            <Menu.Item key="4" className={styles.signOut}>
-              <FormattedMessage id="layout.authorized.signOut" defaultMessage="Sign Out" />
-            </Menu.Item>
+            {onSignOut && (
+              <Menu.Item key="4" className={styles.signOut} onClick={onSignOut}>
+                <FormattedMessage id="layout.authorized.signOut" defaultMessage="Sign Out" />
+              </Menu.Item>
+            )}
           </Menu>
         </Header>
         <Layout>

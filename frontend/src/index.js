@@ -3,10 +3,10 @@ import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 
 // Redux Imports
-import { createStore, applyMiddleware } from "redux";
+import { createStore, applyMiddleware, compose } from "redux";
 import { Provider } from "react-redux";
 import reduxThunk from "redux-thunk";
-import reducers from "./reducers";
+import reducers, { defaultAuthState } from "./reducers";
 
 //Internationalization and pollyfills
 import { IntlProvider } from "react-intl";
@@ -22,6 +22,7 @@ import "index.module.scss";
 
 AxiosGlobalSettings();
 
+const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const browserLocale = navigator.language;
 let jwtToken = localStorage.getItem("JWT_TOKEN");
 
@@ -31,11 +32,12 @@ ReactDOM.render(
       reducers,
       {
         auth: {
+          ...defaultAuthState,
           isAuthenticated: jwtToken ? true : false,
           token: jwtToken
         }
       },
-      applyMiddleware(reduxThunk)
+      composeEnhancer(applyMiddleware(reduxThunk))
     )}
   >
     <IntlProvider locale={browserLocale} defaultLocale="en-US" messages={translationsForUsersLocale[browserLocale]}>

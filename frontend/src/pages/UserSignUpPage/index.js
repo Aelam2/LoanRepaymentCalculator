@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { injectIntl, FormattedMessage } from "react-intl";
-import { Form, Button, Input, Popover, Progress } from "antd";
+import { Form, Button, Input, Popover, Progress, message } from "antd";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import * as actions from "actions/UserActions";
@@ -27,7 +27,8 @@ class UserSignUpPage extends React.Component {
     delete values.ConfirmPassword;
 
     // Start sign-up action
-    await this.props.localSignUp(values);
+    let result = await this.props.localSignUp(values);
+    if (result) message.success("Sign in successful!");
   };
 
   getPasswordStatus = () => {
@@ -180,8 +181,8 @@ const mapStateToProps = state => {
   return {
     isAuthenticated: state.auth.isAuthenticated,
     token: state.auth.token,
-    loading: state.auth.singUp.loading,
-    error: state.auth.singUp.error
+    loading: state.auth.signUp.loading,
+    error: state.auth.signUp.error
   };
 };
 

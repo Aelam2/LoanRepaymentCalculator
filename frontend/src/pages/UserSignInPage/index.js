@@ -6,7 +6,7 @@ import { compose } from "redux";
 import * as actions from "actions/UserActions";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
-import { Form, Input, Button, Checkbox } from "antd";
+import { Form, Input, Button, Checkbox, message } from "antd";
 import { FacebookOutlined, GoogleOutlined } from "@ant-design/icons";
 import LoginFields from "./FormMap";
 import styles from "./UserSignInPage.module.scss";
@@ -15,22 +15,24 @@ class UserSignInPage extends React.Component {
   formRef = React.createRef();
 
   onFinish = async values => {
-    console.log("localSignIn Attempt!");
     // Start sign-in action
-    await this.props.localSignIn(values);
+    let result = await this.props.localSignIn(values);
+    if (result) message.success("Sign in successful!");
   };
 
   onGoogleLogin = async res => {
     console.log("responseGoogle", res.tokenObj.access_token);
     if (res.tokenObj && res.tokenObj.access_token) {
-      await this.props.oAuthGoogleSignIn(res.tokenObj.access_token);
+      let result = await this.props.oAuthGoogleSignIn(res.tokenObj.access_token);
+      if (result) message.success("Sign in successful!");
     }
   };
 
   onFacebookLogin = async res => {
     console.log("responseFacebook", res.accessToken);
     if (res.accessToken) {
-      await this.props.oAuthFacebookSignIn(res.accessToken);
+      let result = await this.props.oAuthFacebookSignIn(res.accessToken);
+      if (result) message.success("Sign in successful!");
     }
   };
 
