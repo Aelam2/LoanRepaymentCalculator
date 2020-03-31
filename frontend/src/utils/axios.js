@@ -52,6 +52,15 @@ const mergeCustomErrorCodeMessages = (config = {}) => {
   return codeMessages;
 };
 
+// Always attempt to add JWT_TOKEN to request headers
+axios.interceptors.request.use(
+  reqConfig => {
+    reqConfig.headers.authorization = localStorage.getItem("JWT_TOKEN");
+    return reqConfig;
+  },
+  err => Promise.reject(err)
+);
+
 // Don't trigger interceptor on site INIT
 let interceptorActive = false;
 

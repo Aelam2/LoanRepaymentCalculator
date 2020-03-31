@@ -26,7 +26,7 @@ export default (state = DEFAULT_STATE, action) => {
 
     case USER_SIGN_UP_LOADING:
       return {
-        ...state,
+        ...DEFAULT_STATE,
         signUp: {
           ...state.signUp,
           loading: action.payload
@@ -35,7 +35,7 @@ export default (state = DEFAULT_STATE, action) => {
 
     case USER_SIGN_UP_ERROR:
       return {
-        ...state,
+        ...DEFAULT_STATE,
         signUp: {
           loading: false,
           error: action.payload
@@ -51,7 +51,7 @@ export default (state = DEFAULT_STATE, action) => {
 
     case USER_SIGN_IN_LOADING:
       return {
-        ...state,
+        ...DEFAULT_STATE,
         signIn: {
           ...state.signIn,
           loading: action.payload
@@ -60,7 +60,7 @@ export default (state = DEFAULT_STATE, action) => {
 
     case USER_SIGN_IN_ERROR:
       return {
-        ...state,
+        ...DEFAULT_STATE,
         signIn: {
           loading: false,
           error: action.payload
@@ -68,7 +68,7 @@ export default (state = DEFAULT_STATE, action) => {
       };
     case USER_SIGN_OUT_SUCCESS:
       return {
-        ...state,
+        ...DEFAULT_STATE,
         isAuthenticated: false,
         token: action.payload
       };
