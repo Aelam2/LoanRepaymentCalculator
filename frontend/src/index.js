@@ -6,11 +6,10 @@ import { BrowserRouter } from "react-router-dom";
 import { createStore, applyMiddleware, compose } from "redux";
 import { Provider } from "react-redux";
 import reduxThunk from "redux-thunk";
-import reducers, { defaultAuthState } from "./reducers";
+import reducers, { defaultAuthState, defaultUserState } from "./reducers";
 
 //Internationalization and pollyfills
-import { IntlProvider } from "react-intl";
-import translationsForUsersLocale from "locales";
+import LocaleProvider from "components/LocaleProvider";
 import "intl";
 import "date-time-format-timezone";
 
@@ -23,8 +22,9 @@ import "index.module.scss";
 AxiosGlobalSettings();
 
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const browserLocale = navigator.language;
+
 let jwtToken = localStorage.getItem("JWT_TOKEN");
+let siteLocale = localStorage.getItem("SITE_LOCALE");
 
 ReactDOM.render(
   <Provider
@@ -35,16 +35,23 @@ ReactDOM.render(
           ...defaultAuthState,
           isAuthenticated: jwtToken ? true : false,
           token: jwtToken
+        },
+        user: {
+          ...defaultUserState,
+          settings: {
+            ...defaultUserState.settings,
+            locale: siteLocale
+          }
         }
       },
       composeEnhancer(applyMiddleware(reduxThunk))
     )}
   >
-    <IntlProvider locale={browserLocale} defaultLocale="en-US" messages={translationsForUsersLocale[browserLocale]}>
+    <LocaleProvider>
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </IntlProvider>
+    </LocaleProvider>
   </Provider>,
   document.getElementById("root")
 );

@@ -2,6 +2,7 @@ import axios from "axios";
 import { USER_SIGN_UP_SUCCESS, USER_SIGN_UP_LOADING, USER_SIGN_UP_ERROR } from "./types";
 import { USER_SIGN_IN_SUCCESS, USER_SIGN_IN_LOADING, USER_SIGN_IN_ERROR } from "./types";
 import { USER_SIGN_OUT_SUCCESS } from "./types";
+import { USER_CHANGE_LOCALE_SUCCESS } from "./types";
 
 export const localSignUp = data => {
   return async dispatch => {
@@ -107,6 +108,14 @@ export const signOutUser = () => {
   return dispatch => {
     localStorage.removeItem("JWT_TOKEN");
     dispatch({ type: USER_SIGN_OUT_SUCCESS, payload: "" });
+    return true;
+  };
+};
+
+export const changeUserLanguage = locale => {
+  return dispatch => {
+    localStorage.setItem("SITE_LOCALE", locale);
+    dispatch({ type: USER_CHANGE_LOCALE_SUCCESS, payload: locale });
     return true;
   };
 };

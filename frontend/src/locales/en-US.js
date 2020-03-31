@@ -1,5 +1,5 @@
 import Forms from "./en-US/Forms";
-import LayoutAuthorized from "./en-US/LayoutAuthorized";
+import TopNavigation from "./en-US/TopNavigation";
 import DashboardPage from "./en-US/DashboardPage";
 import PaymentSchedulePage from "./en-US/PaymentSchedulePage";
 import ResourcesPage from "./en-US/ResourcesPage";
@@ -13,7 +13,7 @@ export default {
   "application.description": "Payoff Loans Smarter and Faster",
 
   ...Forms,
-  ...LayoutAuthorized,
+  ...TopNavigation,
   ...DashboardPage,
   ...PaymentSchedulePage,
   ...ResourcesPage,

@@ -18,9 +18,7 @@
   .menu {
     width: 100%;
 
-    .items {
-    }
-    .signOut {
+    .rightContent {
       float: right;
     }
   }
@@ -36,4 +34,34 @@
 
 .siteLayoutBackground {
   background: #fff;
+}
+
+.right {
+  display: flex;
+  float: right;
+  height: $layout-header-height;
+  margin-left: auto;
+  overflow: hidden;
+
+  .action {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    & > span {
+      color: $text-color;
+      vertical-align: middle;
+    }
+
+    &:hover {
+      background: $header-hover-bg;
+    }
+
+    .opened {
+      background: $header-hover-bg;
+    }
+  }
 }

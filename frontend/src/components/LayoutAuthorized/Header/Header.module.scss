@@ -1,0 +1,38 @@
+@import "utils/variables.scss";
+
+.headerDropdownContainer > * {
+  // background-color: $popover-bg;
+  border-radius: 4px;
+  // box-shadow: $shadow-1-down;
+
+  @media screen and (max-width: $screen-xs) {
+    width: 100% !important;
+
+    & > * {
+      border-radius: 0 !important;
+    }
+  }
+}
+
+.headerDropDown {
+  line-height: $layout-header-height;
+  vertical-align: top;
+  cursor: pointer;
+  & > span {
+    font-size: 16px !important;
+    transform: none !important;
+    svg {
+      position: relative;
+      top: -1px;
+    }
+  }
+}
+
+.dropDownMenu {
+  .anticon {
+    margin-right: 0px;
+  }
+  .ant-dropdown-menu-item {
+    min-width: 160px;
+  }
+}
