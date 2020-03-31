@@ -79,7 +79,9 @@ class UserSignInPage extends React.Component {
                 autoLoad={false}
                 render={renderProps => (
                   <Button size="large" className={styles.socialMediaBtn} icon={<GoogleOutlined />} block={true} onClick={renderProps.onClick}>
-                    <span className={styles.socialMediaBtnInnerText}>Continue with Google</span>
+                    <span className={styles.socialMediaBtnInnerText}>
+                      <FormattedMessage id="login.other.google" defaultMessage="Continue with Google" />
+                    </span>
                   </Button>
                 )}
               />
@@ -89,7 +91,9 @@ class UserSignInPage extends React.Component {
                 callback={this.onFacebookLogin}
                 render={renderProps => (
                   <Button size="large" className={styles.socialMediaBtn} icon={<FacebookOutlined />} block={true} onClick={renderProps.onClick}>
-                    <span className={styles.socialMediaBtnInnerText}>Continue with Facebook</span>
+                    <span className={styles.socialMediaBtnInnerText}>
+                      <FormattedMessage id="login.other.facebook" defaultMessage="Continue with Facebook" />
+                    </span>
                   </Button>
                 )}
               />

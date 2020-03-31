@@ -124,7 +124,12 @@ class UserSignUpPage extends React.Component {
                 <div style={{ padding: "6px 0" }}>
                   {SignUpMaps.passwordStatus[this.getPasswordStatus()]}
                   {this.renderPasswordProgress()}
-                  <div style={{ marginTop: 10 }}>Please enter at least 6 characters and don't use passwords that are easy to guess. </div>
+                  <div style={{ marginTop: 10 }}>
+                    <FormattedMessage
+                      id="sign.up.password.strength.details"
+                      defaultMessage="Please enter at least 6 characters and don't use passwords that are easy to guess."
+                    />
+                  </div>
                 </div>
               )
             }

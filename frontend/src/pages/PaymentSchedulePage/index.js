@@ -3,7 +3,7 @@ import styles from "./PaymentSchedulePage.module.scss";
 
 class PaymentSchedulePage extends React.Component {
   render() {
-    return <div></div>;
+    return <div>Schedule</div>;
   }
 }
 

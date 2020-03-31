@@ -3,7 +3,7 @@ import styles from "./ResourcesPage.module.scss";
 
 class ResourcesPage extends React.Component {
   render() {
-    return <div></div>;
+    return <div>Resources</div>;
   }
 }
 
