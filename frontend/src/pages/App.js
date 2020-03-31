@@ -5,7 +5,10 @@ import { compose } from "redux";
 import * as actions from "actions/UserActions";
 
 import { message } from "antd";
+import topNavMap from "config/topNavMap";
+import sideNavMap from "config/sideNavMap";
 
+import AuthGuard from "components/AuthGuard";
 import LayoutAuthorized from "components/LayoutAuthorized";
 import LayoutUnAuthorized from "components/LayoutUnAuthorized";
 import DashboardPage from "pages/DashboardPage";
@@ -18,47 +21,44 @@ import UserSignUpPage from "pages/UserSignUpPage";
 import "./App.module.scss";
 
 class App extends React.Component {
-  componentDidMount = () => {
-    if (!this.props.isAuthenticated) {
-      this.props.history.push("/user/sign-in");
-    }
-  };
-
-  componentDidUpdate = prevProps => {
-    console.log(prevProps.isAuthenticated, this.props.isAuthenticated);
-    if (prevProps.isAuthenticated === true && this.props.isAuthenticated === false) {
-      this.props.history.push("/user/sign-in");
-    }
-
-    if (prevProps.isAuthenticated === false && this.props.isAuthenticated === true) {
-      this.props.history.push("/");
-    }
-  };
-
   signOutUser = async () => {
     let result = await this.props.signOutUser();
     if (result) message.success("Sign out successful!");
   };
 
+  onLocaleChange = async value => {
+    await this.props.changeUserLanguage(value.key);
+  };
+
   render() {
-    let { isAuthenticated, token } = this.props;
-
-    if (isAuthenticated || token) {
-      return (
-        <LayoutAuthorized onSignOut={this.signOutUser}>
-          <Route path="/" component={DashboardPage} />
-          <Route path="/payment-schedule" component={PaymentSchedulePage} />
-          <Route path="/resources" component={ResourcesPage} />
-          <Route path="/user/profile" component={UserProfilePage} />
-        </LayoutAuthorized>
-      );
-    }
-
     return (
-      <LayoutUnAuthorized>
-        <Route path="/user/sign-in" component={UserSignInPage} />
-        <Route path="/user/sign-up" component={UserSignUpPage} />
-      </LayoutUnAuthorized>
+      <AuthGuard>
+        {(isAuth, token) => {
+          if (!isAuth || !token) {
+            return (
+              <LayoutUnAuthorized>
+                <Route path="/user/sign-in" component={UserSignInPage} />
+                <Route path="/user/sign-up" component={UserSignUpPage} />
+              </LayoutUnAuthorized>
+            );
+          } else {
+            return (
+              <LayoutAuthorized
+                topNavLinks={topNavMap}
+                sideNavLinks={sideNavMap}
+                onSignOut={this.signOutUser}
+                selectedLocale={this.props.locale}
+                onLocaleChange={this.onLocaleChange}
+              >
+                <Route path="/" component={DashboardPage} exact />
+                <Route path="/payment-schedule" component={PaymentSchedulePage} exact />
+                <Route path="/resources" component={ResourcesPage} exact />
+                <Route path="/user/profile" component={UserProfilePage} exact />
+              </LayoutAuthorized>
+            );
+          }
+        }}
+      </AuthGuard>
     );
   }
 }
@@ -66,8 +66,9 @@ class App extends React.Component {
 const mapStateToProps = state => {
   return {
     isAuthenticated: state.auth.isAuthenticated,
-    token: state.auth.token
+    token: state.auth.token,
+    locale: state.locale
   };
 };
 
-export default compose(connect(mapStateToProps, actions))(withRouter(App));
+export default compose(connect(mapStateToProps, actions))(App);
