@@ -1,6 +1,5 @@
 import express from "express";
 import { Users } from "../models/models";
-import { validateSignUp, signUserToken } from "../helpers/userHelper";
 let router = express.Router();
 
 /**

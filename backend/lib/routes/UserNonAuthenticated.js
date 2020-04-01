@@ -1,5 +1,6 @@
 import express from "express";
 import passport from "passport";
+import validate, { userSignUpRules } from "../middleware/route-validator";
 import { Users } from "../models/models";
 import { signUserToken } from "../helpers/userHelper";
 import { isUnique, handleSequelizeError } from "../helpers/errorHelper";
@@ -81,7 +82,7 @@ let router = express.Router();
  *                nullable: true
  *                description: User's Last Name.
  */
-router.route("/sign-up").post(async (req, res) => {
+router.route("/sign-up").post(userSignUpRules(), validate, async (req, res) => {
   try {
     let { UserName, Password, FirstName, LastName, Email } = req.body;
 
