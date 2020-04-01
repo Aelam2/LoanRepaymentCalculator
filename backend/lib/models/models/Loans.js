@@ -43,7 +43,6 @@
  *          StatusID:
  *            type: integer
  *            format: uuid
- *            required: true
  *          DateCreated:
  *            type: string
  *            format: date-time
@@ -128,7 +127,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       StatusID: {
         type: DataTypes.UUID,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: { tableName: "CodeSets" },
           key: "CodeValueID"

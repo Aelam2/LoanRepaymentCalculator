@@ -58,7 +58,7 @@ module.exports = {
         },
         StatusID: {
           type: Sequelize.UUID,
-          allowNull: false,
+          allowNull: true,
           references: {
             model: { tableName: "CodeSets" },
             key: "CodeValueID"
