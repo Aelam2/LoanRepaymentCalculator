@@ -1,4 +1,4 @@
-"use strict";
+const sequelize = require("sequelize");
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -17,7 +17,6 @@ module.exports = {
         UserName: {
           type: Sequelize.STRING,
           allowNull: true,
-          unique: true,
           validate: {
             len: {
               args: [3, 40],
@@ -94,6 +93,18 @@ module.exports = {
         updatedAt: "DateUpdated",
         deletedAt: "DateDeleted",
         paranoid: true,
+
+        indexes: [
+          {
+            unique: true,
+            fields: ["UserName"],
+            where: {
+              UserName: {
+                [sequelize.Op.ne]: null
+              }
+            }
+          }
+        ],
 
         hooks: {
           beforeCreate: async User => {

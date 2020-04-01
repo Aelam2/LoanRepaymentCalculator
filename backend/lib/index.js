@@ -7,7 +7,7 @@ import auth from "./middleware/authentication";
 import userNonAuthenticated from "./routes/UserNonAuthenticated";
 import userAuthenticated from "./routes/UserAuthenticated";
 
-import studentLoans from "./routes/StudentLoans";
+import loans from "./routes/Loans";
 import paymentPlans from "./routes/PaymentPlans";
 import analytics from "./routes/Analytics";
 import swagger from "./routes/Swagger";
@@ -40,7 +40,7 @@ app.use(passport.authenticate("jwt", { session: false }));
 
 //Logged-In Routes
 app.use("/", userAuthenticated);
-app.use("/me", studentLoans);
+app.use("/me", loans);
 app.use("/me/loans", paymentPlans);
 app.use("/me/loans", analytics);
 

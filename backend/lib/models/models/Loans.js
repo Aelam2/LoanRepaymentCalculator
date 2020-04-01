@@ -9,6 +9,10 @@
  *            type: integer
  *            format: int32
  *            required: true
+ *          UserID:
+ *            type: integer
+ *            format: int32
+ *            required: true
  *          LoanName:
  *            type: string
  *            required: true
@@ -16,27 +20,11 @@
  *            type: string
  *            format: uuid
  *            required: true
- *          UserID:
- *            type: integer
- *            format: int32
- *            required: true
- *          PaymentStart:
- *            type: string
- *            format: date
- *            required: true
  *          LoanTerm:
  *            type: integer
  *            format: int32
  *            required: true
- *          StartingPrinciple:
- *            type: number
- *            format: double
- *            required: true
- *          CurrentPrinciple:
- *            type: number
- *            format: double
- *            required: true
- *          AccruedInterest:
+ *          LoanBalance:
  *            type: number
  *            format: double
  *            required: true
@@ -44,7 +32,11 @@
  *            type: integer
  *            format: float
  *            required: true
- *          MinimumPayment:
+ *          PaymentStart:
+ *            type: string
+ *            format: date
+ *            required: true
+ *          PaymentMinimum:
  *            type: number
  *            format: double
  *            required: true
@@ -66,16 +58,14 @@
  *            description: Timestamp of when the loan was deleted. Active loans will have a null value.
  *        example:
  *           LoanID: 1
+ *           UserID: 1
  *           LoanName: My Subsidized Loan #1
  *           LoanType: ge7270e2-0601-36af-da68-4c77423c7329
- *           UserID: 1
- *           PaymentStart: 2020-02-01
  *           LoanTerm: 120
- *           StartingPrinciple: 7500.00
- *           CurrentPrinciple: 7166.75
- *           AccruedInterest: 0.00
+ *           LoanBalance: 7500.00
  *           InterestRate: 4.25
- *           MinimumPayment: 333.33
+ *           PaymentStart: 2020-02-01
+ *           PaymentMinimum: 333.33
  *           StatusID: ae7270e2-0201-36ae-ef68-4c77441j7329
  *           DateCreated: 2020-03-24 11:31:00.5230000 -05:00
  *           DateUpdated: 2020-03-24 13:00:00.6030000 -05:00
@@ -90,6 +80,13 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true
       },
+      UserID: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: { tableName: "Users" },
+          key: "UserID"
+        }
+      },
       LoanName: {
         type: DataTypes.STRING,
         allowNull: false
@@ -102,38 +99,16 @@ module.exports = (sequelize, DataTypes) => {
           key: "CodeValueID"
         }
       },
-      UserID: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: { tableName: "Users" },
-          key: "UserID"
-        }
-      },
-      PaymentStart: {
-        type: DataTypes.DATE
-      },
       LoanTerm: {
         type: DataTypes.INTEGER,
         validate: {
           min: 1
         }
       },
-      StartingPrinciple: {
+      LoanBalance: {
         type: DataTypes.FLOAT,
         validate: {
           min: 1
-        }
-      },
-      CurrentPrinciple: {
-        type: DataTypes.FLOAT,
-        validate: {
-          min: 0
-        }
-      },
-      AccruedInterest: {
-        type: DataTypes.FLOAT,
-        validate: {
-          min: 0
         }
       },
       InterestRate: {
@@ -142,7 +117,10 @@ module.exports = (sequelize, DataTypes) => {
           min: 0
         }
       },
-      MinimumPayment: {
+      PaymentStart: {
+        type: DataTypes.DATE
+      },
+      PaymentMinimum: {
         type: DataTypes.FLOAT,
         validate: {
           min: 1

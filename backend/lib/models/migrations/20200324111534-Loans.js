@@ -10,6 +10,13 @@ module.exports = {
           autoIncrement: true,
           primaryKey: true
         },
+        UserID: {
+          type: Sequelize.INTEGER,
+          references: {
+            model: { tableName: "Users" },
+            key: "UserID"
+          }
+        },
         LoanName: {
           type: Sequelize.STRING,
           allowNull: false
@@ -22,38 +29,16 @@ module.exports = {
             key: "CodeValueID"
           }
         },
-        UserID: {
-          type: Sequelize.INTEGER,
-          references: {
-            model: { tableName: "Users" },
-            key: "UserID"
-          }
-        },
-        PaymentStart: {
-          type: Sequelize.DATE
-        },
         LoanTerm: {
           type: Sequelize.INTEGER,
           validate: {
             min: 1
           }
         },
-        StartingPrinciple: {
+        LoanBalance: {
           type: Sequelize.FLOAT,
           validate: {
             min: 1
-          }
-        },
-        CurrentPrinciple: {
-          type: Sequelize.FLOAT,
-          validate: {
-            min: 0
-          }
-        },
-        AccruedInterest: {
-          type: Sequelize.FLOAT,
-          validate: {
-            min: 0
           }
         },
         InterestRate: {
@@ -62,7 +47,10 @@ module.exports = {
             min: 0
           }
         },
-        MinimumPayment: {
+        PaymentStart: {
+          type: Sequelize.DATE
+        },
+        PaymentMinimum: {
           type: Sequelize.FLOAT,
           validate: {
             min: 1
