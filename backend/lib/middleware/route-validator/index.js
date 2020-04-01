@@ -5,11 +5,19 @@ const validate = (req, res, next) => {
   if (errors.isEmpty()) {
     return next();
   }
+
   const extractedErrors = [];
-  errors.array().map(err => extractedErrors.push({ [err.param]: err.msg }));
+  errors.array().map(err => extractedErrors.push({ error: err.msg, codeName: err.param, value: err.value }));
+
+  const firstError = errors.array()[0];
 
   return res.status(422).json({
-    error: errors.array()[0].msg,
+    status: "error",
+    error: firstError.msg,
+    result: {
+      codeName: firstError.param,
+      value: firstError.value
+    },
     errors: extractedErrors
   });
 };
