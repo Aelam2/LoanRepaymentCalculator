@@ -1,12 +1,19 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 
-const createPayment = () => {
-  return [
-    // username must be an email
-    body("username").isEmail(),
-    // password must be at least 5 chars long
-    body("password").isLength({ min: 5 })
-  ];
+const getPaymentPlanRules = () => {
+  return [body("PlanName", "Plan name is required").isLength({ min: 1 })];
 };
 
-export { createPayment };
+const createPaymentPlanRules = () => {
+  return [body("PlanName", "Plan name is required").isLength({ min: 1 })];
+};
+
+const updatePaymentPlanRules = () => {
+  return [param("PaymentPlanID", "PaymentPlanID is required").isInt({ gt: 0 })];
+};
+
+const deletePaymentPlanRules = () => {
+  return [param("PaymentPlanID", "PaymentPlanID is required").isInt({ gt: 0 })];
+};
+
+export { getPaymentPlanRules, createPaymentPlanRules, updatePaymentPlanRules, deletePaymentPlanRules };
