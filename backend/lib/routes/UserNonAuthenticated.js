@@ -20,35 +20,6 @@ let router = express.Router();
  *  post:
  *    description: Create a new user
  *    tags: [Users]
- *    responses:
- *      '200':
- *        description: New user account was successfully created
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *                token:
- *                  type: string
- *                  description: token used for logged-in requests
- *      '409':
- *        description: Email or Username has already been used
- *        content:
- *          application/json:
- *            schema:
- *               $ref: '#/components/schemas/FourZeroNineError'
- *      '422':
- *        description: Invalid input for a field
- *        content:
- *          application/json:
- *            schema:
- *               $ref: '#/components/schemas/FourTwentyTwoError'
- *      '500':
- *         description: An unexpected error occured
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/FiveHundredError'
  *    requestBody:
  *      required: true
  *      content:
@@ -81,6 +52,35 @@ let router = express.Router();
  *                type: string
  *                nullable: true
  *                description: User's Last Name.
+ *    responses:
+ *      '200':
+ *        description: New user account was successfully created
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                token:
+ *                  type: string
+ *                  description: token used for logged-in requests
+ *      '409':
+ *        description: Email or Username has already been used
+ *        content:
+ *          application/json:
+ *            schema:
+ *               $ref: '#/components/schemas/FourZeroNineError'
+ *      '422':
+ *        description: Invalid input for a field
+ *        content:
+ *          application/json:
+ *            schema:
+ *               $ref: '#/components/schemas/FourTwentyTwoError'
+ *      '500':
+ *         description: An unexpected error occured
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FiveHundredError'
  */
 router.route("/sign-up").post(userSignUpRules(), validate, async (req, res) => {
   try {
@@ -212,7 +212,6 @@ router.route("/oauth/facebook").post((req, res, next) => {
 
       res.status(200).json({ token });
     } catch (err) {
-      console.log(err);
       let sequelizeError = handleSequelizeError(err);
       if (sequelizeError.status) {
         res.status(sequelizeError.status).json({ ...sequelizeError, status: "error" });
@@ -230,25 +229,6 @@ router.route("/oauth/facebook").post((req, res, next) => {
  *  post:
  *    description: Returns a JWT token that is required for logged-in routes.
  *    tags: [Users]
- *    responses:
- *      '200':
- *        description: Sign-in was successful and token was returned
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *                token:
- *                  type: string
- *                  description: token used for logged-in requests
- *      '401':
- *        description: Username or Password incorrect
- *      '500':
- *         description: An unexpected error occured
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/FiveHundredError'
  *    requestBody:
  *      required: true
  *      content:
@@ -268,6 +248,25 @@ router.route("/oauth/facebook").post((req, res, next) => {
  *                format: password
  *                required: true
  *                description: UserName's currently set password
+ *    responses:
+ *      '200':
+ *        description: Sign-in was successful and token was returned
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                token:
+ *                  type: string
+ *                  description: token used for logged-in requests
+ *      '401':
+ *        description: Username or Password incorrect
+ *      '500':
+ *         description: An unexpected error occured
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FiveHundredError'
  */
 router.route("/sign-in").post(passport.authenticate("local", { session: false }), (req, res) => {
   try {
