@@ -89,6 +89,8 @@ class UserSignInPage extends React.Component {
                 appId="649424762459082"
                 fields="name, email, picture"
                 callback={this.onFacebookLogin}
+                cookie={true}
+                isMobile={false}
                 render={renderProps => (
                   <Button size="large" className={styles.socialMediaBtn} icon={<FacebookOutlined />} block={true} onClick={renderProps.onClick}>
                     <span className={styles.socialMediaBtnInnerText}>

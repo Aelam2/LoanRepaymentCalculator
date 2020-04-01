@@ -2,32 +2,34 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
 import { Layout, Menu } from "antd";
-import HeaderLocales from "./Header/HeaderLocales";
+import ThemeSelector from "../Header/HeaderThemeSelector";
+import HeaderLocales from "../Header/HeaderLocales";
 import styles from "./LayoutAuthorized.module.scss";
 
-const { SubMenu } = Menu;
-const { Header, Content, Sider } = Layout;
+const { Header, Content } = Layout;
 
 class LayoutAuthorized extends React.Component {
-  render() {
-    let { children, theme } = this.props;
-    let { topNavLinks, onLocaleChange, selectedLocale, onSignOut } = this.props;
-    let { CustomSideMenu, sideMenuLinks } = this.props;
+  state = {
+    activeTab: [`/${window.location.pathname.split("/").pop()}`]
+  };
 
-    let navTheme = (theme || "dark").toLocaleLowerCase().includes("dark") ? "dark" : "light";
+  render() {
+    let { children, style: innerContentStyle } = this.props;
+    let { topNavLinks, onLocaleChange, selectedLocale, onSignOut, onThemeChange, selectedTheme } = this.props;
+    let { CustomSideMenu } = this.props;
 
     return (
       <Layout className={styles.layout}>
         <Header className={styles.header}>
-          <div>
+          <div className="ant-menu ant-menu-horizontal">
             <h1 className={styles.title}>
               <FormattedMessage id="layout.authorized.title" defaultMessage="Loan Calculator" />
             </h1>
           </div>
-          <Menu className={styles.menu} theme={navTheme} mode="horizontal" defaultSelectedKeys={["1"]}>
+          <Menu className={styles.menu} mode="horizontal" defaultSelectedKeys={this.state.activeTab}>
             {(topNavLinks || []).map(l => {
               return (
-                <Menu.Item key={l.key}>
+                <Menu.Item key={l.path} className={styles.topNavLink}>
                   <Link to={l.path}>{l.text}</Link>
                 </Menu.Item>
               );
@@ -38,23 +40,21 @@ class LayoutAuthorized extends React.Component {
               </Menu.Item>
             )}
             {onLocaleChange && (
-              <div className={styles.right}>
+              <div className={styles.right} key="5">
                 <HeaderLocales className={styles.action} selectedLocale={selectedLocale} onChange={onLocaleChange} />
+              </div>
+            )}
+            {onThemeChange && (
+              <div className={styles.right} key="6">
+                <ThemeSelector className={styles.action} onChange={onThemeChange} selected={selectedTheme} />
               </div>
             )}
           </Menu>
         </Header>
         <Layout>
-          {CustomSideMenu ? <CustomSideMenu /> : sideMenuLinks && sideMenuLinks.length ? <Sider></Sider> : null}
-          <Layout style={{ padding: "0 24px 24px" }}>
-            <Content
-              className="site-layout-background"
-              style={{
-                padding: 24,
-                margin: 0,
-                minHeight: 280
-              }}
-            >
+          {CustomSideMenu && <CustomSideMenu />}
+          <Layout>
+            <Content className={`${styles.siteLayoutBackground}`} style={innerContentStyle}>
               {children}
             </Content>
           </Layout>

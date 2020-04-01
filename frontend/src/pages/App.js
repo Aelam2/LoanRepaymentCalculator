@@ -18,7 +18,7 @@ import UserProfilePage from "pages/UserProfilePage";
 import UserSignInPage from "pages/UserSignInPage";
 import UserSignUpPage from "pages/UserSignUpPage";
 
-import "./App.module.scss";
+import "./App.scss";
 
 class App extends React.Component {
   signOutUser = async () => {
@@ -27,7 +27,11 @@ class App extends React.Component {
   };
 
   onLocaleChange = async value => {
-    await this.props.changeUserLanguage(value.key);
+    await this.props.changeSiteLocale(value.key);
+  };
+
+  onThemeChange = async theme => {
+    await this.props.changeSiteTheme(theme);
   };
 
   render() {
@@ -36,7 +40,12 @@ class App extends React.Component {
         {(isAuth, token) => {
           if (!isAuth || !token) {
             return (
-              <LayoutUnAuthorized>
+              <LayoutUnAuthorized
+                onLocaleChange={this.onLocaleChange}
+                selectedLocale={this.props.locale}
+                onThemeChange={this.onThemeChange}
+                selectedTheme={this.props.theme}
+              >
                 <Route path="/user/sign-in" component={UserSignInPage} />
                 <Route path="/user/sign-up" component={UserSignUpPage} />
               </LayoutUnAuthorized>
@@ -47,8 +56,10 @@ class App extends React.Component {
                 topNavLinks={topNavMap}
                 sideNavLinks={sideNavMap}
                 onSignOut={this.signOutUser}
-                selectedLocale={this.props.locale}
                 onLocaleChange={this.onLocaleChange}
+                selectedLocale={this.props.locale}
+                onThemeChange={this.onThemeChange}
+                selectedTheme={this.props.theme}
               >
                 <Route path="/" component={DashboardPage} exact />
                 <Route path="/payment-schedule" component={PaymentSchedulePage} exact />
@@ -67,7 +78,8 @@ const mapStateToProps = state => {
   return {
     isAuthenticated: state.auth.isAuthenticated,
     token: state.auth.token,
-    locale: state.locale
+    locale: state.user.settings.locale,
+    theme: state.user.settings.theme
   };
 };
 

@@ -33,10 +33,10 @@ class UserSignUpPage extends React.Component {
 
   getPasswordStatus = () => {
     const value = this.formRef.current && this.formRef.current.getFieldValue("Password");
-    if (value && value.length > 9) {
+    if (value && value.length > 12) {
       return "ok";
     }
-    if (value && value.length > 5) {
+    if (value && value.length > 8) {
       return "pass";
     }
     return "poor";

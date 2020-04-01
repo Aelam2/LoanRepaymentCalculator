@@ -5,7 +5,7 @@ export default [
   {
     key: "1",
     path: "/",
-    text: <FormattedMessage id="layout.authorized.Overview" defaultMessage="Loan Overview" />,
+    text: <FormattedMessage id="layout.authorized.Overview" defaultMessage="Dashboard" />,
     children: []
   },
   {

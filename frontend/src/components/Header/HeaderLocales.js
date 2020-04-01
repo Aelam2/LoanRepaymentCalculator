@@ -19,7 +19,7 @@ const HeaderLocales = props => {
   return (
     <HeaderDropdown className={`${className}`} overlay={langMenu} placement="bottomRight" trigger={["click"]}>
       <span className={`${styles.headerDropDown} ${className}`}>
-        <GlobalOutlined title="Languages" style={{ margin: "0px" }} />
+        <GlobalOutlined title="Languages" style={{ marginTop: "3px" }} />
       </span>
     </HeaderDropdown>
   );

@@ -29,6 +29,7 @@
     "react-scripts": "3.4.1",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
+    "use-media-antd-query": "^1.0.1",
     "use-merge-value": "^1.0.1"
   },
   "scripts": {

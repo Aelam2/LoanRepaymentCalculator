@@ -13,6 +13,8 @@ import LocaleProvider from "components/LocaleProvider";
 import "intl";
 import "date-time-format-timezone";
 
+import ThemeProvider from "components/ThemeProvider";
+
 import App from "./pages/App";
 import * as serviceWorker from "./serviceWorker";
 import AxiosGlobalSettings from "utils/axios";
@@ -24,7 +26,8 @@ AxiosGlobalSettings();
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 let jwtToken = localStorage.getItem("JWT_TOKEN");
-let siteLocale = localStorage.getItem("SITE_LOCALE");
+let siteLocale = localStorage.getItem("SITE_LOCALE") || "en-US";
+let siteTheme = localStorage.getItem("SITE_THEME") || "light";
 
 ReactDOM.render(
   <Provider
@@ -40,7 +43,8 @@ ReactDOM.render(
           ...defaultUserState,
           settings: {
             ...defaultUserState.settings,
-            locale: siteLocale
+            locale: siteLocale,
+            theme: siteTheme
           }
         }
       },
@@ -48,9 +52,11 @@ ReactDOM.render(
     )}
   >
     <LocaleProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <ThemeProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </ThemeProvider>
     </LocaleProvider>
   </Provider>,
   document.getElementById("root")

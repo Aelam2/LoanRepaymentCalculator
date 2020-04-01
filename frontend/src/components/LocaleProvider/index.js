@@ -18,10 +18,10 @@ class LocaleProvider extends React.Component {
     if (!lastLocale) {
       // If application has translations for their browser locale
       if (translationsForLocale[browserLocale]) {
-        this.props.changeUserLanguage(browserLocale);
+        this.props.changeSiteLocale(browserLocale);
       } else {
         // Fallback, set to defaultLanguage
-        this.props.changeUserLanguage(defaultLanguage);
+        this.props.changeSiteLocale(defaultLanguage);
       }
     } else {
       // If user has lastLocale, make sure app has translations for locale
@@ -29,7 +29,7 @@ class LocaleProvider extends React.Component {
         return;
       } else {
         // If app has no translations for lastLocale, set to default locale
-        this.props.changeUserLanguage(defaultLanguage);
+        this.props.changeSiteLocale(defaultLanguage);
       }
     }
   };

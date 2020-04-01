@@ -7,7 +7,7 @@ import { Col, Row, Tooltip } from "antd";
 import { FormattedMessage, FormattedDate } from "react-intl";
 // import {  MiniArea, MiniBar, MiniProgress } from "./Charts";
 // import Yuan from '../utils/Yuan';
-import styles from "./DashboardPage.module.scss";
+import styles from "../DashboardPage.module.scss";
 
 const topColResponsiveProps = {
   xs: 24,

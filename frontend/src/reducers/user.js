@@ -1,9 +1,10 @@
-import { USER_CHANGE_LOCALE_SUCCESS } from "actions/types";
+import { USER_CHANGE_LOCALE_SUCCESS, USER_CHANGE_THEME_SUCCESS } from "actions/types";
 
 const DEFAULT_STATE = {
   user: {},
   settings: {
-    locale: ""
+    locale: "",
+    theme: "light"
   }
 };
 
@@ -15,6 +16,15 @@ export default (state = DEFAULT_STATE, action) => {
         settings: {
           ...state.settings,
           locale: action.payload
+        }
+      };
+
+    case USER_CHANGE_THEME_SUCCESS:
+      return {
+        ...state,
+        settings: {
+          ...state.settings,
+          theme: action.payload
         }
       };
 

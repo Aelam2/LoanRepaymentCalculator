@@ -8,13 +8,46 @@ $screen-xxs: 360px;
   justify-content: center;
   height: 100vh;
   overflow: auto;
-  background: $layout-body-background;
 
   @media (min-width: $screen-md-min) {
     background-image: url("https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg");
     background-repeat: no-repeat;
     background-position: center 110px;
     background-size: 100%;
+  }
+}
+
+.topRight {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+
+  .siteSettings {
+    display: flex;
+    align-items: center;
+
+    .action {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      padding: 0 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 16px;
+
+      & > span {
+        color: $text-color;
+        vertical-align: middle;
+      }
+
+      &:hover {
+        background: $header-hover-bg;
+      }
+
+      .opened {
+        background: $header-hover-bg;
+      }
+    }
   }
 }
 

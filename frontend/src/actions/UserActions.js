@@ -2,7 +2,7 @@ import axios from "axios";
 import { USER_SIGN_UP_SUCCESS, USER_SIGN_UP_LOADING, USER_SIGN_UP_ERROR } from "./types";
 import { USER_SIGN_IN_SUCCESS, USER_SIGN_IN_LOADING, USER_SIGN_IN_ERROR } from "./types";
 import { USER_SIGN_OUT_SUCCESS } from "./types";
-import { USER_CHANGE_LOCALE_SUCCESS } from "./types";
+import { USER_CHANGE_LOCALE_SUCCESS, USER_CHANGE_THEME_SUCCESS } from "./types";
 
 export const localSignUp = data => {
   return async dispatch => {
@@ -112,10 +112,18 @@ export const signOutUser = () => {
   };
 };
 
-export const changeUserLanguage = locale => {
+export const changeSiteLocale = locale => {
   return dispatch => {
     localStorage.setItem("SITE_LOCALE", locale);
     dispatch({ type: USER_CHANGE_LOCALE_SUCCESS, payload: locale });
+    return true;
+  };
+};
+
+export const changeSiteTheme = theme => {
+  return dispatch => {
+    localStorage.setItem("SITE_THEME", theme);
+    dispatch({ type: USER_CHANGE_THEME_SUCCESS, payload: theme });
     return true;
   };
 };
