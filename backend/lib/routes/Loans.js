@@ -1,4 +1,5 @@
 import express from "express";
+import validate, { createLoanRules, updateLoanRules, deleteLoanRules } from "../middleware/route-validator";
 import { Loans } from "../models/models";
 
 let router = express.Router();
@@ -32,8 +33,9 @@ router
    *                  type: string
    *                  example: success
    *                data:
-   *                  type: object
-   *                  $ref: '#/components/schemas/Loans'
+   *                  type: array
+   *                  items:
+   *                      $ref: '#/components/schemas/Loans'
    *      '500':
    *         description: An unexpected error occured
    *         content:
@@ -62,29 +64,6 @@ router
    *  post:
    *    description: Create a new loan associated to a user
    *    tags: [Loans]
-   *    responses:
-   *      '200':
-   *        description: New user account was successfully created
-   *        content:
-   *          application/json:
-   *            schema:
-   *              type: object
-   *              properties:
-   *                token:
-   *                  type: string
-   *                  description: token used for logged-in requests
-   *      '422':
-   *        description: Invalid input for a field
-   *        content:
-   *          application/json:
-   *            schema:
-   *               $ref: '#/components/schemas/FourTwentyTwoError'
-   *      '500':
-   *         description: An unexpected error occured
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/FiveHundredError'
    *    requestBody:
    *      required: true
    *      content:
@@ -106,16 +85,44 @@ router
    *                $ref: '#/components/schemas/Loans/properties/LoanType'
    *              LoanTerm:
    *                $ref: '#/components/schemas/Loans/properties/LoanTerm'
-   *              StartingPrinciple:
-   *                $ref: '#/components/schemas/Loans/properties/StartingPrinciple'
+   *              LoanBalance:
+   *                $ref: '#/components/schemas/Loans/properties/LoanBalance'
    *              InterestRate:
    *                $ref: '#/components/schemas/Loans/properties/InterestRate'
    *              PaymentMinimum:
    *                $ref: '#/components/schemas/Loans/properties/PaymentMinimum'
    *              PaymentStart:
    *                $ref: '#/components/schemas/Loans/properties/PaymentStart'
+   *              StatusID:
+   *                $ref: '#/components/schemas/Loans/properties/StatusID'
+   *    responses:
+   *      '200':
+   *        description: New user account was successfully created
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: string
+   *                  example: success
+   *                data:
+   *                  type: object
+   *                  $ref: '#/components/schemas/Loans'
+   *      '422':
+   *        description: Invalid input for a field
+   *        content:
+   *          application/json:
+   *            schema:
+   *               $ref: '#/components/schemas/FourTwentyTwoError'
+   *      '500':
+   *         description: An unexpected error occured
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/FiveHundredError'
    */
-  .post(async (req, res) => {
+  .post(createLoanRules(), validate, async (req, res) => {
     try {
       let { UserID } = req.user;
       let { LoanName, LoanType, LoanTerm, StartingPrinciple, InterestRate, PaymentMinimum, PaymentStart } = req.body;
@@ -133,13 +140,149 @@ router
 
       res.status(200).json({ status: "success", data: newLoan });
     } catch (err) {
+      console.log(err.message);
       res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
     }
   });
 
 router
   .route("/loans/:loanID")
-  .put((req, res) => {})
-  .delete((req, res) => {});
+
+  /**
+   * @swagger
+   *
+   * /me/loans/{LoanID}:
+   *  put:
+   *    description: Update an existing loan
+   *    tags: [Loans]
+   *    parameters:
+   *      - in: path
+   *        name: LoanID
+   *        schema:
+   *          $ref: '#/components/schemas/Loans/properties/LoanName'
+   *        required: true
+   *        description: Numeric ID of the loan
+   *    requestBody:
+   *      required: true
+   *      content:
+   *        application/json:
+   *          schema:
+   *            type: object
+   *            required:
+   *              - LoanName
+   *              - LoanType
+   *              - LoanTerm
+   *              - StartingPrinciple
+   *              - InterestRate
+   *              - PaymentMinimum
+   *              - PaymentStart
+   *            properties:
+   *              LoanName:
+   *                $ref: '#/components/schemas/Loans/properties/LoanName'
+   *              LoanType:
+   *                $ref: '#/components/schemas/Loans/properties/LoanType'
+   *              LoanTerm:
+   *                $ref: '#/components/schemas/Loans/properties/LoanTerm'
+   *              LoanBalance:
+   *                $ref: '#/components/schemas/Loans/properties/LoanBalance'
+   *              InterestRate:
+   *                $ref: '#/components/schemas/Loans/properties/InterestRate'
+   *              PaymentMinimum:
+   *                $ref: '#/components/schemas/Loans/properties/PaymentMinimum'
+   *              PaymentStart:
+   *                $ref: '#/components/schemas/Loans/properties/PaymentStart'
+   *              StatusID:
+   *                $ref: '#/components/schemas/Loans/properties/StatusID'
+   *    responses:
+   *      '200':
+   *        description: New user account was successfully created
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: string
+   *                  example: success
+   *                data:
+   *                  type: object
+   *                  $ref: '#/components/schemas/Loans'
+   *      '422':
+   *        description: Invalid input for a field
+   *        content:
+   *          application/json:
+   *            schema:
+   *               $ref: '#/components/schemas/FourTwentyTwoError'
+   *      '500':
+   *         description: An unexpected error occured
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/FiveHundredError'
+   */
+  .put(updateLoanRules(), validate, async (req, res) => {
+    try {
+    } catch (err) {
+      res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
+    }
+  })
+
+  /**
+   * @swagger
+   *
+   * /me/loans/{LoanID}:
+   *  delete:
+   *    description: Delete an existing loan by LoanID
+   *    tags: [Loans]
+   *    parameters:
+   *      - in: path
+   *        name: LoanID
+   *        schema:
+   *          $ref: '#/components/schemas/Loans/properties/LoanName'
+   *        required: true
+   *        description: Numeric ID of the loan
+   *    responses:
+   *      '200':
+   *        description: New user account was successfully created
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: string
+   *                  example: success
+   *                data:
+   *                  type: object
+   *                  $ref: '#/components/schemas/Loans'
+   *      '422':
+   *        description: Invalid input for a field
+   *        content:
+   *          application/json:
+   *            schema:
+   *               $ref: '#/components/schemas/FourTwentyTwoError'
+   *      '500':
+   *         description: An unexpected error occured
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/FiveHundredError'
+   */
+  .delete(deleteLoanRules(), validate, async (req, res) => {
+    try {
+      let { UserID } = req.user;
+      let { LoanID } = req.params;
+
+      let result = await Loans.delete({
+        where: { LoanID }
+      });
+
+      console.log(result);
+
+      res.status(200).json({ status: "success", data: true });
+    } catch (err) {
+      res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
+    }
+  });
 
 export default router;
