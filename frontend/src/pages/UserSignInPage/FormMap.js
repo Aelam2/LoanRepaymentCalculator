@@ -1,6 +1,6 @@
 import React from "react";
 import { FormattedMessage } from "react-intl";
-import { LockTwoTone, UserOutlined } from "@ant-design/icons";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import styles from "./UserSignInPage.module.scss";
 
 export default {
@@ -18,7 +18,7 @@ export default {
     },
     input: {
       size: "large",
-      prefix: <UserOutlined className="site-form-item-icon" style={{ color: "#1890ff" }} className={styles.prefixIcon} />
+      prefix: <UserOutlined className={`${styles.prefixIcon} secondary-text`} />
     }
   },
   Password: {
@@ -36,7 +36,7 @@ export default {
     },
     input: {
       size: "large",
-      prefix: <LockTwoTone className="site-form-item-icon" className={styles.prefixIcon} />,
+      prefix: <LockOutlined className={`${styles.prefixIcon} secondary-text`} />,
       type: "password"
     }
   }
