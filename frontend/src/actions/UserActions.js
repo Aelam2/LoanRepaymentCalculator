@@ -20,7 +20,7 @@ export const localSignUp = data => {
       localStorage.setItem("JWT_TOKEN", res.data.token);
       return true;
     } catch (err) {
-      console.error("Sign-Up error! ===>", err.message);
+      console.error("localSignUp error! ===>", err.message);
 
       // On error set sign-up error state to true
       dispatch({ type: USER_SIGN_UP_ERROR, payload: true });
@@ -45,7 +45,7 @@ export const localSignIn = data => {
       localStorage.setItem("JWT_TOKEN", res.data.token);
       return true;
     } catch (err) {
-      console.error("Sign-Up error! ===>", err.message);
+      console.error("localSignIn error! ===>", err.message);
 
       // On error set sign-in error state to true
       dispatch({ type: USER_SIGN_IN_ERROR, payload: true });
@@ -70,7 +70,7 @@ export const oAuthGoogleSignIn = data => {
       localStorage.setItem("JWT_TOKEN", res.data.token);
       return true;
     } catch (err) {
-      console.error("Sign-Up error! ===>", err.message);
+      console.error("oAuthGoogleSignIn error! ===>", err.message);
 
       // On error set sign-in error state to true
       dispatch({ type: USER_SIGN_IN_ERROR, payload: true });
@@ -95,7 +95,7 @@ export const oAuthFacebookSignIn = data => {
       localStorage.setItem("JWT_TOKEN", res.data.token);
       return true;
     } catch (err) {
-      console.error("Sign-Up error! ===>", err.message);
+      console.error("oAuthFacebookSignIn error! ===>", err.message);
 
       // On error set sign-in error state to true
       dispatch({ type: USER_SIGN_IN_ERROR, payload: true });
