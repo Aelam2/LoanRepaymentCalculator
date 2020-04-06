@@ -125,14 +125,14 @@ router
   .post(createLoanRules(), validate, async (req, res) => {
     try {
       let { UserID } = req.user;
-      let { LoanName, LoanType, LoanTerm, StartingPrinciple, InterestRate, PaymentMinimum, PaymentStart } = req.body;
+      let { LoanName, LoanType, LoanTerm, LoanBalance, InterestRate, PaymentMinimum, PaymentStart } = req.body;
 
       let newLoan = await Loans.create({
         UserID,
         LoanName,
         LoanType,
         LoanTerm,
-        StartingPrinciple,
+        LoanBalance,
         InterestRate,
         PaymentMinimum,
         PaymentStart
@@ -146,7 +146,7 @@ router
   });
 
 router
-  .route("/loans/:loanID")
+  .route("/loans/:LoanID")
 
   /**
    * @swagger
@@ -168,14 +168,6 @@ router
    *        application/json:
    *          schema:
    *            type: object
-   *            required:
-   *              - LoanName
-   *              - LoanType
-   *              - LoanTerm
-   *              - StartingPrinciple
-   *              - InterestRate
-   *              - PaymentMinimum
-   *              - PaymentStart
    *            properties:
    *              LoanName:
    *                $ref: '#/components/schemas/Loans/properties/LoanName'
@@ -222,7 +214,32 @@ router
    */
   .put(updateLoanRules(), validate, async (req, res) => {
     try {
+      let { UserID } = req.user;
+      let { LoanID } = req.params;
+      let { LoanName, LoanType, LoanTerm, LoanBalance, InterestRate, PaymentMinimum, PaymentStart } = req.body;
+
+      // Update Loan via LoanID and UserID
+      await Loans.update(
+        {
+          ...(LoanName && { LoanName }),
+          ...(LoanType && { LoanType }),
+          ...(LoanTerm && { LoanTerm }),
+          ...(LoanBalance && { LoanBalance }),
+          ...(InterestRate && { InterestRate }),
+          ...(PaymentMinimum && { PaymentMinimum }),
+          ...(PaymentStart && { PaymentStart })
+        },
+        { where: { LoanID, UserID } }
+      );
+
+      // Find and return updated Loan
+      let updatedLoan = await Loans.findOne({
+        where: { LoanID, UserID }
+      });
+
+      res.status(200).json({ status: "success", data: updatedLoan });
     } catch (err) {
+      console.log(err.message);
       res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
     }
   })
@@ -273,13 +290,13 @@ router
       let { UserID } = req.user;
       let { LoanID } = req.params;
 
-      let result = await Loans.delete({
-        where: { LoanID }
+      let result = await Loans.destroy({
+        where: { LoanID, UserID }
       });
 
-      console.log(result);
+      if (result != 1) res.status(404).json({ status: "error", data: null, error: "Loan does not exist for user" });
 
-      res.status(200).json({ status: "success", data: true });
+      res.status(200).json({ status: "success", data: LoanID });
     } catch (err) {
       res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
     }
