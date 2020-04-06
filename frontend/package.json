@@ -2,12 +2,19 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "start": "set PORT=5001 && react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject"
+  },
   "dependencies": {
     "@antv/data-set": "^0.11.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "antd": "^4.0.4",
+    "antd-mobile": "^2.3.1",
     "axios": "^0.19.2",
     "bizcharts": "^3.5.8",
     "bizcharts-plugin-slider": "^3.0.1",
@@ -27,16 +34,18 @@
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
+    "react-sticky": "^6.0.3",
+    "react-textfit": "^1.1.0",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "use-media-antd-query": "^1.0.1",
-    "use-merge-value": "^1.0.1"
+    "simplebar-react": "^2.1.0"
   },
-  "scripts": {
-    "start": "set PORT=5001 && react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+  "devDependencies": {
+    "babel-plugin-import": "^1.13.0",
+    "customize-cra": "^0.9.1",
+    "less": "^3.11.1",
+    "less-loader": "^5.0.0",
+    "react-app-rewired": "^2.1.5"
   },
   "eslintConfig": {
     "extends": "react-app"
