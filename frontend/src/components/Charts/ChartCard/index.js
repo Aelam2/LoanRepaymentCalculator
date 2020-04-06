@@ -1,9 +1,37 @@
 import React from "react";
-import { Card } from "antd";
+import { Card, Typography } from "antd";
 import classNames from "classnames";
 import styles from "./ChartCard.module.scss";
 
+const { Title, Text } = Typography;
+
 class ChartCard extends React.Component {
+  renderTotal = total => {
+    if (!total && total !== 0) {
+      return null;
+    }
+    let totalDom;
+    switch (typeof total) {
+      case "undefined":
+        totalDom = null;
+        break;
+      case "function":
+        totalDom = (
+          <Title className={styles.total} level={3}>
+            {total()}
+          </Title>
+        );
+        break;
+      default:
+        totalDom = (
+          <Title className={styles.total} level={3}>
+            {total}
+          </Title>
+        );
+    }
+    return totalDom;
+  };
+
   renderContent = () => {
     const { contentHeight, title, avatar, action, total, footer, children, loading } = this.props;
 
@@ -21,8 +49,12 @@ class ChartCard extends React.Component {
           <div className={styles.avatar}>{avatar}</div>
           <div className={styles.metaWrap}>
             <div className={styles.meta}>
-              <span className={styles.title}>{title}</span>
-              <span className={styles.action}>{action}</span>
+              <Text className={styles.title} type="secondary">
+                {title}
+              </Text>
+              <Text className={styles.action} type="secondary">
+                {action}
+              </Text>
             </div>
             {this.renderTotal(total)}
           </div>
@@ -43,24 +75,6 @@ class ChartCard extends React.Component {
         )}
       </div>
     );
-  };
-
-  renderTotal = total => {
-    if (!total && total !== 0) {
-      return null;
-    }
-    let totalDom;
-    switch (typeof total) {
-      case "undefined":
-        totalDom = null;
-        break;
-      case "function":
-        totalDom = <div className={styles.total}>{total()}</div>;
-        break;
-      default:
-        totalDom = <div className={styles.total}>{total}</div>;
-    }
-    return totalDom;
   };
 
   render() {
