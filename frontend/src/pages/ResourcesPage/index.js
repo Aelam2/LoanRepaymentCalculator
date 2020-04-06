@@ -7,9 +7,9 @@ const { Content } = Layout;
 class ResourcesPage extends React.Component {
   render() {
     return (
-      <Layout className={styles.layout}>
-        <Content className="main-content">Resources</Content>
-      </Layout>
+      <div className={styles.layout}>
+        <div className="main-content">Payment Schedule Page</div>
+      </div>
     );
   }
 }
