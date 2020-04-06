@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import { createStore, applyMiddleware, compose } from "redux";
 import { Provider } from "react-redux";
 import reduxThunk from "redux-thunk";
-import reducers, { defaultAuthState, defaultUserState } from "./reducers";
+import reducers, { defaultAuthState, defaultSiteState } from "./reducers";
 
 //Internationalization and pollyfills
 import LocaleProvider from "components/LocaleProvider";
@@ -15,10 +15,12 @@ import "date-time-format-timezone";
 
 import ThemeProvider from "components/ThemeProvider";
 
+// https://www.npmjs.com/package/simplebar-react
+import "simplebar/dist/simplebar.min.css";
+
 import App from "./pages/App";
 import * as serviceWorker from "./serviceWorker";
 import AxiosGlobalSettings from "utils/axios";
-import "antd/dist/antd.css";
 import "index.module.scss";
 
 AxiosGlobalSettings();
@@ -39,13 +41,12 @@ ReactDOM.render(
           isAuthenticated: jwtToken ? true : false,
           token: jwtToken
         },
-        user: {
-          ...defaultUserState,
-          settings: {
-            ...defaultUserState.settings,
-            locale: siteLocale,
-            theme: siteTheme
-          }
+        site: {
+          ...defaultSiteState,
+          width: window.innerWidth,
+          locale: siteLocale,
+          currency: "USD",
+          theme: siteTheme
         }
       },
       composeEnhancer(applyMiddleware(reduxThunk))
