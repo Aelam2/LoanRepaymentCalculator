@@ -1,0 +1,20 @@
+diff --git a/node_modules/antd/es/typography/style/index.less b/node_modules/antd/es/typography/style/index.less
+index 14a65d8..357c02e 100644
+--- a/node_modules/antd/es/typography/style/index.less
++++ b/node_modules/antd/es/typography/style/index.less
+@@ -19,6 +19,15 @@
+     color: @error-color;
+   }
+ 
++  &&-white{
++    color: @white;
++  }
++
++  &&-black{
++    color: @black;
++  }
++
++
+   &&-disabled {
+     color: @disabled-color;
+     cursor: not-allowed;
