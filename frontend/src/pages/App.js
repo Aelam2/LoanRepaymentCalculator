@@ -1,10 +1,14 @@
 import React from "react";
-import { Route, withRouter } from "react-router-dom";
+import { Route } from "react-router-dom";
+import debounce from "lodash/debounce";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import * as actions from "actions/UserActions";
+
+import * as userActions from "actions/UserActions";
+import * as siteActions from "actions/SiteActions";
 
 import { message } from "antd";
+
 import topNavMap from "config/topNavMap";
 import sideNavMap from "config/sideNavMap";
 
@@ -21,6 +25,13 @@ import UserSignUpPage from "pages/UserSignUpPage";
 import "./App.scss";
 
 class App extends React.Component {
+  componentDidMount = () => {
+    window.addEventListener(
+      "resize",
+      debounce(() => this.props.updateWindowSize(window.innerWidth), 200)
+    );
+  };
+
   signOutUser = async () => {
     let result = await this.props.signOutUser();
     if (result) message.success("Sign out successful!");
@@ -35,6 +46,8 @@ class App extends React.Component {
   };
 
   render() {
+    let { isMobile } = this.props;
+
     return (
       <AuthGuard>
         {(isAuth, token) => {
@@ -53,6 +66,8 @@ class App extends React.Component {
           } else {
             return (
               <LayoutAuthorized
+                className="content-container"
+                isMobile={isMobile}
                 topNavLinks={topNavMap}
                 sideNavLinks={sideNavMap}
                 onSignOut={this.signOutUser}
@@ -78,9 +93,10 @@ const mapStateToProps = state => {
   return {
     isAuthenticated: state.auth.isAuthenticated,
     token: state.auth.token,
-    locale: state.user.settings.locale,
-    theme: state.user.settings.theme
+    locale: state.site.locale,
+    theme: state.site.theme,
+    isMobile: state.site.isMobile
   };
 };
 
-export default compose(connect(mapStateToProps, actions))(App);
+export default compose(connect(mapStateToProps, { ...userActions, ...siteActions }))(App);

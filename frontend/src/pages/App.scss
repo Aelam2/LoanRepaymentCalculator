@@ -1,7 +1,48 @@
 @import "utils/variables.scss";
 
+.content-container {
+  background-image: url(https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg);
+  background-size: 100%;
+  background-position: left 50px;
+  background-repeat: no-repeat;
+  @media (max-width: $isMobile) {
+    background-size: 250%;
+    background-image: none;
+  }
+  .ant-layout {
+  }
+}
+
 .main-content {
   padding: 24px;
   margin: 0;
-  min-height: 280px;
+  min-height: calc(100vh - 64px);
+  margin-top: $layout-header-height;
+}
+
+.ant-form-item-explain {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ant-layout-header {
+  position: fixed;
+  width: 100%;
+}
+
+.ant-layout-sider {
+  overflow: auto !important;
+  height: calc(100vh - #{$layout-header-height}) !important;
+  position: fixed !important;
+  top: $layout-header-height;
+  left: 0 !important;
+}
+
+.ant-skeleton-paragraph {
+  margin: 0px;
+}
+
+.secondary-text {
+  color: #43dde6;
 }
