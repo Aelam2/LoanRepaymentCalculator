@@ -1,12 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
-import { Layout, Menu } from "antd";
-import ThemeSelector from "../Header/HeaderThemeSelector";
-import HeaderLocales from "../Header/HeaderLocales";
+import { Layout, Typography } from "antd";
+import { Textfit } from "react-textfit";
+import NavBar from "../NavBar/index";
 import styles from "./LayoutAuthorized.module.scss";
 
 const { Header, Content } = Layout;
+const { Title } = Typography;
 
 class LayoutAuthorized extends React.Component {
   state = {
@@ -14,51 +14,23 @@ class LayoutAuthorized extends React.Component {
   };
 
   render() {
-    let { children, style: innerContentStyle } = this.props;
-    let { topNavLinks, onLocaleChange, selectedLocale, onSignOut, onThemeChange, selectedTheme } = this.props;
-    let { CustomSideMenu } = this.props;
+    let { children, style: innerContentStyle, className: contentClassName } = this.props;
+    let { CustomSideMenu, isMobile } = this.props;
 
     return (
       <Layout className={styles.layout}>
-        <Header className={styles.header}>
-          <div className="ant-menu ant-menu-horizontal">
-            <h1 className={styles.title}>
-              <FormattedMessage id="layout.authorized.title" defaultMessage="Loan Calculator" />
-            </h1>
+        <Header className={`${styles.header} ${isMobile && styles.headerMobile}`}>
+          <div className={`ant-menu ant-menu-horizontal ${styles.titleContainer}`}>
+            <Textfit className={styles.title} mode="single" max="32">
+              <FormattedMessage id="layout.authorized.title" defaultMessage="Loan Calculator" tagName="span" />
+            </Textfit>
           </div>
-          <Menu className={styles.menu} mode="horizontal" defaultSelectedKeys={this.state.activeTab}>
-            {(topNavLinks || []).map(l => {
-              return (
-                <Menu.Item key={l.path} className={styles.topNavLink}>
-                  <Link to={l.path}>{l.text}</Link>
-                </Menu.Item>
-              );
-            })}
-            {onSignOut && (
-              <Menu.Item key="4" className={styles.right} onClick={onSignOut}>
-                <FormattedMessage id="layout.authorized.signOut" defaultMessage="Sign Out" />
-              </Menu.Item>
-            )}
-            {onLocaleChange && (
-              <div className={styles.right} key="5">
-                <HeaderLocales className={styles.action} selectedLocale={selectedLocale} onChange={onLocaleChange} />
-              </div>
-            )}
-            {onThemeChange && (
-              <div className={styles.right} key="6">
-                <ThemeSelector className={styles.action} onChange={onThemeChange} selected={selectedTheme} />
-              </div>
-            )}
-          </Menu>
+          <NavBar {...this.props} />
         </Header>
-        <Layout>
-          {CustomSideMenu && <CustomSideMenu />}
-          <Layout>
-            <Content className={`${styles.siteLayoutBackground}`} style={innerContentStyle}>
-              {children}
-            </Content>
-          </Layout>
-        </Layout>
+        {CustomSideMenu && <CustomSideMenu />}
+        <Content className={contentClassName} style={innerContentStyle}>
+          {children}
+        </Content>
       </Layout>
     );
   }

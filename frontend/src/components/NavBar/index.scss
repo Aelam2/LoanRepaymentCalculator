@@ -1,0 +1,97 @@
+@import "utils/variables.scss";
+
+.navBar {
+  width: calc(100% - 150px);
+  float: left;
+  padding-right: 20px !important;
+
+  .leftNav,
+  .rightNav {
+    .menu {
+      max-height: 64px;
+    }
+  }
+
+  .leftNav {
+    float: left;
+  }
+
+  .rightNav {
+    display: flex;
+    float: right;
+    height: $layout-header-height;
+    margin-left: auto;
+  }
+}
+
+.mobileNavBar {
+  width: 100%;
+
+  .drawerMenu {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    margin-left: auto;
+  }
+}
+
+.actionContainer {
+  padding: 0 12px !important;
+  cursor: pointer !important;
+  transition: all 0.3s;
+  border-bottom: none !important;
+  color: unset !important;
+
+  & > span {
+    color: $text-color;
+    vertical-align: middle;
+  }
+
+  &:hover {
+    background: $header-hover-bg;
+  }
+
+  &::after {
+    border-right: none !important;
+  }
+
+  .opened {
+    background: $header-hover-bg;
+  }
+
+  .ant-menu-horizontal {
+    .anticon {
+      margin: 0px !important;
+    }
+  }
+}
+
+.ant-drawer-body {
+  padding: 0 !important;
+
+  .ant-menu-horizontal > .ant-menu-item,
+  .ant-menu-horizontal > .ant-menu-submenu {
+    display: inline-block;
+    width: 100%;
+  }
+
+  .ant-menu-horizontal {
+    border-bottom: none;
+  }
+
+  .ant-drawer-body .ant-menu-horizontal > .ant-menu-item:hover {
+    border-bottom-color: transparent;
+  }
+
+  .actionContainer {
+    display: flex !important;
+    align-items: center !important;
+    padding-left: 24px !important;
+  }
+
+  .ant-menu-item {
+    font-size: 16px !important;
+  }
+}

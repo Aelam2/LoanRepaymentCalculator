@@ -9,23 +9,45 @@
   padding: 0px !important;
   z-index: 100;
 
-  .title {
-    color: $primary-color;
-    width: $layout-sider-default-width;
-    font-size: 32px;
-    text-align: center;
-  }
+  .titleContainer {
+    min-width: $layout-sider-default-width !important;
+    width: $layout-sider-default-width !important;
+    padding: 0px 24px;
 
-  .menu {
-    width: 100%;
+    .title {
+      text-align: center;
+      line-height: inherit;
+      margin: 0px;
+      margin-right: 0.5em;
 
-    .topNavLink {
-      font-weight: 700;
-      font-size: 16px;
+      span {
+        &:before {
+          /* svg-inline--fa */
+          display: inline-block;
+          font-size: inherit;
+          height: 0.65em;
+          overflow: visible;
+          vertical-align: -0.35em;
+
+          /* fa-w-14 */
+          width: 0.65em;
+
+          /* Icon */
+          content: url("../../assets/DollarLogoColor.svg");
+          /* Margin */
+          margin-right: 0.25rem;
+        }
+      }
     }
+  }
+}
 
-    .rightContent {
-      float: right;
+.headerMobile {
+  width: 75%;
+  .titleContainer {
+    width: 75%;
+
+    .title {
     }
   }
 }
@@ -36,39 +58,4 @@
   background: rgba(255, 255, 255, 0.2);
   margin: 16px 28px 16px 0;
   float: left;
-}
-
-.siteLayoutBackground {
-  background: $layout-body-background;
-}
-
-.right {
-  display: flex;
-  float: right;
-  height: $layout-header-height;
-  margin-left: auto;
-  overflow: hidden;
-
-  .action {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    padding: 0 12px;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-size: 16px !important;
-
-    & > span {
-      color: $text-color;
-      vertical-align: middle;
-    }
-
-    &:hover {
-      background: $header-hover-bg;
-    }
-
-    .opened {
-      background: $header-hover-bg;
-    }
-  }
 }

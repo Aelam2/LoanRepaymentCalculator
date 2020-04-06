@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import ReactDOM from "react-dom";
 import defaultSettings from "config/defaultSettings";
 import { BulbOutlined } from "@ant-design/icons";
 
 const ThemeSelector = props => {
-  const { className, onChange, selected } = props;
+  const { className, onChange, selected, children } = props;
 
   const [theme, setTheme] = useState(selected);
 
@@ -14,11 +13,10 @@ const ThemeSelector = props => {
     onChange(newTheme);
   };
 
-  let styleSheet = theme === "dark" ? defaultSettings.themes.dark : defaultSettings.themes.light;
-
   return (
     <span className={`${className}`} onClick={handleButtonClick}>
       <BulbOutlined />
+      {children}
     </span>
   );
 };

@@ -6,7 +6,7 @@ import { compose } from "redux";
 
 const ThemeProvider = props => {
   let { children, theme } = props;
-  let styleSheet = theme === "dark" ? defaultSettings.themes.dark : defaultSettings.themes.light;
+  let styleSheet = theme === "dark" ? defaultSettings.themes.dark : null;
 
   return (
     <>
@@ -18,7 +18,7 @@ const ThemeProvider = props => {
 
 const mapStateToProps = state => {
   return {
-    theme: state.user.settings.theme
+    theme: state.site.theme
   };
 };
 

@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { IntlProvider } from "react-intl";
 import translationsForLocale from "locales";
-import * as actions from "actions/UserActions";
+import * as actions from "actions/SiteActions";
 
 class LocaleProvider extends React.Component {
   state = {
@@ -47,7 +47,7 @@ class LocaleProvider extends React.Component {
 }
 function mapStateToProps(state) {
   return {
-    locale: state.user.settings.locale
+    locale: state.site.locale
   };
 }
 
