@@ -33,7 +33,11 @@ DB_PASSWORD= YOUR_KEY
 
 6. Open the frontend folder in a cmd terminal. This is a basic Create-React-App and can be started as such
 7. Run "npm install"
-8. Run "npm start"
+8. Create a new file ".env" and update the following keys
+```
+REACT_APP_API_BASE_URL=http://localhost:5000:1337
+```
+9. Run "npm start"
 
 ## File Structure
 ### /backend
