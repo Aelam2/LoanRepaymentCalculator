@@ -1,9 +1,10 @@
 import React from "react";
 import { FormattedMessage } from "react-intl";
 import { Layout } from "antd";
+import { Textfit } from "react-textfit";
 
-import ThemeSelector from "../Header/HeaderThemeSelector";
-import HeaderLocales from "../Header/HeaderLocales";
+import ThemeSelector from "components/ThemeProvider/ThemeSelector";
+import LocaleSelector from "components/LocaleProvider/LocaleSelector";
 import styles from "./LayoutUnAuthorized.module.scss";
 
 const { Header, Content, Sider } = Layout;
@@ -20,15 +21,15 @@ class LayoutUnAuthorized extends React.Component {
           <div className={styles.topRight}>
             <div className={styles.siteSettings}>
               {onThemeChange && <ThemeSelector className={styles.action} onChange={onThemeChange} selected={selectedTheme} />}
-              {onLocaleChange && <HeaderLocales className={styles.action} selectedLocale={selectedLocale} onChange={onLocaleChange} />}
+              {onLocaleChange && <LocaleSelector className={styles.action} selectedLocale={selectedLocale} onChange={onLocaleChange} />}
             </div>
           </div>
           <div className={styles.content}>
             <div className={styles.top}>
               <div className={styles.header}>
-                <span className={styles.title}>
-                  <FormattedMessage id="application.title" defaultMessage="Loan Payoff Calculator" />
-                </span>
+                <Textfit className={styles.title} mode="single" max="32">
+                  <FormattedMessage id="application.title" defaultMessage="Loan Payoff Calculator" tagName="span" />
+                </Textfit>
               </div>
               <div className={styles.desc}>
                 <FormattedMessage id="application.description" defaultMessage="Payoff Loans Smarter and Faster" />

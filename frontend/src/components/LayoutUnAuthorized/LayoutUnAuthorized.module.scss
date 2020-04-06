@@ -53,6 +53,10 @@ $screen-xxs: 360px;
 
 .content {
   height: 80vh;
+
+  @media (max-width: $screen-md-min) {
+    margin: 24px;
+  }
 }
 
 .top {
@@ -79,6 +83,25 @@ $screen-xxs: 360px;
   font-weight: 600;
   font-size: 42px;
   font-family: Avenir, "Helvetica Neue", Arial, Helvetica, sans-serif;
+
+  span {
+    &::before {
+      /* svg-inline--fa */
+      display: inline-block;
+      font-size: inherit;
+      height: 0.5em;
+      overflow: visible;
+      vertical-align: -0.125em;
+
+      /* fa-w-14 */
+      width: 0.5em;
+
+      /* Icon */
+      content: url("../../assets/DollarLogoColor.svg");
+      /* Margin */
+      margin-right: 0.75rem;
+    }
+  }
 
   @media (min-width: $screen-xxs) {
     font-size: 33px;
