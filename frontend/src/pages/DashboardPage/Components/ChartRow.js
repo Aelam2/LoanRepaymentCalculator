@@ -1,7 +1,7 @@
 import React from "react";
 import numeral from "numeral";
 import moment from "moment";
-import { Bar } from "components/Charts";
+import { MiniArea } from "components/Charts";
 import { Col, Row, Card, Tooltip } from "antd";
 import { FormattedMessage, FormattedDate } from "react-intl";
 import styles from "../DashboardPage.module.scss";
@@ -11,12 +11,18 @@ const topColResponsiveProps = {
   style: { marginBottom: 24 }
 };
 
-const ChartRow = ({ data, loading, error }) => (
+const ChartRow = ({ isMobile, data, loading, error, ...props }) => (
   <Row gutter={24} type="flex">
     <Col {...topColResponsiveProps}>
-      <Card loading={loading} bordered={false} bodyStyle={{ padding: 0 }}>
+      <Card
+        loading={loading}
+        bordered={false}
+        bodyStyle={{ padding: 0 }}
+        title={<FormattedMessage id="dashboard.chart.title" defaultMessage="Current Repayment Outlook" />}
+        className={styles.analysisCard}
+      >
         <div className={styles.salesCard}>
-          <Bar height={500} title={<FormattedMessage id="BLOCK_NAME.analysis.sales-trend" defaultMessage="Sales Trend" />} data={data} />
+          <MiniArea height={isMobile ? 350 : 500} data={data} color="#fc5c9c54" borderColor="#fc5c9c" line={true} />
         </div>
       </Card>
     </Col>
