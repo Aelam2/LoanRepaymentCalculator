@@ -55,7 +55,7 @@ class UserSignInPage extends React.Component {
                 <FormattedMessage id="login.remember.me" defaultMessage="Remember me" />
               </Checkbox>
             </Form.Item>
-            <a style={{ float: "right" }}>
+            <a style={{ float: "right" }} className="secondary-text">
               <FormattedMessage id="login.forgot.password" defaultMessage="Forgot password" />
             </a>
           </Form.Item>
@@ -63,7 +63,7 @@ class UserSignInPage extends React.Component {
             <Button size="large" className={styles.submit} type="primary" htmlType="submit" loading={loading}>
               <FormattedMessage id="login.login" defaultMessage="Login" />
             </Button>
-            <Link className={styles.register} to="/user/sign-up">
+            <Link className={`${styles.register} secondary-text`} to="/user/sign-up">
               <FormattedMessage id="login.other.new" defaultMessage="Create New Account" />
             </Link>
           </Form.Item>

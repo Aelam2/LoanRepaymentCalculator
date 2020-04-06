@@ -173,7 +173,7 @@ class UserSignUpPage extends React.Component {
             <Button size="large" className={styles.submit} type="primary" htmlType="submit" loading={loading}>
               <FormattedMessage id="sign.up.submit.text" defaultMessage="Register" />
             </Button>
-            <Link className={styles.login} to="/user/sign-in">
+            <Link className={`${styles.login} secondary-text`} to="/user/sign-in">
               <FormattedMessage id="sign.up.account.exists.text" defaultMessage="Already have an account?" />
             </Link>
           </Form.Item>
