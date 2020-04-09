@@ -33,23 +33,6 @@ jobs:
         npm install
         npm run build --if-present
         npm run test --if-present
-      env:
-        PORT: 443
-        NODE_ENV: 'staging'
-        CORS_WHITELIST: ${{secrets.STAGING_CLIENT_HOST}}
-        JWT_SECRET: ${{secrets.STAGING_JWT_SECRET}}
-        GOOGLE_API_KEY: ${{secrets.STAGING_GOOGLE_API_KEY}}
-        GOOGLE_OAUTH_CLIENT_ID: ${{secrets.STAGING_GOOGLE_OAUTH_CLIENT_ID}}
-        GOOGLE_OAUTH_CLIENT_SECRET: ${{secrets.STAGING_GOOGLE_OAUTH_CLIENT_SECRET}}
-        FACEBOOK_OAUTH_CLIENT_ID: ${{secrets.STAGING_FACEBOOK_OAUTH_CLIENT_ID}}
-        FACEBOOK_OAUTH_CLIENT_SECRET:  ${{secrets.STAGING_FACEBOOK_OAUTH_CLIENT_SECRET}}
-        DB_HOST: ${{secrets.STAGING_DB_HOST}}
-        DB_NAME: ${{secrets.STAGING_DB_NAME}}
-        DB_PORT: ${{secrets.STAGING_DB_PORT}}
-        DB_USERNAME: ${{secrets.STAGING_DB_USERNAME}}
-        DB_PASSWORD: ${{secrets.STAGING_DB_PASSWORD}}
-        API_HOST: ${{secrets.STAGING_API_HOST}}
-        API_BASEPATH: ${{secrets.STAGING_API_BASEPATH}}
 
     - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v1
