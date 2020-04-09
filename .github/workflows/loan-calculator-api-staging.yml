@@ -34,6 +34,7 @@ jobs:
         npm run build --if-present
         npm run test --if-present
       env:
+        PORT: 443
         NODE_ENV: 'staging'
         CORS_WHITELIST: ${{secrets.STAGING_CLIENT_HOST}}
         JWT_SECRET: ${{secrets.STAGING_JWT_SECRET}}
