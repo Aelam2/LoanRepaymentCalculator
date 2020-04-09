@@ -1,11 +1,11 @@
 export default {
   "dashboard.accordion.loans.title": "Mis prestamos",
   "dashboard.accordion.loans.add.button": "+ Agregar préstamo",
-  "dashboard.accordion.loans.empty": '¡Haga clic en "+ Agregar préstamo" para comenzar!',
+  "dashboard.accordion.loans.empty": "¡Agregue sus préstamos para comenzar!",
 
   "dashboard.accordion.paymentPlans.title": "Mis planes",
   "dashboard.accordion.paymentPlans.add.button": "+ Agregar plan",
-  "dashboard.accordion.paymentPlans.empty": '¡Haga clic en "+ Agregar plan" para comenzar!',
+  "dashboard.accordion.paymentPlans.empty": "No se encontraron planes de pago.",
 
   "dashboard.analysis.card.one.title": "Fecha de pago",
   "dashboard.analysis.card.one.tooltip": "Fecha en que los préstamos serán pagados 100% de descuento",
