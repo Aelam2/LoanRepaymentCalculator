@@ -17,13 +17,14 @@ const port = process.env.PORT || 1337;
 
 var whitelist = process.env.CORS_WHITELIST && process.env.CORS_WHITELIST.split(",");
 var corsOptions = {
-  origin: function(origin, callback) {
-    if (process.env.NODE_ENV === "development" || whitelist.indexOf(origin) !== -1) {
+  origin: function (origin, callback) {
+    if (true) {
       callback(null, true);
     } else {
+      console.log(origin);
       callback(new Error("Not allowed by CORS"));
     }
-  }
+  },
 };
 app.use(cors(corsOptions));
 
