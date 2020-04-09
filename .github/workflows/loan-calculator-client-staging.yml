@@ -30,6 +30,8 @@ jobs:
         npm install
         npm run build --if-present
         npm run test --if-present
+      env:
+        REACT_APP_API_BASE_URL: ${{secrets.STAGING_API_HOST}}
 
     - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v1
