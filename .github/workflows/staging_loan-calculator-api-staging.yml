@@ -26,6 +26,7 @@ jobs:
         node-version: '12.13.0'
 
     - name: npm install, build, and test
+      working-directory: 'backend/'
       run: |
         npm install
         npm run build --if-present
