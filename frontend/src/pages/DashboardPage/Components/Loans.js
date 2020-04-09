@@ -5,9 +5,8 @@ import { compose } from "redux";
 import { FormattedMessage, FormattedNumber } from "react-intl";
 import QueueAnim from "rc-queue-anim";
 import SimpleBar from "simplebar-react";
-
 import { Button, List, Spin, Result, Typography, Empty } from "antd";
-import { EditFilled, RightOutlined } from "@ant-design/icons";
+import { EditFilled, RightOutlined, FolderOpenOutlined } from "@ant-design/icons";
 import styles from "./index.module.scss";
 
 const { Paragraph, Text, Title } = Typography;
@@ -57,7 +56,7 @@ class Loans extends React.Component {
               if (data && data.length) {
                 return (
                   <QueueAnim delay={150} id="loans-list">
-                    {data.map(loan => {
+                    {data.map((loan) => {
                       return (
                         <List.Item
                           key={loan.LoanID}
@@ -76,6 +75,7 @@ class Loans extends React.Component {
                             <Text>
                               <FormattedNumber
                                 value={loan.LoanBalance}
+                                cd
                                 style="currency"
                                 currency={currency}
                                 minimumFractionDigits={0}
@@ -100,7 +100,18 @@ class Loans extends React.Component {
               }
 
               // If no errors or loans found, display empty message
-              return <Empty description={<FormattedMessage id="dashboard.accordion.loans.empty" defaultMessage='Click "+ Add Loan" to get started!' />} />;
+              return (
+                <Empty
+                  style={{ marginTop: "25px" }}
+                  image={<FolderOpenOutlined style={{ fontSize: "72px", height: "100%", display: "flex", alignItems: "flex-end" }} />}
+                  imageStyle={{ height: "75px" }}
+                  description={
+                    <span style={{ fontWeight: "500", fontSize: "18px" }}>
+                      <FormattedMessage id="dashboard.accordion.loans.empty" defaultMessage="Add your loans to get started!" />
+                    </span>
+                  }
+                />
+              );
             })()}
           </SimpleBar>
         </div>
@@ -109,7 +120,7 @@ class Loans extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     isMobile: state.site.isMobile,
     currency: state.site.currency,

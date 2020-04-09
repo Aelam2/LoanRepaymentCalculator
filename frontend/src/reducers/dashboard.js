@@ -26,7 +26,7 @@ const DEFAULT_STATE = {
 
   paymentPlans: {
     data: [],
-    loading: true,
+    loading: false,
     error: false,
     creating: false,
     updating: false,
@@ -121,7 +121,7 @@ export default (state = DEFAULT_STATE, action) => {
         ...state,
         loans: {
           ...state.loans,
-          data: state.loans.data.map(l => {
+          data: state.loans.data.map((l) => {
             if (l.LoanID === action.payload.LoanID) {
               return action.payload;
             } else {
@@ -146,7 +146,7 @@ export default (state = DEFAULT_STATE, action) => {
         ...state,
         loans: {
           ...state.loans,
-          data: state.loans.data.filter(l => l.LoanID != action.payload),
+          data: state.loans.data.filter((l) => l.LoanID != action.payload),
           deleting: false
         }
       };

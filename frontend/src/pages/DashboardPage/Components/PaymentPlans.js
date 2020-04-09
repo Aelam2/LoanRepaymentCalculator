@@ -7,7 +7,7 @@ import QueueAnim from "rc-queue-anim";
 import SimpleBar from "simplebar-react";
 
 import { Button, List, Spin, Result, Typography, Empty } from "antd";
-import { EditFilled, RightOutlined } from "@ant-design/icons";
+import { EditFilled, RightOutlined, ScheduleOutlined } from "@ant-design/icons";
 import styles from "./index.module.scss";
 
 const { Paragraph, Text, Title } = Typography;
@@ -20,7 +20,7 @@ class PaymentPlans extends React.Component {
   render() {
     let { openDrawer, currency, data, loading, error } = this.props;
     let { containerName, headerClassName, bodyClassName } = this.props;
-    let { isOpen, toggleListAccordion, isMobile } = this.props;
+    let { isOpen, toggleListAccordion, isMobile, loansExist } = this.props;
 
     return (
       <div className={`${styles.viewSection} ${containerName}`}>
@@ -61,7 +61,7 @@ class PaymentPlans extends React.Component {
               if (data && data.length) {
                 return (
                   <QueueAnim delay={150} id="loans-list">
-                    {data.map(loan => {
+                    {data.map((loan) => {
                       return (
                         <List.Item
                           key={loan.LoanID}
@@ -104,7 +104,18 @@ class PaymentPlans extends React.Component {
               }
 
               // If no errors or loans found, display empty message
-              return <Empty description={<FormattedMessage id="dashboard.accordion.loans.empty" defaultMessage='Click "+ Add Loan" to get started!' />} />;
+              return (
+                <Empty
+                  style={{ marginTop: "25px" }}
+                  image={<ScheduleOutlined style={{ fontSize: "72px", height: "100%", display: "flex", alignItems: "flex-end" }} />}
+                  imageStyle={{ height: "75px" }}
+                  description={
+                    <span style={{ fontWeight: "500", fontSize: "18px" }}>
+                      <FormattedMessage id="dashboard.accordion.paymentPlans.empty" defaultMessage="No payment plans found" />
+                    </span>
+                  }
+                />
+              );
             })()}
           </SimpleBar>
         </div>
@@ -113,7 +124,7 @@ class PaymentPlans extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     isMobile: state.site.isMobile,
     currency: state.site.currency,
