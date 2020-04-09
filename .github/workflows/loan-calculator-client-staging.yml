@@ -35,4 +35,4 @@ jobs:
         app-name: 'loan-calculator-client-staging'
         slot-name: 'staging'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_a5821a05b1a54441adce2d70aea78764 }}
-        package: 'frontend/'
+        package: 'frontend/build'
