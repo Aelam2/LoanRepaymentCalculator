@@ -1,38 +1,35 @@
 on:
   push:
     branches: [ staging ]
-    paths-ignore: 
-      - 'backend/**'
+    paths: 
+      - 'frontend/**'
   pull_request:
     branches: [ staging ]
-    paths-ignore: 
-      - 'backend/**'
-
-env:
-  AZURE_WEBAPP_NAME: loan-calculator-client-staging    # set this to your application's name
-  AZURE_WEBAPP_PACKAGE_PATH: './frontend'      # set this to the path to your web app project, defaults to the repository root
-  NODE_VERSION: '12.x'                # set this to the node version to use
+    paths: 
+      - 'frontend/**'
 
 jobs:
   build-and-deploy:
-    name: Build and Deploy
     runs-on: windows-latest
+
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ env.NODE_VERSION }}
+    - uses: actions/checkout@master
+
+    - name: Set up Node.js version
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ env.NODE_VERSION }}
+        node-version: '12.13.0'
+
     - name: npm install, build, and test
       run: |
-        # Build and test the project, then
-        # deploy to Azure Web App.
-        npm ci
+        npm install
         npm run build --if-present
         npm run test --if-present
-    - name: 'Deploy to Azure WebApp'
-      uses: azure/webapps-deploy@v2
+
+    - name: 'Deploy to Azure Web App'
+      uses: azure/webapps-deploy@v1
       with:
-        app-name: loan-calculator-client-staging
-        publish-profile: ${{ secrets.CLIENT_STAGING_PUBLISH_PROFILE  }}
-        package: './frontend/build'
+        app-name: 'loan-calculator-client-staging'
+        slot-name: 'staging'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_2eafa3d1fb8c4b7ba0313d293aaf3130 }}
+        package: ./frontend/build
