@@ -1,12 +1,12 @@
 on:
   push:
     branches: [ staging ]
-    paths-ignore: 
-      - 'frontend/**'
+    paths: 
+      - 'backend/**'
   pull_request:
     branches: [ staging ]
-    paths-ignore: 
-      - 'frontend/**'
+    paths:
+      - 'backend/**'
 
 env:
   AZURE_WEBAPP_NAME: loan-calculator-client-staging    # set this to your application's name
