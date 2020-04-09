@@ -5,15 +5,20 @@ name: Build and deploy Node.js app to Azure Web App - loan-calculator-api-stagin
 
 on:
   push:
-    branches:
-      - staging
+    branches: [ staging ]
+    paths: 
+      - 'backend/**'
+  pull_request:
+    branches: [ staging ]
+    paths:
+      - 'backend/**'
 
 jobs:
   build-and-deploy:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@staging
 
     - name: Set up Node.js version
       uses: actions/setup-node@v1
@@ -30,6 +35,6 @@ jobs:
       uses: azure/webapps-deploy@v1
       with:
         app-name: 'loan-calculator-api-staging'
-        slot-name: 'production'
+        slot-name: 'staging'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_40de2d551f2744ffb38301470da12740 }}
-        package: .
+        package: 'backend/'
