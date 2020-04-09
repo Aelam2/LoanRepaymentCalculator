@@ -11,10 +11,11 @@ const development = {
   dialectOptions: {
     options: {
       ...(process.env.DB_INSTANCE_NAME && {
-        instanceName: process.env.DB_INSTANCE_NAME
-      })
-    }
-  }
+        instanceName: process.env.DB_INSTANCE_NAME,
+      }),
+      ...(process.env.DB_HOST.includes("windows.net") && { encrypt: true }),
+    },
+  },
 };
 
 const staging = {
@@ -27,10 +28,11 @@ const staging = {
   dialectOptions: {
     options: {
       ...(process.env.DB_INSTANCE_NAME && {
-        instanceName: process.env.DB_INSTANCE_NAME
-      })
-    }
-  }
+        instanceName: process.env.DB_INSTANCE_NAME,
+      }),
+      ...(process.env.DB_HOST.includes("windows.net") && { encrypt: true }),
+    },
+  },
 };
 
 const production = {
@@ -43,10 +45,11 @@ const production = {
   dialectOptions: {
     options: {
       ...(process.env.DB_INSTANCE_NAME && {
-        instanceName: process.env.DB_INSTANCE_NAME
-      })
-    }
-  }
+        instanceName: process.env.DB_INSTANCE_NAME,
+      }),
+      ...(process.env.DB_HOST.includes("windows.net") && { encrypt: true }),
+    },
+  },
 };
 
 let config = {};
@@ -63,5 +66,7 @@ switch (process.env.NODE_ENV) {
   default:
     config = development;
 }
+
+console.log(config);
 
 export default config;

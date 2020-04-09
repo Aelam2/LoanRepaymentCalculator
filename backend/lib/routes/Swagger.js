@@ -33,7 +33,7 @@ const swaggerOptions = {
       }
     ]
   },
-  apis: ["lib/models/models/*.js", "lib/routes/*.js"]
+  apis: process.env.NODE_ENV === "production" ? ["dist/models/models/*.js", "dist/routes/*.js"] : ["lib/models/models/*.js", "lib/routes/*.js"]
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
