@@ -17,7 +17,7 @@ class DashboardPage extends React.Component {
     await this.props.fetchLoans();
   };
 
-  componentDidUpdate = prevProps => {
+  componentDidUpdate = (prevProps) => {
     if (prevProps.mobileTab != this.props.mobileTab) {
     }
   };
@@ -56,7 +56,7 @@ class DashboardPage extends React.Component {
           page={Number(mobileTab)}
           swipeable={false}
           tabBarPosition="bottom"
-          renderTab={tab => <span>{tab.title}</span>}
+          renderTab={(tab) => <span>{tab.title}</span>}
           onChange={this.mobileTabChange}
           tabBarBackgroundColor={isDark ? "#141414" : "#3E587B"}
           style={{ height: "100%" }}
@@ -153,7 +153,7 @@ class DashboardPage extends React.Component {
               toggleListAccordion={this.toggleListAccordion}
               openDrawer={this.openDrawer}
               data={loans.data}
-              loading={loans.loading}
+              loading={loans.loading || paymentPlans.loading}
               error={loans.error}
             />
             <PaymentPlans
@@ -161,7 +161,7 @@ class DashboardPage extends React.Component {
               toggleListAccordion={this.toggleListAccordion}
               openDrawer={this.openDrawer}
               data={paymentPlans.data}
-              loading={paymentPlans.loading}
+              loading={loans.loading || paymentPlans.loading}
               error={paymentPlans.error}
             />
           </Sider>
@@ -213,7 +213,7 @@ class DashboardPage extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     isMobile: state.site.isMobile,
     theme: state.site.theme,
