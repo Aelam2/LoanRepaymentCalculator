@@ -2,13 +2,13 @@
   "name": "student-loan-calculator-back-end",
   "version": "1.0.0",
   "description": "Rest API built on ExpressJS built to service the Student Loan Calculator Front-End",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "postinstall": "patch-package",
     "watch": "nodemon --watch lib --exec npm run start",
     "start": "npm run build && npm run serve",
     "build": "babel ./lib -d dist",
-    "serve": "node dist/index.js",
+    "serve": "node dist/server.js",
     "test": "mocha --require @babel/register",
     "db:migrate": "npm run build && npx sequelize db:migrate"
   },
@@ -20,6 +20,7 @@
     "@babel/plugin-transform-runtime": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
     "@babel/register": "^7.9.0",
+    "@babel/runtime": "^7.9.2",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "mocha": "^7.1.1",
