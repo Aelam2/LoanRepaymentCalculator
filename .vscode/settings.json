@@ -1,4 +1,5 @@
 {
   "prettier.configPath": "./.prettierrc",
-  "editor.foldingStrategy": "indentation"
+  "editor.foldingStrategy": "indentation",
+  "appService.defaultWebAppToDeploy": "None"
 }
