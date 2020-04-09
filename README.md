@@ -1,9 +1,11 @@
 # Loan Repayment Calculator
 
 ## Running application locally
+
 1. Open the backend folder in a cmd terminal such as bash or cmd.
 2. Run the command "npm install"
 3. Create a new file ".env" and update the following keys
+
 ```
 PORT=1337
 NODE_ENV=development
@@ -28,36 +30,43 @@ DB_INSTANCE_NAME= YOUR_KEY
 DB_USERNAME= YOUR_KEY
 DB_PASSWORD= YOUR_KEY
 ```
+
 4. Run the commnad "npm run db:migrate" to initiallize you're database.
 5. Run the command "npm run watch" and the backend should start successfully
 
 6. Open the frontend folder in a cmd terminal. This is a basic Create-React-App and can be started as such
 7. Run "npm install"
 8. Create a new file ".env" and update the following keys
+
 ```
 REACT_APP_API_BASE_URL=http://localhost:5000:1337
 ```
+
 9. Run "npm start"
 
 ## File Structure
+
 ### /backend
+
 1. /backend/design
-    - Updated design documents for Database and Service endpoints.
+   - Updated design documents for Database and Service endpoints.
 2. /backend/dist
-    - build folder
+   - build folder
 3. /backend/src
-    - soruce files that are compiled by babel into dist folder
+   - soruce files that are compiled by babel into dist folder
 4. /backend/patches
-    - Files here are related to [Patch-Package](https://www.npmjs.com/package/patch-package)
-    - Updates node_modules during post-install script
+   - Files here are related to [Patch-Package](https://www.npmjs.com/package/patch-package)
+   - Updates node_modules during post-install script
 5. /backend/test
 
 ### /frontend
+
 1. /frontend/design
-    - Updated design documents for user interface and interactions.
+   - Updated design documents for user interface and interactions.
 2. /frontend/public
 3. /frontend/src
-    - ReactJS source files.
+   - ReactJS source files.
 
 ### /style_guide
+
 1. Barebones ReactJS project that with example of application's style and components.
