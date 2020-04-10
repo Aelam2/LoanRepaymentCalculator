@@ -1,4 +1,4 @@
-import { SITE_UPDATING_WINDOW_SIZE } from "./types";
+import { SITE_UPDATING_WINDOW_SIZE } from "actions/SiteActionTypes";
 
 export const updateWindowSize = width => {
   return async dispatch => {
