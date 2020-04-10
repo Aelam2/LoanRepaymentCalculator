@@ -1,6 +1,6 @@
 export default {
   "layout.authorized.title": "Calculadora de préstamo",
-  "layout.authorized.overview": "tablero",
+  "layout.authorized.overview": "Tablero",
   "layout.authorized.paymentSchedule": "Calendario de pago",
   "layout.authorized.resources": "Recursos",
   "layout.navbar.switchTheme": "Cambiar de tema",
