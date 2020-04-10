@@ -46,3 +46,9 @@
 .secondary-text {
   color: #43dde6;
 }
+
+.ant-picker-cell-disabled {
+  .ant-picker-cell-inner {
+    text-decoration: line-through;
+  }
+}

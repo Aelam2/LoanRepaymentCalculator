@@ -9,7 +9,9 @@ $html-selector: html;
 
 // -------- Colors -----------
 
-$primary-color: #1890ff;
+$primary-color: #fc5c9c;
+$secondary-color: #43dde6;
+
 $info-color: #1890ff;
 $success-color: #52c41a;
 $processing-color: #1890ff;
@@ -42,18 +44,18 @@ $header-hover-bg: rgba(0, 0, 0, 0.025);
 // Background color for `<body>`
 $body-background: #fff;
 // Base background color for most components
-$component-background: #fff;
+$component-background: #304863;
 // Popover background color
 $popover-background: $component-background;
 $font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
   "Segoe UI Symbol", "Noto Color Emoji";
 $code-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-$text-color: fade($black, 65%);
-$text-color-secondary: fade($black, 45%);
+$text-color: #fff;
+$text-color-secondary: fade($white, 45%);
 $text-color-inverse: $white;
-$icon-color: inherit;
-$icon-color-hover: fade($black, 75%);
-$heading-color: fade(#000, 85%);
+$icon-color: #fff;
+$icon-color-hover: fade($white, 75%);
+$heading-color: #fff;
 $heading-color-dark: fade($white, 100%);
 $text-color-dark: fade($white, 85%);
 $text-color-secondary-dark: fade($white, 65%);
@@ -85,7 +87,7 @@ $control-padding-horizontal-sm: $padding-xs;
 // The background colors for active and hover states for things like
 // list items or table cells.
 $item-active-bg: $primary-1;
-$item-hover-bg: #f5f5f5;
+$item-hover-bg: #00000021;
 
 // ICONFONT
 $iconfont-css-prefix: anticon;
@@ -113,7 +115,7 @@ $ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
 
 // Border color
 $border-color-base: hsv(0, 0, 85%); // base border outline a component
-$border-color-split: #f0f0f0; // split border inside a component
+$border-color-split: #374d6b; // split border inside a component
 $border-color-inverse: $white;
 $border-width-base: 1px; // width of the border for a component
 $border-style-base: solid; // style of a components border
@@ -128,8 +130,8 @@ $background-color-light: hsv(0, 0, 98%); // background of header and selected it
 $background-color-base: hsv(0, 0, 96%); // Default grey background color
 
 // Disabled states
-$disabled-color: fade(#000, 25%);
-$disabled-bg: $background-color-base;
+$disabled-color: rgba(0, 0, 0, 0.82);
+$disabled-bg: #bfbfbf85;
 $disabled-color-dark: fade(#fff, 35%);
 
 // Shadow
@@ -263,8 +265,8 @@ $grid-columns: 24;
 $grid-gutter-width: 0;
 
 // Layout
-$layout-body-background: #f0f2f5;
-$layout-header-background: #141414;
+$layout-body-background: #364f6b;
+$layout-header-background: #3e587b;
 $layout-header-height: 64px;
 $layout-header-padding: 0 50px;
 $layout-header-color: $text-color;
@@ -278,7 +280,7 @@ $layout-trigger-color: #fff;
 $layout-zero-trigger-width: 36px;
 $layout-zero-trigger-height: 42px;
 // Layout light theme
-$layout-sider-background-light: #fff;
+$layout-sider-background-light: #3e587b;
 $layout-trigger-background-light: #fff;
 $layout-trigger-color-light: $text-color;
 
@@ -307,7 +309,7 @@ $animation-duration-fast: 0.1s; // Tooltip
 $collapse-panel-border-radius: $border-radius-base;
 
 //Dropdown
-$dropdown-menu-bg: $component-background;
+$dropdown-menu-bg: #3e587b;
 $dropdown-vertical-padding: 5px;
 $dropdown-edge-child-vertical-padding: 4px;
 $dropdown-font-size: $font-size-base;
@@ -453,7 +455,7 @@ $progress-steps-item-bg: #f3f3f3;
 $menu-inline-toplevel-item-height: 40px;
 $menu-item-height: 40px;
 $menu-collapsed-width: 80px;
-$menu-bg: $component-background;
+$menu-bg: #00000021;
 $menu-popup-bg: $component-background;
 $menu-item-color: $text-color;
 $menu-highlight-color: $primary-color;

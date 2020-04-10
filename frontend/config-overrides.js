@@ -24,7 +24,12 @@ const darkBlue = {
   "heading-color": "#fff",
 
   "text-color": "#fff",
-  "text-color-secondary": "fade(@white, 85%)"
+  "text-color-secondary": "fade(@white, 85%)",
+
+  "icon-color": "#fff",
+
+  "disabled-color": "rgba(0, 0, 0, 0.82)",
+  "disabled-bg": "#bfbfbf85"
 };
 
 let theme = darkBlue;
