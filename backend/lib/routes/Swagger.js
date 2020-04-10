@@ -33,7 +33,7 @@ const swaggerOptions = {
       }
     ]
   },
-  apis: process.env.NODE_ENV !== "development" ? ["dist/models/models/*.js", "dist/routes/*.js"] : ["lib/models/models/*.js", "lib/routes/*.js"]
+  apis: ["dist/models/models/*.js", "dist/routes/*.js"]
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
@@ -63,7 +63,7 @@ export default router;
  *            type: string
  *            description: User-friendly description of unique-constraint error in application
  *            example: UserName has already been taken
- *          result:
+ *          data:
  *            type: object
  *            properties:
  *              codeName:
@@ -85,7 +85,7 @@ export default router;
  *            type: string
  *            description: User-friendly description of validation error in application
  *            example: Username must start with a letter, have no spaces, and be between 3 to 40 characters
- *          result:
+ *          data:
  *            type: object
  *            properties:
  *              codeName:
@@ -107,7 +107,7 @@ export default router;
  *            type: string
  *            description: Description of error in application
  *            example: An unexpected error occured
- *          result:
+ *          data:
  *            type: object
  *            example: null
  */

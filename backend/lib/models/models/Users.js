@@ -190,12 +190,11 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   // Check plain-text password against hashed password
-  Users.prototype.isValidPassword = async function(password) {
-    console.log(password, this.Password);
+  Users.prototype.isValidPassword = async function (password) {
     return await bcrypt.compare(password, this.Password);
   };
 
-  Users.associate = function(models) {
+  Users.associate = function (models) {
     // associations can be defined here
   };
 

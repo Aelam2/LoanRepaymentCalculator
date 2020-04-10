@@ -27,17 +27,12 @@ module.exports = {
             min: 1
           }
         },
-        AllocationMethodID: {
-          type: Sequelize.UUID,
+        RecurringTypeID: {
+          type: Sequelize.INTEGER,
           references: {
             model: { tableName: "CodeSets" },
             key: "CodeValueID"
           }
-        },
-        IsRecurring: {
-          type: Sequelize.BOOLEAN,
-          allowNull: false,
-          defaultValue: 1
         },
         DateCreated: {
           type: Sequelize.DATE
