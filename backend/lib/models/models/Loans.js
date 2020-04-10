@@ -16,7 +16,7 @@
  *          LoanName:
  *            type: string
  *            required: true
- *          LoanType:
+ *          LoanTypeID:
  *            type: string
  *            format: uuid
  *            required: true
@@ -59,13 +59,13 @@
  *           LoanID: 1
  *           UserID: 1
  *           LoanName: My Subsidized Loan #1
- *           LoanType: ge7270e2-0601-36af-da68-4c77423c7329
+ *           LoanTypeID: 9
  *           LoanTerm: 120
  *           LoanBalance: 7500.00
  *           InterestRate: 4.25
  *           PaymentStart: 2020-02-01
  *           PaymentMinimum: 333.33
- *           StatusID: ae7270e2-0201-36ae-ef68-4c77441j7329
+ *           StatusID: 12
  *           DateCreated: 2020-03-24 11:31:00.5230000 -05:00
  *           DateUpdated: 2020-03-24 13:00:00.6030000 -05:00
  *           DateDeleted: null
@@ -90,7 +90,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false
       },
-      LoanType: {
+      LoanTypeID: {
         type: DataTypes.UUID,
         allowNull: false,
         references: {
@@ -152,7 +152,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  Loans.associate = function(models) {
+  Loans.associate = function (models) {
     Loans.belongsTo(models.Users, {
       foreignKey: "UserID",
       targetKey: "UserID"
@@ -160,7 +160,7 @@ module.exports = (sequelize, DataTypes) => {
 
     models.CodeSets.belongsTo(Loans, {
       foreignKey: "CodeValueID",
-      targetKey: "LoanType"
+      targetKey: "LoanTypeID"
     });
 
     models.CodeSets.belongsTo(Loans, {

@@ -18,7 +18,6 @@ passport.use(
     },
     async (payload, done) => {
       try {
-        console.log(payload);
         // Find the user specified in token
         const user = await Users.findOne({ where: { UserID: payload.sub } });
 

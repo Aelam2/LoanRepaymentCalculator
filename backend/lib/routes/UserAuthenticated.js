@@ -30,7 +30,7 @@ router
    *                status:
    *                  type: string
    *                  example: success
-   *                result:
+   *                data:
    *                  type: object
    *                  $ref: '#/components/schemas/Users'
    *      '401':
@@ -51,7 +51,7 @@ router
       if (!user) {
         res.status(404).json({
           status: "error",
-          result: null,
+          data: null,
           error: "User does not exist or has been deleted."
         });
       }
@@ -59,10 +59,10 @@ router
       // Return basic user information
       res.status(200).json({
         status: "success",
-        result: user.toJSON()
+        data: user.toJSON()
       });
     } catch (err) {
-      res.status(500).json({ status: "error", result: null, error: "an unexpected error occured" });
+      res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
     }
   })
 
@@ -103,7 +103,7 @@ router
    *                status:
    *                  type: string
    *                  example: success
-   *                result:
+   *                data:
    *                  type: object
    *                  $ref: '#/components/schemas/Users'
    *      '401':
@@ -149,17 +149,17 @@ router
       let user = await Users.findOne({ where: { UserID: req.user.UserID } });
 
       // Return user information
-      res.status(200).json({ status: "success", result: user.toJSON() });
+      res.status(200).json({ status: "success", data: user.toJSON() });
     } catch (err) {
       console.log(err.message);
-      res.status(500).json({ status: "error", result: null, error: "an unexpected error occured" });
+      res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
     }
   });
 
 router.route("/password-reset").post((req, res) => {
   try {
   } catch (err) {
-    res.status(500).json({ status: "error", result: null, error: "an unexpected error occured" });
+    res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
   }
 });
 

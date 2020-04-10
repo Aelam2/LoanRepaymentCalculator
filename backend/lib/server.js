@@ -21,10 +21,9 @@ var corsOptions = {
     if (true) {
       callback(null, true);
     } else {
-      console.log(origin);
       callback(new Error("Not allowed by CORS"));
     }
-  },
+  }
 };
 app.use(cors(corsOptions));
 
@@ -42,7 +41,7 @@ app.use(passport.authenticate("jwt", { session: false }));
 //Logged-In Routes
 app.use("/", userAuthenticated);
 app.use("/me", loans);
-app.use("/me/loans", paymentPlans);
+app.use("/me", paymentPlans);
 app.use("/me/loans", analytics);
 
 app.listen(port, () => {

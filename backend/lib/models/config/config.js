@@ -67,4 +67,4 @@ switch (process.env.NODE_ENV) {
     config = development;
 }
 
-export default config;
+module.exports = config;

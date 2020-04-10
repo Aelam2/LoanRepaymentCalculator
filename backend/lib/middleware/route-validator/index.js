@@ -7,14 +7,14 @@ const validate = (req, res, next) => {
   }
 
   const extractedErrors = [];
-  errors.array().map(err => extractedErrors.push({ error: err.msg, codeName: err.param, value: err.value }));
+  errors.array().map((err) => extractedErrors.push({ error: err.msg, codeName: err.param, value: err.value }));
 
   const firstError = errors.array()[0];
 
   return res.status(422).json({
     status: "error",
     error: firstError.msg,
-    result: {
+    data: {
       codeName: firstError.param,
       value: firstError.value
     },
