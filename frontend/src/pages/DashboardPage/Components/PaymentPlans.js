@@ -35,7 +35,7 @@ class PaymentPlans extends React.Component {
             </Paragraph>
           </Button>
         </div>
-        <div className={`${styles.body} ${bodyClassName} ${isOpen ? styles.bodyOpen : styles.bodyClosed}`}>
+        <div className={`${styles.body} ${bodyClassName} ${isMobile || isOpen ? styles.bodyOpen : styles.bodyClosed}`}>
           <SimpleBar className={styles.list}>
             {(() => {
               if (error) {
@@ -50,7 +50,7 @@ class PaymentPlans extends React.Component {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      visibility: isOpen ? "visible" : "hidden"
+                      visibility: isMobile || isOpen ? "visible" : "hidden"
                     }}
                   >
                     <Spin />
@@ -61,7 +61,7 @@ class PaymentPlans extends React.Component {
               if (data && data.length) {
                 return (
                   <QueueAnim delay={150} id="loans-list">
-                    {data.map((loan) => {
+                    {data.map(loan => {
                       return (
                         <List.Item
                           key={loan.LoanID}
@@ -124,7 +124,7 @@ class PaymentPlans extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     isMobile: state.site.isMobile,
     currency: state.site.currency,

@@ -1,12 +1,15 @@
 import axios from "axios";
-import { DASHBOARD_ADD_EDIT_DRAWER_TOGGLE, DASHBOARD_LIST_ACCORDION_TOGGLE, DASHBOARD_MOBILE_TAB_CHANGE } from "./types";
+import { DASHBOARD_ADD_EDIT_DRAWER_TOGGLE, DASHBOARD_LIST_ACCORDION_TOGGLE, DASHBOARD_MOBILE_TAB_CHANGE } from "actions/DashboardActionTypes";
 
-import { DASHBOARD_FETCH_LOANS_SUCCESS, DASHBOARD_FETCH_LOANS_LOADING, DASHBOARD_FETCH_LOANS_ERROR } from "./types";
-import { DASHBOARD_CREATE_LOAN_SUCCESS, DASHBOARD_CREATE_LOAN_LOADING } from "./types";
-import { DASHBOARD_UPDATE_LOAN_SUCCESS, DASHBOARD_UPDATE_LOAN_LOADING } from "./types";
-import { DASHBOARD_DELETE_LOAN_SUCCESS, DASHBOARD_DELETE_LOAN_LOADING } from "./types";
+import { DASHBOARD_FETCH_LOANS_SUCCESS, DASHBOARD_FETCH_LOANS_LOADING, DASHBOARD_FETCH_LOANS_ERROR } from "actions/DashboardActionTypes";
+import { DASHBOARD_CREATE_LOAN_SUCCESS, DASHBOARD_CREATE_LOAN_LOADING } from "actions/DashboardActionTypes";
+import { DASHBOARD_UPDATE_LOAN_SUCCESS, DASHBOARD_UPDATE_LOAN_LOADING } from "actions/DashboardActionTypes";
+import { DASHBOARD_DELETE_LOAN_SUCCESS, DASHBOARD_DELETE_LOAN_LOADING } from "actions/DashboardActionTypes";
 
-import { DASHBOARD_FETCH_PAYMENT_PLANS_SUCCESS, DASHBOARD_FETCH_PAYMENT_PLANS_LOADING, DASHBOARD_FETCH_PAYMENT_PLANS_ERROR } from "./types.js";
+import { DASHBOARD_FETCH_PAYMENT_PLANS_SUCCESS, DASHBOARD_FETCH_PAYMENT_PLANS_LOADING, DASHBOARD_FETCH_PAYMENT_PLANS_ERROR } from "actions/DashboardActionTypes.js"; //prettier-ignore
+import { DASHBOARD_CREATE_PAYMENT_PLANS_SUCCESS, DASHBOARD_CREATE_PAYMENT_PLANS_LOADING } from "actions/DashboardActionTypes";
+import { DASHBOARD_UPDATE_PAYMENT_PLANS_SUCCESS, DASHBOARD_UPDATE_PAYMENT_PLANS_LOADING } from "actions/DashboardActionTypes";
+import { DASHBOARD_DELETE_PAYMENT_PLANS_SUCCESS, DASHBOARD_DELETE_PAYMENT_PLANS_LOADING } from "actions/DashboardActionTypes";
 
 export const toggleListAccordion = (type, isOpen) => {
   return dispatch => {
@@ -59,7 +62,7 @@ export const fetchLoans = () => {
   };
 };
 
-export const createNewLoan = loan => {
+export const createLoan = loan => {
   return async dispatch => {
     try {
       dispatch({
@@ -67,7 +70,7 @@ export const createNewLoan = loan => {
         payload: true
       });
 
-      const { data } = await axios.post(`/me/loans`, { ...loan, LoanType: "2bc95ac6-7448-11ea-bc55-0242ac130003" });
+      const { data } = await axios.post(`/me/loans`, { ...loan, LoanTypeID: "9" });
 
       dispatch({
         type: DASHBOARD_CREATE_LOAN_SUCCESS,
@@ -76,14 +79,14 @@ export const createNewLoan = loan => {
 
       return true;
     } catch (err) {
-      console.error("createNewLoan error! ===>", err.message);
+      console.error("createLoan error! ===>", err.message);
 
       return false;
     }
   };
 };
 
-export const updateExistingLoan = loan => {
+export const updateLoan = loan => {
   return async dispatch => {
     try {
       dispatch({
@@ -91,7 +94,7 @@ export const updateExistingLoan = loan => {
         payload: true
       });
 
-      const { data } = await axios.put(`/me/loans/${loan.LoanID}`, { ...loan, LoanType: "2bc95ac6-7448-11ea-bc55-0242ac130003" });
+      const { data } = await axios.put(`/me/loans/${loan.LoanID}`, { ...loan, LoanTypeID: "9" });
 
       dispatch({
         type: DASHBOARD_UPDATE_LOAN_SUCCESS,
@@ -100,14 +103,14 @@ export const updateExistingLoan = loan => {
 
       return true;
     } catch (err) {
-      console.error("updateExistingLoan error! ===>", err.message);
+      console.error("updateLoan error! ===>", err.message);
 
       return false;
     }
   };
 };
 
-export const deleteExistingLoan = LoanID => {
+export const deleteLoan = LoanID => {
   return async dispatch => {
     try {
       dispatch({
@@ -124,7 +127,7 @@ export const deleteExistingLoan = LoanID => {
 
       return true;
     } catch (err) {
-      console.error("deleteExistingLoan error! ===>", err.message);
+      console.error("deleteLoan error! ===>", err.message);
 
       return false;
     }
@@ -153,6 +156,78 @@ export const fetchPaymentPlans = () => {
         type: DASHBOARD_FETCH_PAYMENT_PLANS_ERROR,
         payload: true
       });
+      return false;
+    }
+  };
+};
+
+export const createPaymentPlan = loan => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: DASHBOARD_CREATE_PAYMENT_PLANS_LOADING,
+        payload: true
+      });
+
+      const { data } = await axios.post(`/me/loans`, { ...loan, LoanTypeID: "9" });
+
+      dispatch({
+        type: DASHBOARD_CREATE_PAYMENT_PLANS_SUCCESS,
+        payload: data.data
+      });
+
+      return true;
+    } catch (err) {
+      console.error("createLoan error! ===>", err.message);
+
+      return false;
+    }
+  };
+};
+
+export const updatePaymentPlan = loan => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: DASHBOARD_UPDATE_PAYMENT_PLANS_LOADING,
+        payload: true
+      });
+
+      const { data } = await axios.put(`/me/loans/${loan.LoanID}`, { ...loan, LoanTypeID: "9" });
+
+      dispatch({
+        type: DASHBOARD_UPDATE_PAYMENT_PLANS_SUCCESS,
+        payload: data.data
+      });
+
+      return true;
+    } catch (err) {
+      console.error("updateLoan error! ===>", err.message);
+
+      return false;
+    }
+  };
+};
+
+export const deletePaymentPlan = LoanID => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: DASHBOARD_DELETE_PAYMENT_PLANS_LOADING,
+        payload: true
+      });
+
+      const { data } = await axios.delete(`/me/loans/${LoanID}`);
+
+      dispatch({
+        type: DASHBOARD_DELETE_PAYMENT_PLANS_SUCCESS,
+        payload: data.data
+      });
+
+      return true;
+    } catch (err) {
+      console.error("deleteLoan error! ===>", err.message);
+
       return false;
     }
   };

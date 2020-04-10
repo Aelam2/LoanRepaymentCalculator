@@ -2,8 +2,9 @@ import React, { Suspense } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import * as actions from "actions/DashboardActions";
-import { Tabs } from "antd-mobile";
+import { TabBar } from "antd-mobile";
 import { Layout, Drawer } from "antd";
+import { FolderOpenOutlined, FallOutlined, ScheduleOutlined } from "@ant-design/icons";
 import GridContent from "components/GridContent";
 import PageLoading from "components/PageLoading";
 import { Loans, PaymentPlans, AnalysisRow, ChartRow, DrawerLoans, DrawerPaymentPlans } from "./Components";
@@ -15,16 +16,17 @@ const { Sider } = Layout;
 class DashboardPage extends React.Component {
   componentDidMount = async () => {
     await this.props.fetchLoans();
+    await this.props.fetchPaymentPlans();
   };
 
-  componentDidUpdate = (prevProps) => {
+  componentDidUpdate = async prevProps => {
     if (prevProps.mobileTab != this.props.mobileTab) {
+      await this.props.toggleAddEditDrawer(false, null, null);
     }
   };
 
-  mobileTabChange = async (tab, index) => {
-    await this.props.handleMobileTabChange(index);
-    await this.props.toggleAddEditDrawer(false, null, null);
+  mobileTabChange = async tab => {
+    await this.props.handleMobileTabChange(tab);
   };
 
   toggleListAccordion = async (type, isOpen) => {
@@ -47,22 +49,16 @@ class DashboardPage extends React.Component {
       let { mobileTab } = this.props;
 
       return (
-        <Tabs
-          tabs={[
-            { title: "My Loans", sub: "1" },
-            { title: "My Plans", sub: "2" },
-            { title: "Dashboard", sub: "3" }
-          ]}
-          page={Number(mobileTab)}
-          swipeable={false}
-          tabBarPosition="bottom"
-          renderTab={(tab) => <span>{tab.title}</span>}
-          onChange={this.mobileTabChange}
-          tabBarBackgroundColor={isDark ? "#141414" : "#3E587B"}
-          style={{ height: "100%" }}
-        >
-          <div className={`${styles.mobileTab} ${styles.loans}`}>
-            {mobileTab === 0 && (
+        <TabBar unselectedTintColor="#949494" tintColor="#fff" barTintColor={isDark ? "#141414" : "#3E587B"} prerenderingSiblingsNumber={0}>
+          <TabBar.Item
+            title="My Loans"
+            key="loans"
+            icon={<FolderOpenOutlined style={{ color: "#949494" }} />}
+            selectedIcon={<FolderOpenOutlined />}
+            onPress={() => this.mobileTabChange("loans")}
+            selected={mobileTab === "loans"}
+          >
+            <div className={`${styles.mobileTab} ${styles.loans}`}>
               <Drawer
                 className={styles.mobileAddItemDrawer}
                 title={null}
@@ -84,20 +80,28 @@ class DashboardPage extends React.Component {
                   isDeleting={loans.deleting}
                 />
               </Drawer>
-            )}
 
-            <Loans
-              containerName={styles.loansSection}
-              headerClassName={styles.header}
-              bodyClassName={styles.body}
-              openDrawer={this.openDrawer}
-              data={loans.data}
-              loading={loans.loading}
-              error={loans.error}
-            />
-          </div>
-          <div className={`${styles.mobileTab} ${styles.paymentPlans}`}>
-            {mobileTab === 1 && (
+              <Loans
+                containerName={styles.loansSection}
+                headerClassName={styles.header}
+                bodyClassName={styles.body}
+                openDrawer={this.openDrawer}
+                data={loans.data}
+                loading={loans.loading}
+                error={loans.error}
+              />
+            </div>
+          </TabBar.Item>
+
+          <TabBar.Item
+            title="My Plans"
+            key="plans"
+            icon={<ScheduleOutlined style={{ color: "#949494" }} />}
+            selectedIcon={<ScheduleOutlined />}
+            onPress={() => this.mobileTabChange("plans")}
+            selected={mobileTab === "plans"}
+          >
+            <div className={`${styles.mobileTab} ${styles.paymentPlans}`}>
               <Drawer
                 className={styles.mobileAddItemDrawer}
                 title={null}
@@ -106,11 +110,10 @@ class DashboardPage extends React.Component {
                 onClose={this.closeDrawer}
                 closable={false}
                 getContainer={false}
-                width={width + width}
+                width={width}
                 zIndex={10}
                 bodyStyle={{ padding: "0px" }}
                 drawerStyle={{ posiiton: "relative" }}
-                bodyStyle={{ marginLeft: width }}
               >
                 <DrawerPaymentPlans
                   closeDrawer={this.closeDrawer}
@@ -120,29 +123,38 @@ class DashboardPage extends React.Component {
                   isDeleting={paymentPlans.deleting}
                 />
               </Drawer>
-            )}
 
-            <PaymentPlans
-              containerName={styles.paymentPlansSection}
-              headerClassName={styles.header}
-              bodyClassName={styles.body}
-              openDrawer={this.openDrawer}
-              data={paymentPlans.data}
-              loading={paymentPlans.loading}
-              error={paymentPlans.error}
-            />
-          </div>
-          <div className={`${styles.mobileTab} ${styles.dashboard}`}>
-            <GridContent>
-              <Suspense fallback={<PageLoading />}>
-                <AnalysisRow isMobile={true} loading={false} error={false} data={visitData} />
-              </Suspense>
-              <Suspense fallback={<PageLoading />}>
-                <ChartRow isMobile={true} loading={false} error={false} data={visitData} />
-              </Suspense>
-            </GridContent>
-          </div>
-        </Tabs>
+              <PaymentPlans
+                containerName={styles.paymentPlansSection}
+                headerClassName={styles.header}
+                bodyClassName={styles.body}
+                openDrawer={this.openDrawer}
+                data={paymentPlans.data}
+                loading={paymentPlans.loading}
+                error={paymentPlans.error}
+              />
+            </div>
+          </TabBar.Item>
+          <TabBar.Item
+            title="Dashboard"
+            key="dashboard"
+            icon={<FallOutlined style={{ color: "#949494" }} />}
+            selectedIcon={<FallOutlined />}
+            onPress={() => this.mobileTabChange("dashboard")}
+            selected={mobileTab === "dashboard"}
+          >
+            <div className={`${styles.mobileTab} ${styles.dashboard}`}>
+              <GridContent>
+                <Suspense fallback={<PageLoading />}>
+                  <AnalysisRow isMobile={true} loading={false} error={false} data={visitData} />
+                </Suspense>
+                <Suspense fallback={<PageLoading />}>
+                  <ChartRow isMobile={true} loading={false} error={false} data={visitData} />
+                </Suspense>
+              </GridContent>
+            </div>
+          </TabBar.Item>
+        </TabBar>
       );
     } else {
       return (
@@ -213,7 +225,7 @@ class DashboardPage extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     isMobile: state.site.isMobile,
     theme: state.site.theme,

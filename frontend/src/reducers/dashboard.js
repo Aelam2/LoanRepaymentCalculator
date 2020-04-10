@@ -6,6 +6,9 @@ import { DASHBOARD_UPDATE_LOAN_SUCCESS, DASHBOARD_UPDATE_LOAN_LOADING } from "ac
 import { DASHBOARD_DELETE_LOAN_SUCCESS, DASHBOARD_DELETE_LOAN_LOADING } from "actions/types";
 
 import { DASHBOARD_FETCH_PAYMENT_PLANS_SUCCESS, DASHBOARD_FETCH_PAYMENT_PLANS_LOADING, DASHBOARD_FETCH_PAYMENT_PLANS_ERROR } from "actions/types";
+import { DASHBOARD_CREATE_PAYMENT_PLANS_SUCCESS, DASHBOARD_CREATE_PAYMENT_PLANS_LOADING } from "actions/DashboardActionTypes";
+import { DASHBOARD_UPDATE_PAYMENT_PLANS_SUCCESS, DASHBOARD_UPDATE_PAYMENT_PLANS_LOADING } from "actions/DashboardActionTypes";
+import { DASHBOARD_DELETE_PAYMENT_PLANS_SUCCESS, DASHBOARD_DELETE_PAYMENT_PLANS_LOADING } from "actions/DashboardActionTypes";
 
 const DEFAULT_STATE = {
   drawer: {
@@ -26,7 +29,7 @@ const DEFAULT_STATE = {
 
   paymentPlans: {
     data: [],
-    loading: false,
+    loading: true,
     error: false,
     creating: false,
     updating: false,
@@ -34,7 +37,7 @@ const DEFAULT_STATE = {
     isOpen: true
   },
 
-  mobileTab: 0
+  mobileTab: "loans"
 };
 
 export default (state = DEFAULT_STATE, action) => {
@@ -61,7 +64,7 @@ export default (state = DEFAULT_STATE, action) => {
     case DASHBOARD_MOBILE_TAB_CHANGE:
       return {
         ...state,
-        mobileTab: Number(action.payload)
+        mobileTab: action.payload
       };
 
     case DASHBOARD_FETCH_LOANS_LOADING:
@@ -121,7 +124,7 @@ export default (state = DEFAULT_STATE, action) => {
         ...state,
         loans: {
           ...state.loans,
-          data: state.loans.data.map((l) => {
+          data: state.loans.data.map(l => {
             if (l.LoanID === action.payload.LoanID) {
               return action.payload;
             } else {
@@ -146,7 +149,7 @@ export default (state = DEFAULT_STATE, action) => {
         ...state,
         loans: {
           ...state.loans,
-          data: state.loans.data.filter((l) => l.LoanID != action.payload),
+          data: state.loans.data.filter(l => l.LoanID != action.payload),
           deleting: false
         }
       };
@@ -177,6 +180,68 @@ export default (state = DEFAULT_STATE, action) => {
           ...state.paymentPlans,
           loading: false,
           error: action.payload
+        }
+      };
+
+    case DASHBOARD_CREATE_PAYMENT_PLANS_LOADING:
+      return {
+        ...state,
+        paymentPlans: {
+          ...state.paymentPlans,
+          creating: action.payload
+        }
+      };
+    case DASHBOARD_CREATE_PAYMENT_PLANS_SUCCESS:
+      return {
+        ...state,
+        paymentPlans: {
+          ...state.paymentPlans,
+          data: [...state.paymentPlans.data, action.payload],
+          creating: false
+        }
+      };
+
+    case DASHBOARD_UPDATE_PAYMENT_PLANS_LOADING:
+      return {
+        ...state,
+        paymentPlans: {
+          ...state.paymentPlans,
+          updating: action.payload
+        }
+      };
+
+    case DASHBOARD_UPDATE_PAYMENT_PLANS_SUCCESS:
+      return {
+        ...state,
+        paymentPlans: {
+          ...state.paymentPlans,
+          data: state.paymentPlans.data.map(l => {
+            if (l.PaymentPlanID === action.payload.PaymentPlanID) {
+              return action.payload;
+            } else {
+              return l;
+            }
+          }),
+          updating: false
+        }
+      };
+
+    case DASHBOARD_DELETE_PAYMENT_PLANS_LOADING:
+      return {
+        ...state,
+        paymentPlans: {
+          ...state.paymentPlans,
+          deleting: true
+        }
+      };
+
+    case DASHBOARD_DELETE_PAYMENT_PLANS_SUCCESS:
+      return {
+        ...state,
+        paymentPlans: {
+          ...state.paymentPlans,
+          data: state.paymentPlans.data.filter(l => l.PaymentPlanID != action.payload),
+          deleting: false
         }
       };
 

@@ -7,68 +7,45 @@ import moment from "moment";
 import { isEmptyObject } from "utils/utils";
 
 import { FormattedMessage, FormattedNumber } from "react-intl";
-import { Button, Form, Input, InputNumber, DatePicker, notification } from "antd";
-import { DoubleLeftOutlined } from "@ant-design/icons";
+import { Button, Form, Input, InputNumber, DatePicker, Select, notification, Typography, Tooltip } from "antd";
+import { DoubleLeftOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import styles from "./index.module.scss";
 
+const { Option } = Select;
+const { Paragraph, Text, Title } = Typography;
+
 const formMap = {
-  LoanName: {
+  PlanName: {
     form: {
-      id: "LoanName",
-      name: "LoanName",
-      label: "Loan Name",
-      rules: [{ required: true, message: "Loan name is required!", whitespace: true }]
+      id: "PlanName",
+      name: "PlanName",
+      label: <FormattedMessage id="dashboard.drawer.paymentPlans.form.planName" defaultMessage="Payment Plan Name" />,
+      rules: [{ required: true, message: "Plan name is required!", whitespace: true }]
     },
     input: {
       size: "large"
     }
   },
-  LoanBalance: {
+  AllocationMethodID: {
     form: {
-      id: "LoanBalance",
-      name: "LoanBalance",
-      label: "Starting Balance",
+      id: "AllocationMethodID",
+      name: "AllocationMethodID",
+      label: <FormattedMessage id="dashboard.drawer.paymentPlans.form.allocationMethodID" defaultMessage="Allocation Method" />,
       rules: [
         { required: true, type: "number", whitespace: true, message: "Balance must be a positive number" },
         { min: 1, type: "number", message: "Must be greater than 0" }
       ]
     },
     input: {
-      size: "large",
-      defaultValue: 0,
-      min: 1,
-      step: 100,
-      formatter: value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-      parser: value => value.replace(/\$\s?|(,*)/g, ""),
-      style: { width: "100%" }
+      size: "large"
     }
   },
-  InterestRate: {
+
+  PaymentAmount: {
     form: {
-      id: "InterestRate",
-      name: "InterestRate",
-      label: "Interest Rate",
-      rules: [
-        { required: true, type: "number", whitespace: true, message: "Interest rate is required" },
-        { min: 0, type: "number", message: "Must be greater than or equal to 0", transform: value => value / 100 }
-      ]
-    },
-    input: {
-      size: "large",
-      defaultValue: 0,
-      step: 0.25,
-      min: 0,
-      max: 100,
-      formatter: value => `${value}%`,
-      parser: value => value.replace("%", ""),
-      style: { width: "100%" }
-    }
-  },
-  PaymentMinimum: {
-    form: {
-      id: "PaymentMinimum",
-      name: "PaymentMinimum",
-      label: "Minimum Payment",
+      id: "PaymentAmount",
+      name: "PaymentAmount",
+      label: <FormattedMessage id="dashboard.drawer.paymentPlans.form.paymentAmount" defaultMessage="Payment Amount" />,
       rules: [
         { required: true, type: "number", whitespace: true, message: "Min. payment is required" },
         { min: 0, type: "number", message: "Must be greater than 0" }
@@ -84,24 +61,36 @@ const formMap = {
       style: { width: "100%" }
     }
   },
-  PaymentStart: {
+
+  PaymentDate: {
     form: {
-      id: "PaymentStart",
-      name: "PaymentStart",
-      label: "Next Payment Date",
-      rules: [{ required: true, type: "object", whitespace: true, message: "Start Date is required!" }]
+      id: "PaymentDate",
+      name: "PaymentDate",
+      label: <FormattedMessage id="dashboard.drawer.paymentPlans.form.paymentDate" defaultMessage="Start Date" />,
+      rules: [
+        { required: true, type: "number", whitespace: true, message: "Balance must be a positive number" },
+        { min: 1, type: "number", message: "Must be greater than 0" }
+      ]
     },
     input: {
       size: "large",
-      disabledDate: current =>
-        current &&
-        current <= moment().endOf("day") ||
-        current > moment().endOf("day").add(1, "month") //prettier-ignore
+      disabledDate: current => current && current <= moment().endOf("day")
     }
   },
-  StatusID: {
-    form: { id: "StatusID", name: "StatusID", label: "Status", rules: [] },
-    input: { size: "large" }
+
+  RecurringTypeID: {
+    form: {
+      id: "AllocationMethodID",
+      name: "AllocationMethodID",
+      label: <FormattedMessage id="dashboard.drawer.paymentPlans.form.recurringTypeID" defaultMessage="Repeat?" />,
+      rules: [
+        { required: true, type: "number", whitespace: true, message: "Balance must be a positive number" },
+        { min: 1, type: "number", message: "Must be greater than 0" }
+      ]
+    },
+    input: {
+      size: "large"
+    }
   }
 };
 
@@ -148,8 +137,8 @@ class DrawerPaymentPlans extends React.Component {
 
     if (this.formRef.current) {
       this.formRef.current.setFieldsValue({
-        LoanName: isExisting ? item.LoanName : null,
-        LoanBalance: isExisting ? item.LoanBalance : null,
+        PlanName: isExisting ? item.PlanName : null,
+        AllocationMethodID: isExisting ? item.AllocationMethodID : null,
         InterestRate: isExisting ? item.InterestRate * 100 : null,
         PaymentMinimum: isExisting ? item.PaymentMinimum : null,
         PaymentStart: isExisting ? moment(item.PaymentStart) : null,
@@ -167,9 +156,9 @@ class DrawerPaymentPlans extends React.Component {
       values.InterestRate = values.InterestRate / 100;
 
       if (isExisting) {
-        await this.props.updateExistingPaymentPlan({ LoanID: item.LoanID, ...values });
+        await this.props.updatePaymentPlan({ LoanID: item.LoanID, ...values });
       } else {
-        await this.props.createNewPaymentPlan(values);
+        await this.props.createPaymentPlan(values);
       }
 
       await this.props.toggleAddEditDrawer(false, null);
@@ -181,11 +170,11 @@ class DrawerPaymentPlans extends React.Component {
 
   onDelete = async LoanID => {
     try {
-      await this.props.deleteExistingPaymentPlan(LoanID);
+      await this.props.deletePaymentPlan(LoanID);
 
       await this.props.toggleAddEditDrawer(false, null);
     } catch (err) {
-      let errMessage = "Loan was unable to be deleted";
+      let errMessage = "Payment Plan was unable to be deleted";
       notification.error({ duration: 3000, message: errMessage });
     }
   };
@@ -211,7 +200,7 @@ class DrawerPaymentPlans extends React.Component {
               loading={isSaving}
               disabled={isDeleting}
             >
-              Save
+              <FormattedMessage id="dashboard.drawer.header.save" defaultMessage="Save" />
             </Button>
             <Button
               type="danger"
@@ -220,7 +209,7 @@ class DrawerPaymentPlans extends React.Component {
               loading={isDeleting}
               disabled={isSaving}
             >
-              Delete
+              <FormattedMessage id="dashboard.drawer.header.delete" defaultMessage="Delete" />
             </Button>
           </div>
         </div>
@@ -235,7 +224,7 @@ class DrawerPaymentPlans extends React.Component {
           </h3>
           <div className={styles.actions}>
             <Button type="primary" className={`${styles.btnSmall} ${isSaving && styles.btnLoading}`} form="newLoan" htmlType="submit" loading={isSaving}>
-              Save
+              <FormattedMessage id="dashboard.drawer.header.save" defaultMessage="Save" />
             </Button>
           </div>
         </div>
@@ -244,7 +233,8 @@ class DrawerPaymentPlans extends React.Component {
   };
 
   render() {
-    let { visible } = this.props;
+    let { visible, item } = this.props;
+    let { isExisting } = this.state;
 
     if (!visible) {
       return null;
@@ -255,28 +245,100 @@ class DrawerPaymentPlans extends React.Component {
         {this.renderHeader()}
 
         <Form name="newLoan" className={styles.formContainer} ref={this.formRef} layout="vertical" onFinish={this.onFinish}>
-          <Form.Item {...formMap.LoanName.form}>
-            <Input {...formMap.LoanName.input} />
+          <Form.Item {...formMap.PlanName.form}>
+            <Input {...formMap.PlanName.input} />
           </Form.Item>
 
-          <Form.Item {...formMap.LoanBalance.form}>
-            <InputNumber {...formMap.LoanBalance.input} />
-          </Form.Item>
-          <Form.Item {...formMap.InterestRate.form}>
-            <InputNumber {...formMap.InterestRate.input} />
-          </Form.Item>
-          <Form.Item style={{ marginBottom: 0 }}>
-            <Form.Item {...formMap.PaymentMinimum.form} style={{ display: "inline-block", width: "calc(50% - 5px)", marginRight: 8 }}>
-              <InputNumber {...formMap.PaymentMinimum.input} />
-            </Form.Item>
-            <Form.Item {...formMap.PaymentStart.form} style={{ display: "inline-block", width: "calc(50% - 5px)" }}>
-              <DatePicker {...formMap.PaymentStart.input} style={{ width: "100%" }} />
-            </Form.Item>
+          <Form.Item {...formMap.AllocationMethodID.form}>
+            <Select defaultValue="Avalanche">
+              <Option value="5">
+                <FormattedMessage id="dashboard.drawer.paymentPlans.allocation.avalanche" defaultMessage="Avalanche - Highest Interest First" />
+              </Option>
+              <Option value="4">
+                <FormattedMessage id="dashboard.drawer.paymentPlans.allocation.snowball" defaultMessage="Snowball - Lowest Balance First" />
+              </Option>
+            </Select>
           </Form.Item>
 
-          <Form.Item {...formMap.StatusID.form}>
-            <Input {...formMap.StatusID.input} />
-          </Form.Item>
+          <Form.List name="payments">
+            {(fields, { add, remove }) => (
+              <div className={`${styles.paymentsListContainer}`} style={{ border: "#3E587B solid 1px" }}>
+                <div
+                  className={`${styles.paymentsListHeader}`}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}
+                >
+                  <Title level={3}>
+                    <FormattedMessage id="dashboard.drawer.paymentPlans.addPaymentTitle" defaultMessage="Payments" />
+                    <Tooltip
+                      title={
+                        <FormattedMessage
+                          id="dashboard.drawer.paymentPlans.addPaymentTooltip"
+                          defaultMessage="These payments will be made on top of the minimum payments on your loans"
+                        />
+                      }
+                    >
+                      <InfoCircleOutlined style={{ marginLeft: "8px", fontSize: "14px" }} />
+                    </Tooltip>
+                  </Title>
+                  <Button
+                    onClick={() => {
+                      add();
+                    }}
+                  >
+                    <FormattedMessage id="dashboard.drawer.paymentPlans.addPaymentBtn" defaultMessage="Add Payment" />
+                  </Button>
+                </div>
+                <div className={`${styles.paymentsListItemContainer}`}>
+                  {fields.map((field, index) => (
+                    <Form.Item key={field.key} className={`${styles.paymentsListItem}`}>
+                      <Form.Item
+                        name={[field.name, formMap.PaymentAmount.form.name]}
+                        fieldKey={[field.fieldKey, formMap.PaymentAmount.id]}
+                        {...field}
+                        {...formMap.PaymentAmount.form}
+                      >
+                        <Input {...formMap.PaymentAmount.input} />
+                      </Form.Item>
+                      <Form.Item
+                        name={[field.name, formMap.PaymentDate.form.name]}
+                        fieldKey={[field.fieldKey, formMap.PaymentDate.id]}
+                        {...formMap.PaymentDate.form}
+                      >
+                        <DatePicker {...formMap.PaymentDate.input} />
+                      </Form.Item>
+                      <Form.Item
+                        name={[field.name, formMap.RecurringTypeID.form.name]}
+                        fieldKey={[field.fieldKey, formMap.RecurringTypeID.id]}
+                        {...formMap.RecurringTypeID.form}
+                      >
+                        <Select {...formMap.RecurringTypeID.input}></Select>
+                      </Form.Item>
+                    </Form.Item>
+                  ))}
+                </div>
+              </div>
+            )}
+          </Form.List>
+
+          {(() => {
+            if (isExisting) {
+              if (item.Payments && item.Payments.length) {
+                return item.Payments.map(p => (
+                  <Form.List>
+                    <Form.Item {...formMap.PaymentAmount.form}>
+                      <Input {...formMap.PaymentAmount.input} />
+                    </Form.Item>
+                    <Form.Item {...formMap.PaymentDate.form}>
+                      <DatePicker {...formMap.PaymentDate.input} />
+                    </Form.Item>
+                    <Form.Item {...formMap.RecurringTypeID.form}>
+                      <Select {...formMap.RecurringTypeID.input}></Select>
+                    </Form.Item>
+                  </Form.List>
+                ));
+              }
+            }
+          })()}
         </Form>
       </div>
     );

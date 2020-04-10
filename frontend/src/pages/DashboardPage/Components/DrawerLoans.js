@@ -16,7 +16,7 @@ const formMap = {
     form: {
       id: "LoanName",
       name: "LoanName",
-      label: "Loan Name",
+      label: <FormattedMessage id="dashboard.drawer.loans.form.loanName" defaultMessage="Loan Name" />,
       rules: [{ required: true, message: "Loan name is required!", whitespace: true }]
     },
     input: {
@@ -27,7 +27,7 @@ const formMap = {
     form: {
       id: "LoanBalance",
       name: "LoanBalance",
-      label: "Starting Balance",
+      label: <FormattedMessage id="dashboard.drawer.loans.form.loanBalance" defaultMessage="Starting Balance" />,
       rules: [
         { required: true, type: "number", whitespace: true, message: "Balance must be a positive number" },
         { min: 1, type: "number", message: "Must be greater than 0" }
@@ -47,7 +47,7 @@ const formMap = {
     form: {
       id: "InterestRate",
       name: "InterestRate",
-      label: "Interest Rate",
+      label: <FormattedMessage id="dashboard.drawer.loans.form.intereRate" defaultMessage="Interest Rate" />,
       rules: [
         { required: true, type: "number", whitespace: true, message: "Interest rate is required" },
         { min: 0, type: "number", message: "Must be greater than or equal to 0", transform: value => value / 100 }
@@ -68,7 +68,7 @@ const formMap = {
     form: {
       id: "PaymentMinimum",
       name: "PaymentMinimum",
-      label: "Minimum Payment",
+      label: <FormattedMessage id="dashboard.drawer.loans.form.paymentMinimum" defaultMessage="Minimum Payment" />,
       rules: [
         { required: true, type: "number", whitespace: true, message: "Min. payment is required" },
         { min: 0, type: "number", message: "Must be greater than 0" }
@@ -88,7 +88,7 @@ const formMap = {
     form: {
       id: "PaymentStart",
       name: "PaymentStart",
-      label: "Next Payment Date",
+      label: <FormattedMessage id="dashboard.drawer.loans.form.paymentStart" defaultMessage="Next Payment Date" />,
       rules: [{ required: true, type: "object", whitespace: true, message: "Start Date is required!" }]
     },
     input: {
@@ -100,7 +100,7 @@ const formMap = {
     }
   },
   StatusID: {
-    form: { id: "StatusID", name: "StatusID", label: "Status", rules: [] },
+    form: { id: "StatusID", name: "StatusID", label: <FormattedMessage id="dashboard.drawer.loans.form.statusID" defaultMessage="Status" />, rules: [] },
     input: { size: "large" }
   }
 };
@@ -167,9 +167,9 @@ class DrawerLoans extends React.Component {
       values.InterestRate = values.InterestRate / 100;
 
       if (isExisting) {
-        await this.props.updateExistingLoan({ LoanID: item.LoanID, ...values });
+        await this.props.updateLoan({ LoanID: item.LoanID, ...values });
       } else {
-        await this.props.createNewLoan(values);
+        await this.props.createLoan(values);
       }
 
       await this.props.toggleAddEditDrawer(false, null);
@@ -181,7 +181,7 @@ class DrawerLoans extends React.Component {
 
   onDelete = async LoanID => {
     try {
-      await this.props.deleteExistingLoan(LoanID);
+      await this.props.deleteLoan(LoanID);
 
       await this.props.toggleAddEditDrawer(false, null);
     } catch (err) {
@@ -211,7 +211,7 @@ class DrawerLoans extends React.Component {
               loading={isSaving}
               disabled={isDeleting}
             >
-              Save
+              <FormattedMessage id="dashboard.drawer.header.save" defaultMessage="Save" />
             </Button>
             <Button
               type="danger"
@@ -220,7 +220,7 @@ class DrawerLoans extends React.Component {
               loading={isDeleting}
               disabled={isSaving}
             >
-              Delete
+              <FormattedMessage id="dashboard.drawer.header.delete" defaultMessage="Delete" />
             </Button>
           </div>
         </div>
@@ -235,7 +235,7 @@ class DrawerLoans extends React.Component {
           </h3>
           <div className={styles.actions}>
             <Button type="primary" className={`${styles.btnSmall} ${isSaving && styles.btnLoading}`} form="newLoan" htmlType="submit" loading={isSaving}>
-              Save
+              <FormattedMessage id="dashboard.drawer.header.save" defaultMessage="Save" />
             </Button>
           </div>
         </div>

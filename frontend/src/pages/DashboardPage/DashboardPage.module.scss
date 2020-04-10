@@ -83,7 +83,9 @@
   .analysisCard {
     flex: 0 0 auto;
     margin-right: 24px;
+    min-width: 300px;
     width: 350px;
+    max-width: 80vw;
     scroll-snap-align: center;
   }
 }
