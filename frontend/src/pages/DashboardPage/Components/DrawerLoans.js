@@ -49,7 +49,18 @@ const formMap = {
       name: "InterestRate",
       label: <FormattedMessage id="dashboard.drawer.loans.form.intereRate" defaultMessage="Interest Rate" />,
       rules: [
-        { required: true, type: "number", whitespace: true, message: "Interest rate is required" },
+        {
+          required: true,
+          whitespace: true,
+          message: "Interest rate is required",
+          validator: (rule, value) => {
+            if (isNaN(value)) {
+              Promise.reject("Interest rate is required");
+            }
+
+            return Promise.resolve();
+          }
+        },
         { min: 0, type: "number", message: "Must be greater than or equal to 0", transform: value => value / 100 }
       ]
     },
@@ -150,7 +161,7 @@ class DrawerLoans extends React.Component {
       this.formRef.current.setFieldsValue({
         LoanName: isExisting ? item.LoanName : null,
         LoanBalance: isExisting ? item.LoanBalance : null,
-        InterestRate: isExisting ? item.InterestRate * 100 : null,
+        InterestRate: isExisting ? Number(item.InterestRate * 100).toFixed(2) : null,
         PaymentMinimum: isExisting ? item.PaymentMinimum : null,
         PaymentStart: isExisting ? moment(item.PaymentStart) : null,
         StatusID: isExisting ? item.StatusID : null
