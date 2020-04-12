@@ -133,3 +133,43 @@
     border-bottom: 1.5px solid rgba(51, 51, 51, 0.45);
   }
 }
+
+.overviewEmptyCard {
+  h3,
+  p {
+    font-family: "SourceSansPro";
+  }
+
+  .title {
+    padding: 12px 0px;
+
+    @media (min-width: $isMobile) {
+      padding: 6px 0px;
+    }
+    h3 {
+      font-size: 28px;
+      margin: 0px;
+
+      @media (min-width: $isMobile) {
+        font-size: 32px;
+      }
+    }
+  }
+
+  .bodyWrapper {
+    padding: 12px 24px;
+  }
+
+  .paragraph {
+    @media (min-width: $isMobile) {
+    }
+    p {
+      font-size: 16px;
+      margin: 0px;
+
+      @media (min-width: $isMobile) {
+        font-size: 24px;
+      }
+    }
+  }
+}

@@ -63,7 +63,7 @@ class Loans extends React.Component {
                           className={styles.listItemContainer}
                           actions={[
                             <Text key="edit" type="secondary" onClick={() => openDrawer("loans", loan)}>
-                              edit
+                              <FormattedMessage id="dashboard.accordion.loans.edit.button" defaultMessage="Edit" />
                               <EditFilled style={{ marginLeft: "5px" }} />
                             </Text>
                           ]}

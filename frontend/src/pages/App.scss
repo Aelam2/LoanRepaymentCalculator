@@ -39,6 +39,18 @@
   left: 0 !important;
 }
 
+.ant-card-head {
+  border-bottom: 1px solid darken(#374d6b, 10%);
+
+  .ant-card-head-title {
+    padding: 0px;
+  }
+}
+
+.ant-card-body {
+  padding: 0px;
+}
+
 .ant-skeleton-paragraph {
   margin: 0px;
 }

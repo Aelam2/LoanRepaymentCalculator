@@ -1,10 +1,17 @@
 export default {
+  "dashboard.overview.empty.title": "Getting Started!",
+  "dashboard.overview.empty.paragraphOne": 'Welcome to the Loan Repayment Calculator. To get started add your loans under "My Loans".',
+  "dashboard.overview.empty.paragraphTwo":
+    'Next create a new Payment Plan under "My Plans" that fits your current budget. Create as many plans as you want and easily switch between them to view how it affects the repayment dashboard',
+
   "dashboard.accordion.loans.title": "My Loans",
   "dashboard.accordion.loans.add.button": "+ Add Loan",
+  "dashboard.accordion.loans.edit.btn": "Edit",
   "dashboard.accordion.loans.empty": "Add your loans to get started!",
 
   "dashboard.accordion.paymentPlans.title": "My Plans",
   "dashboard.accordion.paymentPlans.add.button": "+ Add Plan",
+  "dashboard.accordion.paymentPlans.edit.btn": "Edit",
   "dashboard.accordion.paymentPlans.empty": "No payment plans found",
 
   "dashboard.drawer.header.save": "Save",

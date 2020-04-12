@@ -19,7 +19,7 @@
     transition: 0.2s;
     margin-left: $layout-sider-default-width;
     margin-top: $layout-header-height;
-
+    min-height: 300px;
     padding: 24px;
   }
 }
@@ -49,33 +49,6 @@
     padding: 1em;
     height: calc(100vh - 100px);
     overflow: auto;
-  }
-}
-
-.salesCard {
-  .salesBar {
-    padding: 0 0 32px 32px;
-  }
-  .salesRank {
-    padding: 0 32px 32px 72px;
-  }
-  .ant-tabs-bar {
-    padding-left: 16px;
-    .ant-tabs-nav .ant-tabs-tab {
-      padding-top: 16px;
-      padding-bottom: 14px;
-      line-height: 24px;
-    }
-  }
-  .ant-tabs-extra-content {
-    padding-right: 24px;
-    line-height: 55px;
-  }
-  .ant-card-head {
-    position: relative;
-  }
-  .ant-card-head-title {
-    align-items: normal;
   }
 }
 

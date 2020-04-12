@@ -252,8 +252,7 @@ class DrawerPaymentPlans extends React.Component {
 
     return (
       <StickyContainer className={styles.editSection}>
-        <Sticky>{({ style }) => <div style={style}>{this.renderHeader()}</div>}</Sticky>
-
+        {this.renderHeader()}
         <Form name="paymentPlan" className={styles.formContainer} ref={this.formRef} layout="vertical" onFinish={this.onFinish}>
           <Form.Item {...formMap.PlanName.form}>
             <Input {...formMap.PlanName.input} />
@@ -273,31 +272,35 @@ class DrawerPaymentPlans extends React.Component {
           <Form.List name="payments">
             {(fields, { add, remove }) => (
               <div className={`${styles.paymentsListContainer}`} style={{ border: "#3E587B solid 1px" }}>
-                <div
-                  className={`${styles.paymentsListHeader}`}
-                  style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}
-                >
-                  <Title level={3}>
-                    <FormattedMessage id="dashboard.drawer.paymentPlans.addPaymentTitle" defaultMessage="Payments" />
-                    <Tooltip
-                      title={
-                        <FormattedMessage
-                          id="dashboard.drawer.paymentPlans.addPaymentTooltip"
-                          defaultMessage="These payments will be made on top of the minimum payments on your loans"
-                        />
-                      }
+                <Sticky>
+                  {({ style, isSticky, wasSticky, distanceFromTop, distanceFromBottom, calculatedHeight }) => (
+                    <div
+                      className={`${styles.paymentsListHeader}`}
+                      style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", ...style }}
                     >
-                      <InfoCircleOutlined style={{ marginLeft: "8px", fontSize: "14px" }} />
-                    </Tooltip>
-                  </Title>
-                  <Button
-                    onClick={() => {
-                      add();
-                    }}
-                  >
-                    <FormattedMessage id="dashboard.drawer.paymentPlans.addPaymentBtn" defaultMessage="Add Payment" />
-                  </Button>
-                </div>
+                      <Title level={3}>
+                        <FormattedMessage id="dashboard.drawer.paymentPlans.addPaymentTitle" defaultMessage="Payments" />
+                        <Tooltip
+                          title={
+                            <FormattedMessage
+                              id="dashboard.drawer.paymentPlans.addPaymentTooltip"
+                              defaultMessage="These payments will be made on top of the minimum payments on your loans"
+                            />
+                          }
+                        >
+                          <InfoCircleOutlined style={{ marginLeft: "8px", fontSize: "14px" }} />
+                        </Tooltip>
+                      </Title>
+                      <Button
+                        onClick={() => {
+                          add();
+                        }}
+                      >
+                        <FormattedMessage id="dashboard.drawer.paymentPlans.addPaymentBtn" defaultMessage="Add Payment" />
+                      </Button>
+                    </div>
+                  )}
+                </Sticky>
                 <div className={`${styles.paymentsListItemContainer}`}>
                   {fields.map((field, index) => (
                     <Form.Item key={field.key} className={`${styles.paymentsListItem}`}>

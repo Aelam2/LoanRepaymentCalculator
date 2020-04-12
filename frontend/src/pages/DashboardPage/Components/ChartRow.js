@@ -19,10 +19,11 @@ const ChartRow = ({ isMobile, data, loading, error, ...props }) => (
         bordered={false}
         bodyStyle={{ padding: 0 }}
         title={<FormattedMessage id="dashboard.chart.title" defaultMessage="Current Repayment Outlook" />}
+        headStyle={{ padding: "12px" }}
         className={styles.analysisCard}
       >
         <div className={styles.salesCard}>
-          <MiniArea height={isMobile ? 350 : 500} data={data} color="#fc5c9c54" borderColor="#fc5c9c" line={true} />
+          <MiniArea height={isMobile ? 250 : 450} data={data} color="#fc5c9c54" borderColor="#fc5c9c" line={true} />
         </div>
       </Card>
     </Col>

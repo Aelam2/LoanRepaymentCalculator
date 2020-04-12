@@ -37,7 +37,7 @@ const DEFAULT_STATE = {
     isOpen: true
   },
 
-  mobileTab: "loans"
+  mobileTab: "dashboard"
 };
 
 export default (state = DEFAULT_STATE, action) => {

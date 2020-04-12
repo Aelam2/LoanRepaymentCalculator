@@ -1,6 +1,7 @@
 import React from "react";
 import numeral from "numeral";
 import moment from "moment";
+import QueueAnim from "rc-queue-anim";
 import { ChartCard, Field, Trend, MiniArea } from "components/Charts";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { Col, Row, Tooltip } from "antd";
@@ -24,7 +25,7 @@ const topColResponsiveProps = {
 const StatisticsRow = ({ isMobile, data, loading, error, ...props }) => {
   if (isMobile) {
     return (
-      <div gutter={24} className={`${styles.horizontalScroll}`}>
+      <div className={`${isMobile ? styles.horizontalScroll : ""}`}>
         <ChartCard
           bordered={false}
           title={<FormattedMessage id="dashboard.analysis.card.one.title" defaultMessage="Total Sales" />}

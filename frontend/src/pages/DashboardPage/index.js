@@ -5,11 +5,8 @@ import * as actions from "actions/DashboardActions";
 import { TabBar } from "antd-mobile";
 import { Layout, Drawer } from "antd";
 import { FolderOpenOutlined, FallOutlined, ScheduleOutlined } from "@ant-design/icons";
-import GridContent from "components/GridContent";
-import PageLoading from "components/PageLoading";
-import { Loans, PaymentPlans, AnalysisRow, ChartRow, DrawerLoans, DrawerPaymentPlans } from "./Components";
+import { Overview, Loans, PaymentPlans, DrawerLoans, DrawerPaymentPlans } from "pages/DashboardPage/Components";
 import styles from "./DashboardPage.module.scss";
-import { visitData } from "__tests__/mockData/charts";
 
 const { Sider } = Layout;
 
@@ -51,6 +48,19 @@ class DashboardPage extends React.Component {
           prerenderingSiblingsNumber={0}
           hidden={drawer.visible}
         >
+          <TabBar.Item
+            title="Dashboard"
+            key="dashboard"
+            icon={<FallOutlined style={{ color: "#949494" }} />}
+            selectedIcon={<FallOutlined />}
+            onPress={() => this.mobileTabChange("dashboard")}
+            selected={mobileTab === "dashboard"}
+          >
+            <div className={`${styles.mobileTab} ${styles.dashboard}`}>
+              <Overview />
+            </div>
+          </TabBar.Item>
+
           <TabBar.Item
             title="My Loans"
             key="loans"
@@ -137,25 +147,6 @@ class DashboardPage extends React.Component {
               />
             </div>
           </TabBar.Item>
-          <TabBar.Item
-            title="Dashboard"
-            key="dashboard"
-            icon={<FallOutlined style={{ color: "#949494" }} />}
-            selectedIcon={<FallOutlined />}
-            onPress={() => this.mobileTabChange("dashboard")}
-            selected={mobileTab === "dashboard"}
-          >
-            <div className={`${styles.mobileTab} ${styles.dashboard}`}>
-              <GridContent>
-                <Suspense fallback={<PageLoading />}>
-                  <AnalysisRow isMobile={true} loading={false} error={false} data={visitData} />
-                </Suspense>
-                <Suspense fallback={<PageLoading />}>
-                  <ChartRow isMobile={true} loading={false} error={false} data={visitData} />
-                </Suspense>
-              </GridContent>
-            </div>
-          </TabBar.Item>
         </TabBar>
       );
     } else {
@@ -212,14 +203,7 @@ class DashboardPage extends React.Component {
             )}
           </Drawer>
           <div className={`${styles.content}`}>
-            <GridContent>
-              <Suspense fallback={<PageLoading />}>
-                <AnalysisRow loading={false} error={false} data={visitData} />
-              </Suspense>
-              <Suspense fallback={<PageLoading />}>
-                <ChartRow loading={false} error={false} data={visitData} />
-              </Suspense>
-            </GridContent>
+            <Overview />
           </div>
         </div>
       );
