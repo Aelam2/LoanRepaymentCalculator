@@ -44,6 +44,14 @@
   height: calc(100vh - #{$layout-header-height});
 }
 
+.dashboard {
+  @media (max-width: $isMobile) {
+    padding: 1em;
+    height: calc(100vh - 100px);
+    overflow: auto;
+  }
+}
+
 .salesCard {
   .salesBar {
     padding: 0 0 32px 32px;

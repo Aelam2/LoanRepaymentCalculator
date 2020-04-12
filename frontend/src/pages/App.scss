@@ -54,6 +54,12 @@
 }
 
 @media (max-width: $isMobile) {
+  .am-tabs-tab-bar-wrap {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+  }
+
   .am-tab-bar-item {
     overflow: hidden;
   }
