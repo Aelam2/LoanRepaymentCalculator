@@ -7,6 +7,7 @@ import moment from "moment";
 import { isEmptyObject } from "utils/utils";
 
 import { FormattedMessage, FormattedNumber } from "react-intl";
+import { StickyContainer, Sticky } from "react-sticky";
 import { Button, Form, Input, InputNumber, DatePicker, Select, notification, Typography, Tooltip } from "antd";
 import { DoubleLeftOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import styles from "./index.module.scss";
@@ -26,18 +27,29 @@ const formMap = {
       size: "large"
     }
   },
+
   AllocationMethodID: {
     form: {
       id: "AllocationMethodID",
       name: "AllocationMethodID",
       label: <FormattedMessage id="dashboard.drawer.paymentPlans.form.allocationMethodID" defaultMessage="Allocation Method" />,
-      rules: [
-        { required: true, type: "number", whitespace: true, message: "Balance must be a positive number" },
-        { min: 1, type: "number", message: "Must be greater than 0" }
-      ]
+      rules: [{ required: true, message: "Allocation Method is required" }]
     },
     input: {
       size: "large"
+    }
+  },
+
+  PaymentName: {
+    form: {
+      id: "PaymentName",
+      name: "PaymentName",
+      label: <FormattedMessage id="dashboard.drawer.loans.form.paymentName" defaultMessage="Payment Name" />,
+      rules: [{ required: true, message: "Payment Name is required!", whitespace: true }],
+      style: { marginBottom: "5px" }
+    },
+    input: {
+      size: "default"
     }
   },
 
@@ -49,10 +61,11 @@ const formMap = {
       rules: [
         { required: true, type: "number", whitespace: true, message: "Min. payment is required" },
         { min: 0, type: "number", message: "Must be greater than 0" }
-      ]
+      ],
+      style: { marginBottom: "5px" }
     },
     input: {
-      size: "large",
+      size: "default",
       defaultValue: 0,
       min: 1,
       step: 100,
@@ -67,29 +80,26 @@ const formMap = {
       id: "PaymentDate",
       name: "PaymentDate",
       label: <FormattedMessage id="dashboard.drawer.paymentPlans.form.paymentDate" defaultMessage="Start Date" />,
-      rules: [
-        { required: true, type: "number", whitespace: true, message: "Balance must be a positive number" },
-        { min: 1, type: "number", message: "Must be greater than 0" }
-      ]
+      rules: [{ required: true, type: "object", whitespace: true, message: "Payment Date is required!" }],
+      style: { marginBottom: "5px" }
     },
     input: {
-      size: "large",
+      size: "default",
       disabledDate: current => current && current <= moment().endOf("day")
     }
   },
 
   RecurringTypeID: {
     form: {
-      id: "AllocationMethodID",
-      name: "AllocationMethodID",
+      id: "RecurringTypeID",
+      name: "RecurringTypeID",
       label: <FormattedMessage id="dashboard.drawer.paymentPlans.form.recurringTypeID" defaultMessage="Repeat?" />,
-      rules: [
-        { required: true, type: "number", whitespace: true, message: "Balance must be a positive number" },
-        { min: 1, type: "number", message: "Must be greater than 0" }
-      ]
+      rules: [{ required: true, message: "Recurring Type is required" }],
+      style: { marginBottom: "5px" },
+      defaultValue: "6"
     },
     input: {
-      size: "large"
+      size: "default"
     }
   }
 };
@@ -151,15 +161,15 @@ class DrawerPaymentPlans extends React.Component {
     try {
       let { item } = this.props;
       let { isExisting } = this.state;
+      console.log(values);
+      // // convert back to decimal value
+      // values.InterestRate = values.InterestRate / 100;
 
-      // convert back to decimal value
-      values.InterestRate = values.InterestRate / 100;
-
-      if (isExisting) {
-        await this.props.updatePaymentPlan({ LoanID: item.LoanID, ...values });
-      } else {
-        await this.props.createPaymentPlan(values);
-      }
+      // if (isExisting) {
+      //   await this.props.updatePaymentPlan({ LoanID: item.LoanID, ...values });
+      // } else {
+      //   await this.props.createPaymentPlan(values);
+      // }
 
       await this.props.toggleAddEditDrawer(false, null);
     } catch (err) {
@@ -241,10 +251,10 @@ class DrawerPaymentPlans extends React.Component {
     }
 
     return (
-      <div className={styles.editSection}>
-        {this.renderHeader()}
+      <StickyContainer className={styles.editSection}>
+        <Sticky>{({ style }) => <div style={style}>{this.renderHeader()}</div>}</Sticky>
 
-        <Form name="newLoan" className={styles.formContainer} ref={this.formRef} layout="vertical" onFinish={this.onFinish}>
+        <Form name="paymentPlan" className={styles.formContainer} ref={this.formRef} layout="vertical" onFinish={this.onFinish}>
           <Form.Item {...formMap.PlanName.form}>
             <Input {...formMap.PlanName.input} />
           </Form.Item>
@@ -292,26 +302,43 @@ class DrawerPaymentPlans extends React.Component {
                   {fields.map((field, index) => (
                     <Form.Item key={field.key} className={`${styles.paymentsListItem}`}>
                       <Form.Item
+                        name={[field.name, formMap.PaymentName.form.name]}
+                        fieldKey={[field.fieldKey, formMap.PaymentName.id]}
+                        {...field}
+                        {...formMap.PaymentName.form}
+                      >
+                        <Input {...formMap.PaymentName.input} />
+                      </Form.Item>
+                      <Form.Item
                         name={[field.name, formMap.PaymentAmount.form.name]}
                         fieldKey={[field.fieldKey, formMap.PaymentAmount.id]}
                         {...field}
                         {...formMap.PaymentAmount.form}
                       >
-                        <Input {...formMap.PaymentAmount.input} />
+                        <InputNumber {...formMap.PaymentAmount.input} />
                       </Form.Item>
-                      <Form.Item
-                        name={[field.name, formMap.PaymentDate.form.name]}
-                        fieldKey={[field.fieldKey, formMap.PaymentDate.id]}
-                        {...formMap.PaymentDate.form}
-                      >
-                        <DatePicker {...formMap.PaymentDate.input} />
-                      </Form.Item>
-                      <Form.Item
-                        name={[field.name, formMap.RecurringTypeID.form.name]}
-                        fieldKey={[field.fieldKey, formMap.RecurringTypeID.id]}
-                        {...formMap.RecurringTypeID.form}
-                      >
-                        <Select {...formMap.RecurringTypeID.input}></Select>
+
+                      <Form.Item style={{ marginBottom: 0 }}>
+                        <Form.Item
+                          name={[field.name, formMap.PaymentDate.form.name]}
+                          fieldKey={[field.fieldKey, formMap.PaymentDate.id]}
+                          {...formMap.PaymentDate.form}
+                          style={{ display: "inline-block", width: "calc(50% - 5px)", marginRight: 8 }}
+                        >
+                          <DatePicker {...formMap.PaymentDate.input} />
+                        </Form.Item>
+                        <Form.Item
+                          name={[field.name, formMap.RecurringTypeID.form.name]}
+                          fieldKey={[field.fieldKey, formMap.RecurringTypeID.id]}
+                          {...formMap.RecurringTypeID.form}
+                          style={{ display: "inline-block", width: "calc(50% - 5px)" }}
+                        >
+                          <Select {...formMap.RecurringTypeID.input}>
+                            <Option key="6">None</Option>
+                            <Option key="7">Monthly</Option>
+                            <Option key="8">Yearly</Option>
+                          </Select>
+                        </Form.Item>
                       </Form.Item>
                     </Form.Item>
                   ))}
@@ -340,7 +367,7 @@ class DrawerPaymentPlans extends React.Component {
             }
           })()}
         </Form>
-      </div>
+      </StickyContainer>
     );
   }
 }
