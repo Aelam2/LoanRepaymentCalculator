@@ -9,6 +9,10 @@
   padding: 0px !important;
   z-index: 100;
 
+  @media (max-width: $isMobile) {
+    position: relative !important;
+  }
+
   .titleContainer {
     min-width: $layout-sider-default-width !important;
     width: $layout-sider-default-width !important;

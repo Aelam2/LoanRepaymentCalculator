@@ -93,35 +93,3 @@
 .analysisCard {
   box-shadow: 0 2.5px 10px rgba(0, 0, 0, 0.096), 0 1.5px 3px rgba(0, 0, 0, 0.082);
 }
-
-.mobileTab {
-  margin-top: 64px;
-
-  &.loans {
-    .loansSection {
-      height: 100%;
-
-      .header {
-      }
-      .body {
-        height: 100%;
-      }
-    }
-  }
-
-  &.paymentPlans {
-    .paymentPlansSection {
-      height: 100%;
-
-      .header {
-      }
-      .body {
-        height: 100%;
-      }
-    }
-  }
-
-  &.dashboard {
-    padding: 12px;
-  }
-}

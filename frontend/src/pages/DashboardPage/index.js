@@ -19,13 +19,8 @@ class DashboardPage extends React.Component {
     await this.props.fetchPaymentPlans();
   };
 
-  componentDidUpdate = async prevProps => {
-    if (prevProps.mobileTab != this.props.mobileTab) {
-      await this.props.toggleAddEditDrawer(false, null, null);
-    }
-  };
-
   mobileTabChange = async tab => {
+    await this.props.toggleAddEditDrawer(false, null, null);
     await this.props.handleMobileTabChange(tab);
   };
 
@@ -49,10 +44,17 @@ class DashboardPage extends React.Component {
       let { mobileTab } = this.props;
 
       return (
-        <TabBar unselectedTintColor="#949494" tintColor="#fff" barTintColor={isDark ? "#141414" : "#3E587B"} prerenderingSiblingsNumber={0}>
+        <TabBar
+          unselectedTintColor="#949494"
+          tintColor="#fff"
+          barTintColor={isDark ? "#141414" : "#3E587B"}
+          prerenderingSiblingsNumber={0}
+          hidden={drawer.visible}
+        >
           <TabBar.Item
             title="My Loans"
             key="loans"
+            className="test"
             icon={<FolderOpenOutlined style={{ color: "#949494" }} />}
             selectedIcon={<FolderOpenOutlined />}
             onPress={() => this.mobileTabChange("loans")}

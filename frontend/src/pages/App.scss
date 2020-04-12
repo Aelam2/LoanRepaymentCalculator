@@ -52,3 +52,9 @@
     text-decoration: line-through;
   }
 }
+
+@media (max-width: $isMobile) {
+  .am-tab-bar-item {
+    overflow: hidden;
+  }
+}
