@@ -13,12 +13,15 @@ import styles from "pages/DashboardPage/Components/index.module.scss";
 let { Paragraph } = Typography;
 
 class Overview extends React.Component {
+  componentDidMount = () => {
+    this.props.fetchAmortizationSchedule();
+  };
+
   render() {
-    let { isMobile, drawer, theme, loans } = this.props;
+    let { isMobile, width, theme, loans, amortization } = this.props;
     let isDark = theme === "dark" ? true : false;
 
     let { mobileTab } = this.props;
-
     if (loans.loading) {
       return <PageLoading style={{ height: isMobile ? "50%" : "300px" }} />;
     }
@@ -49,10 +52,23 @@ class Overview extends React.Component {
     return (
       <GridContent>
         <QueueAnim type="right">
-          <AnalysisRow isMobile={isMobile} loading={false} error={false} data={visitData} />
+          <AnalysisRow isMobile={isMobile} width={width} loading={false} error={false} data={visitData} />
         </QueueAnim>
         <QueueAnim type="bottom">
-          <ChartRow isMobile={isMobile} loading={false} error={false} data={visitData} />
+          <ChartRow
+            refetchData={this.props.fetchAmortizationSchedule}
+            isMobile={isMobile}
+            width={width}
+            loading={amortization.loading}
+            error={amortization.error}
+            data={amortization.data
+              .map(a =>
+                a.schedule.map(s => {
+                  return { ...s, ...a, LoanID: `${s.LoanID}` };
+                })
+              )
+              .flat()}
+          />
         </QueueAnim>
       </GridContent>
     );
@@ -67,7 +83,8 @@ const mapStateToProps = state => {
     mobileTab: state.dashboard.mobileTab,
     drawer: state.dashboard.drawer,
     loans: state.dashboard.loans,
-    paymentPlans: state.dashboard.paymentPlans
+    paymentPlans: state.dashboard.paymentPlans,
+    amortization: state.dashboard.analytics.amortization
   };
 };
 

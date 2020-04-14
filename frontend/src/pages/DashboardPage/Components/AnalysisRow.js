@@ -22,7 +22,7 @@ const topColResponsiveProps = {
   style: { marginBottom: 24 }
 };
 
-const StatisticsRow = ({ isMobile, data, loading, error, ...props }) => {
+const StatisticsRow = ({ isMobile, width, data, loading, error, ...props }) => {
   if (isMobile) {
     return (
       <div className={`${isMobile ? styles.horizontalScroll : ""}`}>

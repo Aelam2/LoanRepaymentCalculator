@@ -16,6 +16,12 @@ class DashboardPage extends React.Component {
     await this.props.fetchPaymentPlans();
   };
 
+  componentWillUpdate = prevProps => {
+    if (prevProps.loans.data.length !== this.props.loans.data.length) {
+      this.props.fetchAmortizationSchedule();
+    }
+  };
+
   mobileTabChange = async tab => {
     await this.props.toggleAddEditDrawer(false, null, null);
     await this.props.handleMobileTabChange(tab);

@@ -17,6 +17,10 @@ module.exports = {
             key: "PaymentPlanID"
           }
         },
+        PaymentName: {
+          type: Sequelize.STRING,
+          allowNull: false
+        },
         PaymentDate: {
           type: Sequelize.DATE
         },

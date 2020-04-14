@@ -10,6 +10,12 @@ import { DASHBOARD_CREATE_PAYMENT_PLANS_SUCCESS, DASHBOARD_CREATE_PAYMENT_PLANS_
 import { DASHBOARD_UPDATE_PAYMENT_PLANS_SUCCESS, DASHBOARD_UPDATE_PAYMENT_PLANS_LOADING } from "actions/DashboardActionTypes";
 import { DASHBOARD_DELETE_PAYMENT_PLANS_SUCCESS, DASHBOARD_DELETE_PAYMENT_PLANS_LOADING } from "actions/DashboardActionTypes";
 
+import {
+  DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_SUCCESS,
+  DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_LOADING,
+  DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_ERROR
+} from "actions/DashboardActionTypes";
+
 const DEFAULT_STATE = {
   drawer: {
     visible: false,
@@ -35,6 +41,15 @@ const DEFAULT_STATE = {
     updating: false,
     deleting: false,
     isOpen: true
+  },
+
+  analytics: {
+    amortization: {
+      data: [],
+      loading: true,
+      error: false,
+      errorMessage: null
+    }
   },
 
   mobileTab: "dashboard"
@@ -244,7 +259,48 @@ export default (state = DEFAULT_STATE, action) => {
           deleting: false
         }
       };
+    case DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_LOADING:
+      return {
+        ...state,
+        analytics: {
+          ...state.analytics,
+          amortization: {
+            ...state.analytics.amortization,
+            loading: action.payload,
+            error: false,
+            errorMessage: false
+          }
+        }
+      };
 
+    case DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_SUCCESS:
+      return {
+        ...state,
+        analytics: {
+          ...state.analytics,
+          amortization: {
+            ...state.analytics.amortization,
+            data: action.payload,
+            loading: false,
+            error: false,
+            errorMessage: false
+          }
+        }
+      };
+
+    case DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_ERROR:
+      return {
+        ...state,
+        analytics: {
+          ...state.analytics,
+          amortization: {
+            ...state.analytics.amortization,
+            loading: false,
+            error: action.payload.error,
+            errorMessage: action.payload.errorMessage
+          }
+        }
+      };
     default:
       return state;
   }

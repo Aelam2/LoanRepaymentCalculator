@@ -1,4 +1,6 @@
 import axios from "axios";
+import querystring from "querystring";
+
 import { DASHBOARD_ADD_EDIT_DRAWER_TOGGLE, DASHBOARD_LIST_ACCORDION_TOGGLE, DASHBOARD_MOBILE_TAB_CHANGE } from "actions/DashboardActionTypes";
 
 import { DASHBOARD_FETCH_LOANS_SUCCESS, DASHBOARD_FETCH_LOANS_LOADING, DASHBOARD_FETCH_LOANS_ERROR } from "actions/DashboardActionTypes";
@@ -10,6 +12,12 @@ import { DASHBOARD_FETCH_PAYMENT_PLANS_SUCCESS, DASHBOARD_FETCH_PAYMENT_PLANS_LO
 import { DASHBOARD_CREATE_PAYMENT_PLANS_SUCCESS, DASHBOARD_CREATE_PAYMENT_PLANS_LOADING } from "actions/DashboardActionTypes";
 import { DASHBOARD_UPDATE_PAYMENT_PLANS_SUCCESS, DASHBOARD_UPDATE_PAYMENT_PLANS_LOADING } from "actions/DashboardActionTypes";
 import { DASHBOARD_DELETE_PAYMENT_PLANS_SUCCESS, DASHBOARD_DELETE_PAYMENT_PLANS_LOADING } from "actions/DashboardActionTypes";
+
+import {
+  DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_SUCCESS,
+  DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_LOADING,
+  DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_ERROR
+} from "actions/DashboardActionTypes";
 
 export const toggleListAccordion = (type, isOpen) => {
   return dispatch => {
@@ -50,7 +58,7 @@ export const fetchLoans = () => {
 
       return true;
     } catch (err) {
-      console.error("fetchLoans error! ===>", err.message);
+      console.error("[fetchLoans] error! ===>", err.message);
 
       dispatch({
         type: DASHBOARD_FETCH_LOANS_ERROR,
@@ -79,7 +87,7 @@ export const createLoan = loan => {
 
       return true;
     } catch (err) {
-      console.error("createLoan error! ===>", err.message);
+      console.error("[createLoan] error! ===>", err.message);
 
       return false;
     }
@@ -103,7 +111,7 @@ export const updateLoan = loan => {
 
       return true;
     } catch (err) {
-      console.error("updateLoan error! ===>", err.message);
+      console.error("[updateLoan] error! ===>", err.message);
 
       return false;
     }
@@ -127,7 +135,7 @@ export const deleteLoan = LoanID => {
 
       return true;
     } catch (err) {
-      console.error("deleteLoan error! ===>", err.message);
+      console.error("[deleteLoan] error! ===>", err.message);
 
       return false;
     }
@@ -151,7 +159,7 @@ export const fetchPaymentPlans = () => {
 
       return true;
     } catch (err) {
-      console.error("fetchPaymentPlans error! ===>", err.message);
+      console.error("[fetchPaymentPlans] error! ===>", err.message);
       dispatch({
         type: DASHBOARD_FETCH_PAYMENT_PLANS_ERROR,
         payload: true
@@ -178,7 +186,7 @@ export const createPaymentPlan = loan => {
 
       return true;
     } catch (err) {
-      console.error("createLoan error! ===>", err.message);
+      console.error("[createLoan] error! ===>", err.message);
 
       return false;
     }
@@ -202,7 +210,7 @@ export const updatePaymentPlan = loan => {
 
       return true;
     } catch (err) {
-      console.error("updateLoan error! ===>", err.message);
+      console.error("[updateLoan] error! ===>", err.message);
 
       return false;
     }
@@ -226,7 +234,7 @@ export const deletePaymentPlan = LoanID => {
 
       return true;
     } catch (err) {
-      console.error("deleteLoan error! ===>", err.message);
+      console.error("[deleteLoan] error! ===>", err.message);
 
       return false;
     }
@@ -240,5 +248,30 @@ export const handleMobileTabChange = key => {
       payload: key
     });
     return true;
+  };
+};
+
+export const fetchAmortizationSchedule = (consolidated = 0) => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_LOADING,
+        payload: true
+      });
+
+      const { data } = await axios.get(`/me/loans/amortization?${querystring.stringify({ consolidated: consolidated })}`);
+
+      dispatch({
+        type: DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_SUCCESS,
+        payload: data.data
+      });
+    } catch (err) {
+      console.error("[fetchAmortizationSchedule] error! ===>", err.message);
+
+      dispatch({
+        type: DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_LOADING,
+        payload: true
+      });
+    }
   };
 };

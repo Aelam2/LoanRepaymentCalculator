@@ -8,7 +8,8 @@ import MiniProgress from "./MiniProgress";
 import Pie from "./Pie";
 import TagCloud from "./TagCloud";
 import TimelineChart from "./TimelineChart";
+import LineChart from "./LineChart";
 import Trend from "./Trend";
 import WaterWave from "./WaterWave";
 
-export { ChartCard, Field, Trend, Bar, Gauge, MiniArea, MiniBar, MiniProgress, Pie, TagCloud, TimelineChart, WaterWave };
+export { ChartCard, Field, Trend, Bar, Gauge, MiniArea, MiniBar, MiniProgress, Pie, TagCloud, TimelineChart, LineChart, WaterWave };
