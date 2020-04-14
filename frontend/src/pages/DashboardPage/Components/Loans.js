@@ -75,7 +75,6 @@ class Loans extends React.Component {
                             <Text>
                               <FormattedNumber
                                 value={loan.LoanBalance}
-                                cd
                                 style="currency"
                                 currency={currency}
                                 minimumFractionDigits={0}

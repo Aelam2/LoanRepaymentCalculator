@@ -47,7 +47,7 @@ const LineChart = props => {
       range: [0, 1]
     }
   };
-  console.log(data);
+
   return (
     <div className={styles.miniChart} style={{ height }}>
       <div className={styles.chartContent}>

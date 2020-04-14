@@ -119,6 +119,7 @@
 
 .paymentsListContainer {
   background-color: $layout-header-background;
+  margin-bottom: 100px;
 
   .paymentsListHeader {
     border: $border-color-split solid 1px;
@@ -171,5 +172,25 @@
         font-size: 24px;
       }
     }
+  }
+}
+
+.miniChart {
+  position: relative;
+  width: 100%;
+  .chartContent {
+    position: absolute;
+    bottom: -28px;
+    width: 100%;
+    & > div {
+      margin: 0 -5px;
+      overflow: hidden;
+    }
+  }
+  .chartLoading {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    margin-left: -7px;
   }
 }

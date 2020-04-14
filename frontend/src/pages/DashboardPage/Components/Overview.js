@@ -18,10 +18,10 @@ class Overview extends React.Component {
   };
 
   render() {
-    let { isMobile, width, theme, loans, amortization } = this.props;
+    let { isMobile, width, theme, currency, loans, amortization } = this.props;
     let isDark = theme === "dark" ? true : false;
-
     let { mobileTab } = this.props;
+
     if (loans.loading) {
       return <PageLoading style={{ height: isMobile ? "50%" : "300px" }} />;
     }
@@ -52,19 +52,20 @@ class Overview extends React.Component {
     return (
       <GridContent>
         <QueueAnim type="right">
-          <AnalysisRow isMobile={isMobile} width={width} loading={false} error={false} data={visitData} />
+          <AnalysisRow isMobile={isMobile} width={width} loading={false} error={false} data={visitData} currency={currency} />
         </QueueAnim>
         <QueueAnim type="bottom">
           <ChartRow
             refetchData={this.props.fetchAmortizationSchedule}
+            currency={currency}
             isMobile={isMobile}
             width={width}
             loading={amortization.loading}
             error={amortization.error}
             data={amortization.data
-              .map(a =>
-                a.schedule.map(s => {
-                  return { ...s, ...a, LoanID: `${s.LoanID}` };
+              .map(l =>
+                l.schedule.map(s => {
+                  return { ...s, ...l, LoanID: s.LoanID.toString() };
                 })
               )
               .flat()}
@@ -80,6 +81,7 @@ const mapStateToProps = state => {
     isMobile: state.site.isMobile,
     theme: state.site.theme,
     width: state.site.width,
+    currency: state.site.currency,
     mobileTab: state.dashboard.mobileTab,
     drawer: state.dashboard.drawer,
     loans: state.dashboard.loans,
