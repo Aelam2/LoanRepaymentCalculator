@@ -15,7 +15,7 @@ const topColResponsiveProps = {
 const ChartRow = ({ isMobile, refetchData, width, currency, data = [], loading, error, ...props }) => {
   const intl = useIntl();
   const chartContainer = React.createRef();
-  let height = isMobile ? 350 : 450;
+  let height = isMobile ? 325 : 450;
 
   useEffect(() => {
     if (data.length && chartContainer.current) {
