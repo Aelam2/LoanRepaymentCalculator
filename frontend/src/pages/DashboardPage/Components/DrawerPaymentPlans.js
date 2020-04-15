@@ -273,7 +273,7 @@ class DrawerPaymentPlans extends React.Component {
             {(fields, { add, remove }) => (
               <div className={`${styles.paymentsListContainer}`} style={{ border: "#3E587B solid 1px" }}>
                 <Sticky>
-                  {({ style, isSticky, wasSticky, distanceFromTop, distanceFromBottom, calculatedHeight }) => (
+                  {({ style }) => (
                     <div
                       className={`${styles.paymentsListHeader}`}
                       style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", ...style }}
