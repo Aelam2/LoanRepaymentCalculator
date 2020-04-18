@@ -63,6 +63,7 @@
 .ant-picker-cell-disabled {
   .ant-picker-cell-inner {
     text-decoration: line-through;
+    background-color: transparent;
   }
 }
 
@@ -75,5 +76,41 @@
 
   .am-tab-bar-item {
     overflow: hidden;
+  }
+}
+
+.ant-switch {
+  &.ant-switch-checked {
+    background-color: $primary-color !important;
+  }
+  &:not(.ant-switch-checked) {
+    background-color: #5b5b5b !important;
+  }
+  &:after {
+    background-color: #fff !important;
+  }
+}
+
+.ant-card-extra {
+  padding: 0px !important;
+}
+
+.ant-list-item-action {
+  li {
+    font-size: 24px !important;
+  }
+}
+
+.ant-card-head-wrapper {
+  @media (max-width: 500px) {
+    flex-wrap: wrap;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .ant-card-extra {
+      float: none;
+      margin-left: initial;
+    }
   }
 }

@@ -52,29 +52,6 @@
   }
 }
 
-.horizontalScroll {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  margin-bottom: 24px;
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x mandatory;
-  scroll-padding: 50%;
-
-  .analysisCard {
-    flex: 0 0 auto;
-    margin-right: 24px;
-    min-width: 300px;
-    width: 350px;
-    max-width: 80vw;
-    scroll-snap-align: center;
-  }
-}
-
-.analysisCard {
-  box-shadow: 0 2.5px 10px rgba(0, 0, 0, 0.096), 0 1.5px 3px rgba(0, 0, 0, 0.082);
-}
-
 .mobileTab {
   position: relative;
 }

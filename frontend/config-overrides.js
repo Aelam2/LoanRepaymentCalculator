@@ -29,7 +29,9 @@ const darkBlue = {
   "icon-color": "#fff",
 
   "disabled-color": "rgba(0, 0, 0, 0.82)",
-  "disabled-bg": "#bfbfbf85"
+  "disabled-bg": "#bfbfbf85",
+
+  "select-item-selected-bg": "#fc5c9c"
 };
 
 let theme = darkBlue;

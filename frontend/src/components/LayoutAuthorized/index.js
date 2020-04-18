@@ -21,7 +21,7 @@ class LayoutAuthorized extends React.Component {
       <Layout className={styles.layout}>
         <Header className={`${styles.header} ${isMobile && styles.headerMobile}`}>
           <div className={`ant-menu ant-menu-horizontal ${styles.titleContainer}`}>
-            <Textfit className={styles.title} mode="single" max="32">
+            <Textfit className={styles.title} mode="single" max={32}>
               <FormattedMessage id="layout.authorized.title" defaultMessage="Loan Calculator" tagName="span" />
             </Textfit>
           </div>
