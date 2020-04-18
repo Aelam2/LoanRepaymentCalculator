@@ -112,6 +112,12 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "PaymentPlanID",
       targetKey: "PaymentPlanID"
     });
+
+    PaymentPlans.belongsTo(models.CodeSets, {
+      foreignKey: "AllocationMethodID",
+      targetKey: "CodeValueID",
+      as: "AllocationMethod"
+    });
   };
 
   return PaymentPlans;

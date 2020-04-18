@@ -15,6 +15,10 @@
  *            required: true
  *            format: int32
  *            description: Overlying payment plan that current payment is associated with.
+ *          PaymentName:
+ *            type: string
+ *            require: true
+ *            description: Name of Payment
  *          PaymentDate:
  *            type: string
  *            format: date-time
@@ -45,6 +49,7 @@
  *        example:
  *          PaymentID: 1
  *          PaymentPlanID: 1
+ *          PaymentName: Extra Monthly Payment
  *          PaymentDate: 2020-04-01
  *          PaymentAmount: 333.25
  *          AllocationMethodID: 4
@@ -68,6 +73,10 @@ module.exports = (sequelize, DataTypes) => {
           model: { tableName: "PaymentPlans" },
           key: "PaymentPlanID"
         }
+      },
+      PaymentName: {
+        type: DataTypes.STRING,
+        allowNull: false
       },
       PaymentDate: {
         type: DataTypes.DATE
@@ -109,6 +118,12 @@ module.exports = (sequelize, DataTypes) => {
     Payments.belongsTo(models.PaymentPlans, {
       foreignKey: "PaymentPlanID",
       targetKey: "PaymentPlanID"
+    });
+
+    Payments.belongsTo(models.CodeSets, {
+      foreignKey: "RecurringTypeID",
+      targetKey: "CodeValueID",
+      as: "RecurringType"
     });
   };
 
