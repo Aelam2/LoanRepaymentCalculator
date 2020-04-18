@@ -4,24 +4,21 @@ import querystring from "querystring";
 import { DASHBOARD_ADD_EDIT_DRAWER_TOGGLE, DASHBOARD_LIST_ACCORDION_TOGGLE, DASHBOARD_MOBILE_TAB_CHANGE } from "actions/DashboardActionTypes";
 
 import { DASHBOARD_FETCH_LOANS_SUCCESS, DASHBOARD_FETCH_LOANS_LOADING, DASHBOARD_FETCH_LOANS_ERROR } from "actions/DashboardActionTypes";
-import { DASHBOARD_CREATE_LOAN_SUCCESS, DASHBOARD_CREATE_LOAN_LOADING } from "actions/DashboardActionTypes";
-import { DASHBOARD_UPDATE_LOAN_SUCCESS, DASHBOARD_UPDATE_LOAN_LOADING } from "actions/DashboardActionTypes";
-import { DASHBOARD_DELETE_LOAN_SUCCESS, DASHBOARD_DELETE_LOAN_LOADING } from "actions/DashboardActionTypes";
+import { DASHBOARD_CREATE_LOAN_SUCCESS, DASHBOARD_CREATE_LOAN_LOADING, DASHBOARD_CREATE_LOAN_ERROR } from "actions/DashboardActionTypes";
+import { DASHBOARD_UPDATE_LOAN_SUCCESS, DASHBOARD_UPDATE_LOAN_LOADING, DASHBOARD_UPDATE_LOAN_ERROR } from "actions/DashboardActionTypes";
+import { DASHBOARD_DELETE_LOAN_SUCCESS, DASHBOARD_DELETE_LOAN_LOADING, DASHBOARD_DELETE_LOAN_ERROR } from "actions/DashboardActionTypes";
 
 import { DASHBOARD_FETCH_PAYMENT_PLANS_SUCCESS, DASHBOARD_FETCH_PAYMENT_PLANS_LOADING, DASHBOARD_FETCH_PAYMENT_PLANS_ERROR } from "actions/DashboardActionTypes.js"; //prettier-ignore
-import { DASHBOARD_CREATE_PAYMENT_PLANS_SUCCESS, DASHBOARD_CREATE_PAYMENT_PLANS_LOADING } from "actions/DashboardActionTypes";
-import { DASHBOARD_UPDATE_PAYMENT_PLANS_SUCCESS, DASHBOARD_UPDATE_PAYMENT_PLANS_LOADING } from "actions/DashboardActionTypes";
-import { DASHBOARD_DELETE_PAYMENT_PLANS_SUCCESS, DASHBOARD_DELETE_PAYMENT_PLANS_LOADING } from "actions/DashboardActionTypes";
+import { DASHBOARD_CREATE_PAYMENT_PLANS_SUCCESS, DASHBOARD_CREATE_PAYMENT_PLANS_LOADING, DASHBOARD_CREATE_PAYMENT_PLANS_ERROR } from "actions/DashboardActionTypes"; //prettier-ignore
+import { DASHBOARD_UPDATE_PAYMENT_PLANS_SUCCESS, DASHBOARD_UPDATE_PAYMENT_PLANS_LOADING, DASHBOARD_UPDATE_PAYMENT_PLANS_ERROR  } from "actions/DashboardActionTypes"; //prettier-ignore
+import { DASHBOARD_DELETE_PAYMENT_PLANS_SUCCESS, DASHBOARD_DELETE_PAYMENT_PLANS_LOADING , DASHBOARD_DELETE_PAYMENT_PLANS_ERROR} from "actions/DashboardActionTypes"; //prettier-ignore
+import { DASHBOARD_TOGGLE_CURRENT_PAYMENT_PLAN_SUCCESS, DASHBOARD_TOGGLE_CURRENT_PAYMENT_PLAN_LOADING } from 'actions/DashboardActionTypes' //prettier-ignore
 
-import {
-  DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_SUCCESS,
-  DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_LOADING,
-  DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_ERROR
-} from "actions/DashboardActionTypes";
+import { DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_SUCCESS, DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_LOADING, DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_ERROR} from "actions/DashboardActionTypes"; //prettier-ignore
+import { DASHBOARD_ANALYTICS_TOGGLE_CONSOLIDATED_VIEW } from "actions/DashboardActionTypes"; //prettier-ignore
 
 export const toggleListAccordion = (type, isOpen) => {
   return dispatch => {
-    console.log(type, isOpen);
     dispatch({
       type: DASHBOARD_LIST_ACCORDION_TOGGLE,
       payload: { type, isOpen }
@@ -89,7 +86,11 @@ export const createLoan = loan => {
     } catch (err) {
       console.error("[createLoan] error! ===>", err.message);
 
-      return false;
+      dispatch({
+        type: DASHBOARD_CREATE_LOAN_ERROR
+      });
+
+      throw new Error("There was a problem creating your loan!");
     }
   };
 };
@@ -113,7 +114,11 @@ export const updateLoan = loan => {
     } catch (err) {
       console.error("[updateLoan] error! ===>", err.message);
 
-      return false;
+      dispatch({
+        type: DASHBOARD_UPDATE_LOAN_ERROR
+      });
+
+      throw new Error("There was a problem updating your loan!");
     }
   };
 };
@@ -137,7 +142,11 @@ export const deleteLoan = LoanID => {
     } catch (err) {
       console.error("[deleteLoan] error! ===>", err.message);
 
-      return false;
+      dispatch({
+        type: DASHBOARD_DELETE_LOAN_ERROR
+      });
+
+      throw new Error("There was a problem deleting your loan!");
     }
   };
 };
@@ -154,22 +163,24 @@ export const fetchPaymentPlans = () => {
 
       dispatch({
         type: DASHBOARD_FETCH_PAYMENT_PLANS_SUCCESS,
-        payload: data.data
+        payload: { plans: data.data, currentPlan: data.data.find(p => p.IsCurrent == 1) || {} }
       });
 
       return true;
     } catch (err) {
       console.error("[fetchPaymentPlans] error! ===>", err.message);
+
       dispatch({
         type: DASHBOARD_FETCH_PAYMENT_PLANS_ERROR,
         payload: true
       });
-      return false;
+
+      throw new Error("There was a problem fetching your payment plans!");
     }
   };
 };
 
-export const createPaymentPlan = loan => {
+export const createPaymentPlan = paymentPlan => {
   return async dispatch => {
     try {
       dispatch({
@@ -177,7 +188,7 @@ export const createPaymentPlan = loan => {
         payload: true
       });
 
-      const { data } = await axios.post(`/me/loans`, { ...loan, LoanTypeID: "9" });
+      const { data } = await axios.post(`/me/payment-plans`, { ...paymentPlan, IsCurrent: 1 });
 
       dispatch({
         type: DASHBOARD_CREATE_PAYMENT_PLANS_SUCCESS,
@@ -186,22 +197,28 @@ export const createPaymentPlan = loan => {
 
       return true;
     } catch (err) {
-      console.error("[createLoan] error! ===>", err.message);
+      console.error("[createPaymentPlan] error! ===>", err.message);
 
-      return false;
+      dispatch({
+        type: DASHBOARD_CREATE_PAYMENT_PLANS_ERROR
+      });
+
+      throw new Error("There was a problem creating your payment plan!");
     }
   };
 };
 
-export const updatePaymentPlan = loan => {
+export const updatePaymentPlan = paymentPlan => {
   return async dispatch => {
     try {
+      let { PaymentPlanID, ...updatedValeus } = paymentPlan;
+      console.log(paymentPlan);
       dispatch({
         type: DASHBOARD_UPDATE_PAYMENT_PLANS_LOADING,
         payload: true
       });
 
-      const { data } = await axios.put(`/me/loans/${loan.LoanID}`, { ...loan, LoanTypeID: "9" });
+      const { data } = await axios.put(`/me/payment-plans/${PaymentPlanID}`, { ...updatedValeus });
 
       dispatch({
         type: DASHBOARD_UPDATE_PAYMENT_PLANS_SUCCESS,
@@ -210,14 +227,18 @@ export const updatePaymentPlan = loan => {
 
       return true;
     } catch (err) {
-      console.error("[updateLoan] error! ===>", err.message);
+      console.error("[updatePaymentPlan] error! ===>", err.message);
 
-      return false;
+      dispatch({
+        type: DASHBOARD_UPDATE_PAYMENT_PLANS_ERROR
+      });
+
+      throw new Error("There was a problem updating your payment plan!");
     }
   };
 };
 
-export const deletePaymentPlan = LoanID => {
+export const deletePaymentPlan = PaymentPlanID => {
   return async dispatch => {
     try {
       dispatch({
@@ -225,7 +246,7 @@ export const deletePaymentPlan = LoanID => {
         payload: true
       });
 
-      const { data } = await axios.delete(`/me/loans/${LoanID}`);
+      const { data } = await axios.delete(`/me/payment-plans/${PaymentPlanID}`);
 
       dispatch({
         type: DASHBOARD_DELETE_PAYMENT_PLANS_SUCCESS,
@@ -234,10 +255,32 @@ export const deletePaymentPlan = LoanID => {
 
       return true;
     } catch (err) {
-      console.error("[deleteLoan] error! ===>", err.message);
+      console.error("[deletePaymentPlan] error! ===>", err.message);
 
-      return false;
+      dispatch({
+        type: DASHBOARD_DELETE_PAYMENT_PLANS_ERROR
+      });
+
+      throw new Error("There was a problem deleting your payment plan!");
     }
+  };
+};
+
+export const toggleCurrentPlan = (PaymentPlanID, IsCurrent) => {
+  return async dispatch => {
+    // Analytics Loading animiations
+    dispatch({
+      type: DASHBOARD_TOGGLE_CURRENT_PAYMENT_PLAN_LOADING,
+      payload: true
+    });
+
+    const { data } = await axios.post(`/me/payment-plans/${PaymentPlanID}/activate`, { IsCurrent: IsCurrent });
+
+    // Set currentPlan, update IsCurrent for all plans, and remove loading animations
+    dispatch({
+      type: DASHBOARD_TOGGLE_CURRENT_PAYMENT_PLAN_SUCCESS,
+      payload: { PaymentPlanID, IsCurrent }
+    });
   };
 };
 
@@ -273,5 +316,14 @@ export const fetchAmortizationSchedule = (consolidated = 0) => {
         payload: true
       });
     }
+  };
+};
+
+export const toggleConsolidatedView = boolean => {
+  return dispatch => {
+    dispatch({
+      type: DASHBOARD_ANALYTICS_TOGGLE_CONSOLIDATED_VIEW,
+      payload: boolean
+    });
   };
 };

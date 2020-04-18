@@ -1,4 +1,5 @@
 import React from "react";
+import moment from "moment";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { FormattedMessage } from "react-intl";
@@ -7,7 +8,7 @@ import { Card, Typography } from "antd";
 import * as actions from "actions/DashboardActions";
 import GridContent from "components/GridContent";
 import PageLoading from "components/PageLoading";
-import { AnalysisRow, ChartRow } from "pages/DashboardPage/Components";
+import { OverviewAnalysisRow, OverviewChartRow } from "pages/DashboardPage/Components";
 import { visitData } from "__tests__/mockData/charts";
 import styles from "pages/DashboardPage/Components/index.module.scss";
 let { Paragraph } = Typography;
@@ -17,10 +18,12 @@ class Overview extends React.Component {
     this.props.fetchAmortizationSchedule();
   };
 
+  toggleConsolidatedView = isConsolidated => {
+    this.props.toggleConsolidatedView(isConsolidated);
+  };
+
   render() {
-    let { isMobile, width, theme, currency, loans, amortization } = this.props;
-    let isDark = theme === "dark" ? true : false;
-    let { mobileTab } = this.props;
+    let { isMobile, width, theme, currency, loans, paymentPlans, analytics, ...props } = this.props;
 
     if (loans.loading) {
       return <PageLoading style={{ height: isMobile ? "50%" : "300px" }} />;
@@ -49,26 +52,39 @@ class Overview extends React.Component {
       );
     }
 
+    let scheduleView = analytics.isConsolidatedView
+      ? analytics.data.consolidated.map(s => {
+          return { ...s, date: moment(s.date).startOf("month").endOf("day").toISOString(), LoanID: s.LoanID.toString() };
+        })
+      : analytics.data.masterSchedule.map(s => {
+          return { ...s, date: moment(s.date).startOf("month").endOf("day").toISOString(), LoanID: s.LoanID.toString() };
+        });
+
     return (
       <GridContent>
         <QueueAnim type="right">
-          <AnalysisRow isMobile={isMobile} width={width} loading={false} error={false} data={visitData} currency={currency} />
+          <OverviewAnalysisRow
+            isMobile={isMobile}
+            width={width}
+            currency={currency}
+            loading={analytics.loading || loans.loading || paymentPlans.loading}
+            error={analytics.error || loans.error || paymentPlans.error}
+            data={analytics.data}
+            currentPlan={paymentPlans.currentPlan}
+          />
         </QueueAnim>
         <QueueAnim type="bottom">
-          <ChartRow
+          <OverviewChartRow
             refetchData={this.props.fetchAmortizationSchedule}
+            isConsolidatedView={analytics.isConsolidatedView}
+            toggleConsolidatedView={this.toggleConsolidatedView}
             currency={currency}
             isMobile={isMobile}
             width={width}
-            loading={amortization.loading}
-            error={amortization.error}
-            data={amortization.data
-              .map(l =>
-                l.schedule.map(s => {
-                  return { ...s, ...l, LoanID: s.LoanID.toString() };
-                })
-              )
-              .flat()}
+            loading={analytics.loading || loans.loading || paymentPlans.loading}
+            error={analytics.error || loans.error || paymentPlans.error}
+            data={scheduleView}
+            currentPlan={paymentPlans.currentPlan}
           />
         </QueueAnim>
       </GridContent>
@@ -79,14 +95,11 @@ class Overview extends React.Component {
 const mapStateToProps = state => {
   return {
     isMobile: state.site.isMobile,
-    theme: state.site.theme,
     width: state.site.width,
     currency: state.site.currency,
-    mobileTab: state.dashboard.mobileTab,
-    drawer: state.dashboard.drawer,
     loans: state.dashboard.loans,
     paymentPlans: state.dashboard.paymentPlans,
-    amortization: state.dashboard.analytics.amortization
+    analytics: state.dashboard.analytics
   };
 };
 

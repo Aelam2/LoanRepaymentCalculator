@@ -182,8 +182,7 @@ class DrawerLoans extends React.Component {
       } else {
         await this.props.createLoan(values);
       }
-
-      await this.props.toggleAddEditDrawer(false, null);
+      await Promise.all([this.props.fetchAmortizationSchedule(), this.props.toggleAddEditDrawer(false, null)]);
     } catch (err) {
       let errMessage = this.state.isExisting ? "There was a problem uppdating the selected loan." : "An unexpected error occured during loan creation";
       notification.error({ duration: 3000, message: errMessage });
@@ -217,8 +216,7 @@ class DrawerLoans extends React.Component {
             <Button
               type="primary"
               className={`${styles.btnSmall} ${isSaving && styles.btnLoading}`}
-              form="newLoan"
-              htmlType="submit"
+              onClick={() => this.formRef.current.submit()}
               loading={isSaving}
               disabled={isDeleting}
             >
@@ -245,7 +243,12 @@ class DrawerLoans extends React.Component {
             </Button>
           </h3>
           <div className={styles.actions}>
-            <Button type="primary" className={`${styles.btnSmall} ${isSaving && styles.btnLoading}`} form="newLoan" htmlType="submit" loading={isSaving}>
+            <Button
+              type="primary"
+              className={`${styles.btnSmall} ${isSaving && styles.btnLoading}`}
+              onClick={() => this.formRef.current.submit()}
+              loading={isSaving}
+            >
               <FormattedMessage id="dashboard.drawer.header.save" defaultMessage="Save" />
             </Button>
           </div>
@@ -255,7 +258,8 @@ class DrawerLoans extends React.Component {
   };
 
   render() {
-    let { item, visible } = this.props;
+    let { loans, item, visible } = this.props;
+    let { isExisting } = this.state;
 
     if (!visible) {
       return null;
@@ -266,7 +270,30 @@ class DrawerLoans extends React.Component {
         {this.renderHeader()}
 
         <Form name="newLoan" className={styles.formContainer} ref={this.formRef} layout="vertical" onFinish={this.onFinish}>
-          <Form.Item {...formMap.LoanName.form}>
+          <Form.Item
+            {...formMap.LoanName.form}
+            rules={[
+              ...formMap.LoanName.form.rules,
+              {
+                //Unique Loan Name is Required
+                validator: async (rule, value) => {
+                  const promise = Promise;
+                  if (
+                    loans
+                      .map(l => {
+                        if (isExisting && item.LoanID === l.LoanID) return;
+
+                        return l.LoanName;
+                      })
+                      .includes(value)
+                  ) {
+                    return promise.reject("Loan name must be unique");
+                  }
+                  return promise.resolve();
+                }
+              }
+            ]}
+          >
             <Input {...formMap.LoanName.input} />
           </Form.Item>
 

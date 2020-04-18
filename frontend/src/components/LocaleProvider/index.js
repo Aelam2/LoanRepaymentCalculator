@@ -37,7 +37,7 @@ class LocaleProvider extends React.Component {
   render() {
     let { children, locale } = this.props;
     let { defaultLanguage } = this.state;
-    console.log(translationsForLocale[locale]);
+
     return (
       <IntlProvider locale={locale} defaultLocale={defaultLanguage} messages={translationsForLocale[locale]}>
         {children}

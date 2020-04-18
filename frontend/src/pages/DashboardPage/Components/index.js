@@ -1,9 +1,9 @@
-import ChartRow from "./ChartRow";
-import AnalysisRow from "./AnalysisRow";
+import OverviewChartRow from "./OverviewChartRow";
+import OverviewAnalysisRow from "./OverviewAnalysisRow";
 import Overview from "./Overview";
 import Loans from "./Loans";
-import DrawerLoans from "./DrawerLoans";
+import LoansDrawer from "./LoansDrawer";
 import PaymentPlans from "./PaymentPlans";
-import DrawerPaymentPlans from "./DrawerPaymentPlans";
+import PaymentPlansDrawer from "./PaymentPlansDrawer";
 
-export { Overview, ChartRow, AnalysisRow, Loans, PaymentPlans, DrawerLoans, DrawerPaymentPlans };
+export { Overview, OverviewChartRow, OverviewAnalysisRow, Loans, PaymentPlans, LoansDrawer, PaymentPlansDrawer };

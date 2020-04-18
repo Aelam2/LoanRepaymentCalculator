@@ -48,5 +48,7 @@ export default {
   "dashboard.analysis.card.three.tooltip": "Date that loans will be paid 100% off",
   "dashboard.analysis.card.three.footer": "Original: ",
 
-  "dashboard.chart.title": "Perspectiva de reembolso actual"
+  "dashboard.analysis.toggleConsolidatedView": "Vista consolidada",
+
+  "dashboard.chart.title": "Perspectiva de pago mínimo"
 };

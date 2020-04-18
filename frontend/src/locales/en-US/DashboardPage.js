@@ -8,11 +8,12 @@ export default {
   "dashboard.accordion.loans.add.button": "+ Add Loan",
   "dashboard.accordion.loans.edit.btn": "Edit",
   "dashboard.accordion.loans.empty": "Add your loans to get started!",
+  "dashboard.accordion.loans.error": "Error loading loans",
 
   "dashboard.accordion.paymentPlans.title": "My Plans",
   "dashboard.accordion.paymentPlans.add.button": "+ Add Plan",
   "dashboard.accordion.paymentPlans.edit.btn": "Edit",
-  "dashboard.accordion.paymentPlans.empty": "No payment plans found",
+  "dashboard.accordion.paymentPlans.error": "Error loading plans",
 
   "dashboard.drawer.header.save": "Save",
   "dashboard.drawer.header.delete": "delete",
@@ -48,5 +49,7 @@ export default {
   "dashboard.analysis.card.three.tooltip": "Date that loans will be paid 100% off",
   "dashboard.analysis.card.three.footer": "Original: ",
 
-  "dashboard.chart.title": "Current Repayment Outlook"
+  "dashboard.analysis.toggleConsolidatedView": "Consolidated View",
+
+  "dashboard.chart.title": "Minimum Payment Outlook"
 };

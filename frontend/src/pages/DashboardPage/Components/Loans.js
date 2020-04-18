@@ -6,7 +6,7 @@ import { FormattedMessage, FormattedNumber } from "react-intl";
 import QueueAnim from "rc-queue-anim";
 import SimpleBar from "simplebar-react";
 import { Button, List, Spin, Result, Typography, Empty } from "antd";
-import { EditFilled, RightOutlined, FolderOpenOutlined } from "@ant-design/icons";
+import { EditFilled, RightOutlined, FolderOpenOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import styles from "./index.module.scss";
 
 const { Paragraph, Text, Title } = Typography;
@@ -34,7 +34,7 @@ class Loans extends React.Component {
           <SimpleBar className={styles.list}>
             {(() => {
               if (error) {
-                return <Result status="warning" title="Error loading loans" />;
+                return <Result status="warning" title={<FormattedMessage id="dashboard.accordion.loans.error" defaultMessage="Error loading plans" />} />;
               }
 
               if (loading) {
@@ -62,8 +62,8 @@ class Loans extends React.Component {
                           key={loan.LoanID}
                           className={styles.listItemContainer}
                           actions={[
-                            <Text key="edit" type="secondary" onClick={() => openDrawer("loans", loan)}>
-                              <FormattedMessage id="dashboard.accordion.loans.edit.button" defaultMessage="Edit" />
+                            <Text key="edit" onClick={() => openDrawer("loans", loan)}>
+                              {/* <FormattedMessage id="dashboard.accordion.loans.edit.button" defaultMessage="Edit" /> */}
                               <EditFilled style={{ marginLeft: "5px" }} />
                             </Text>
                           ]}
