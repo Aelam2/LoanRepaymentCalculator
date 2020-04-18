@@ -1,5 +1,8 @@
 import express from "express";
-import { sequelize, Loans } from "../models/models";
+import _ from "lodash";
+import { calculateSchedule } from "../helpers/repaymentCalculator";
+import { StrategyCodeValueIdMap } from "../helpers/repaymentStrategies";
+import { sequelize, Loans, PaymentPlans, Payments as PaymentsModel } from "../models/models";
 
 let router = express.Router();
 
@@ -83,38 +86,44 @@ let router = express.Router();
 router.route("/amortization").get(async (req, res) => {
   try {
     let { UserID } = req.user;
-    let { Consolidated = 0 } = req.body;
+    let { hidden = [] } = req.body;
 
     // Get all active loans for a user
-    let activeLoans = await Loans.findAll({
+    let currentLoans = await Loans.findAll({
       where: { UserID }
     });
 
-    let [schedules] = await sequelize.query(
-      `
-      EXEC	[dbo].[LoanAmortizationSchedule]
-      @UserID = :UserID,
-      @Consolidated = :Consolidated
-    `,
-      {
-        replacements: {
-          UserID,
-          Consolidated
+    // Attempt to fetch any active payment plans and their associated payments
+    let currentPlan = await PaymentPlans.findOne({
+      where: { IsCurrent: 1, UserID },
+      include: [
+        {
+          model: PaymentsModel
         }
-      }
-    );
+      ]
+    });
 
-    // Map generate payment schedules to the appropriate active loan
-    let mappedSchedules = activeLoans
-      .map(a => a.toJSON())
-      .map(a => {
-        return { ...a, schedule: schedules.filter(s => s.LoanID === a.LoanID) };
+    // Loans that have not been hidden by user
+    let activeLoans = currentLoans
+      .map(l => l.toJSON())
+      .map(l => {
+        if (!hidden.includes(l.LoanID)) {
+          return l;
+        }
       });
 
+    let AllocationMethodID = currentPlan && currentPlan.hasOwnProperty("AllocationMethodID") ? currentPlan.AllocationMethodID : 4;
+    let payments = currentPlan && currentPlan.hasOwnProperty("Payments") ? currentPlan.Payments : [];
+
+    let [planResult, minimumResult] = await Promise.all([
+      calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], _.cloneDeep(payments))
+      // calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], [])
+    ]);
+
     // Return loan information with array of scheduled payments
-    res.status(200).json({ status: "success", data: mappedSchedules });
+    res.status(200).json({ status: "success", data: { ...planResult, minimumPlan: minimumResult } });
   } catch (err) {
-    console.log("err", err.message);
+    console.log(err.message);
     res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
   }
 });
