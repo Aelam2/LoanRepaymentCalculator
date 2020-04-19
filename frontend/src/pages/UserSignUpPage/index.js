@@ -59,7 +59,7 @@ class UserSignUpPage extends React.Component {
     this.setState({ passwordPopover: !passwordPopover });
 
     if (value.length < 6) {
-      return promise.reject("");
+      return promise.reject("Must be atleast 6 charactersisMobile");
     }
 
     if (value && confirmDirty) {
@@ -102,7 +102,7 @@ class UserSignUpPage extends React.Component {
 
   render() {
     let { intl } = this.props;
-    let { loading } = this.props;
+    let { loading, isMobile } = this.props;
     let { visible } = this.state;
 
     return (
@@ -134,8 +134,8 @@ class UserSignUpPage extends React.Component {
               )
             }
             overlayStyle={{ width: 240 }}
-            placement="right"
-            visible={visible}
+            placement={"right"}
+            visible={visible && !isMobile}
           >
             <Form.Item
               {...SignUpMaps.Password.form}
@@ -185,6 +185,7 @@ class UserSignUpPage extends React.Component {
 const mapStateToProps = state => {
   return {
     isAuthenticated: state.auth.isAuthenticated,
+    isMobile: state.site.isMobile,
     token: state.auth.token,
     loading: state.auth.signUp.loading,
     error: state.auth.signUp.error
