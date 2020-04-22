@@ -15,7 +15,7 @@ class Loans extends React.Component {
   render() {
     let { openDrawer, currency, data, loading, error } = this.props;
     let { containerName, headerClassName, bodyClassName } = this.props;
-    let { isOpen, toggleListAccordion, isMobile } = this.props;
+    let { isOpen, toggleListAccordion, toggleHideLoan, isMobile } = this.props;
 
     return (
       <div className={`${styles.viewSection} ${containerName}`}>
@@ -65,6 +65,13 @@ class Loans extends React.Component {
                             <Text key="edit" onClick={() => openDrawer("loans", loan)}>
                               {/* <FormattedMessage id="dashboard.accordion.loans.edit.button" defaultMessage="Edit" /> */}
                               <EditFilled style={{ marginLeft: "5px" }} />
+                            </Text>,
+                            <Text key="edit" type="secondary" onClick={() => toggleHideLoan(loan.LoanID, loan.hidden)}>
+                              {loan.hidden ? (
+                                <EyeInvisibleOutlined className={styles.activeIcon} style={{ marginLeft: "5px" }} />
+                              ) : (
+                                <EyeOutlined className={styles.deactiveIcon} style={{ marginLeft: "5px" }} />
+                              )}
                             </Text>
                           ]}
                         >

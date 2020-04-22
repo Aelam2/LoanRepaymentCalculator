@@ -15,10 +15,9 @@
 }
 
 .main-content {
-  padding: 24px;
+  padding: 0px 24px 24px 24px;
   margin: 0;
   min-height: calc(100vh - 64px);
-  margin-top: $layout-header-height;
 }
 
 .ant-form-item-explain {
@@ -44,7 +43,7 @@
   border-bottom: 1px solid darken(#374d6b, 10%);
 
   .ant-card-head-title {
-    padding: 0px;
+    padding: 0px !important;
   }
 }
 
@@ -103,14 +102,14 @@
 
 .ant-card-head-wrapper {
   @media (max-width: 500px) {
-    flex-wrap: wrap;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-wrap: wrap !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
 
     .ant-card-extra {
-      float: none;
-      margin-left: initial;
+      float: none !important;
+      margin-left: initial !important;
     }
   }
 }

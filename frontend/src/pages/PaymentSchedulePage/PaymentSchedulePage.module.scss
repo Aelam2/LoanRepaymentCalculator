@@ -2,11 +2,49 @@
 
 .layout {
   min-height: calc(100vh - #{$layout-header-height}) !important;
+  margin-top: 64px;
 
   .sider {
     flex: 0 0 $layout-sider-default-width !important;
     max-width: $layout-sider-default-width !important;
     min-width: $layout-sider-default-width !important;
     width: $layout-sider-default-width !important;
+  }
+}
+
+.groupByHeader {
+  margin-bottom: 12px;
+  height: 60px;
+  width: 100%;
+  background-color: lighten($layout-sider-background-light, 5%);
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+
+  .groupByTitle {
+    font-size: 24px;
+    font-weight: 400;
+    padding: 0px 0px 0px 25px;
+    text-transform: uppercase;
+  }
+
+  .select {
+    background-color: none;
+    color: $text-color;
+    font-size: 24px;
+  }
+
+  .selectDisabled {
+    color: lighten($text-color, 25%) !important;
+  }
+}
+
+.scheduleCard {
+  margin-bottom: 24px !important;
+
+  & > div:first-of-type {
+    padding: 12px 24px !important;
+    font-size: 18px !important;
   }
 }

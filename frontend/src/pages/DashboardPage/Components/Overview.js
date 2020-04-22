@@ -15,8 +15,12 @@ let { Paragraph } = Typography;
 
 class Overview extends React.Component {
   componentDidMount = () => {
-    this.props.fetchAmortizationSchedule();
+    if (!this.props.analytics.data.masterSchedule.length) {
+      this.props.fetchAmortizationSchedule();
+    }
   };
+
+  componentDidUpdate() {}
 
   toggleConsolidatedView = isConsolidated => {
     this.props.toggleConsolidatedView(isConsolidated);
@@ -53,7 +57,7 @@ class Overview extends React.Component {
     }
 
     let scheduleView = analytics.isConsolidatedView
-      ? analytics.data.consolidated.map(s => {
+      ? analytics.data.consolidatedSchedule.map(s => {
           return { ...s, date: moment(s.date).startOf("month").endOf("day").toISOString(), LoanID: s.LoanID.toString() };
         })
       : analytics.data.masterSchedule.map(s => {
@@ -70,6 +74,7 @@ class Overview extends React.Component {
             loading={analytics.loading || loans.loading || paymentPlans.loading}
             error={analytics.error || loans.error || paymentPlans.error}
             data={analytics.data}
+            selectedMonth={analytics.data.selectedMonth}
             currentPlan={paymentPlans.currentPlan}
           />
         </QueueAnim>
@@ -78,6 +83,7 @@ class Overview extends React.Component {
             refetchData={this.props.fetchAmortizationSchedule}
             isConsolidatedView={analytics.isConsolidatedView}
             toggleConsolidatedView={this.toggleConsolidatedView}
+            onChartTooltipHover={this.props.onChartTooltipHover}
             currency={currency}
             isMobile={isMobile}
             width={width}

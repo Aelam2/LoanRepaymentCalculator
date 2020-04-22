@@ -37,16 +37,23 @@ export default {
   "dashboard.drawer.paymentPlans.addPaymentBtn": "Agregar pago",
 
   "dashboard.analysis.card.one.title": "Fecha de pago",
-  "dashboard.analysis.card.one.tooltip": "Fecha en que los préstamos serán pagados 100% de descuento",
-  "dashboard.analysis.card.one.footer": "Original: ",
+  "dashboard.analysis.card.one.tooltip": "Fecha en que los préstamos se pagarán al 100%",
+  "dashboard.analysis.card.one.daysLeft": "Días restantes",
+  "dashboard.analysis.card.one.monthsFaster": "meses más rápido",
+  "dashboard.analysis.card.one.percentQuicker": "% más rápido",
+  "dashboard.analysis.card.one.footer": "Pago original: ",
 
-  "dashboard.analysis.card.two.title": "Principio restante",
-  "dashboard.analysis.card.two.tooltip": "Date that loans will be paid 100% off",
-  "dashboard.analysis.card.two.footer": "Original: ",
+  "dashboard.analysis.card.two.title": "balance total",
+  "dashboard.analysis.card.two.tooltip": "Saldo total = capital + interés acumulado",
+  "dashboard.analysis.card.two.footer": "Total original: ",
 
-  "dashboard.analysis.card.three.title": "Interés diario acumulado",
-  "dashboard.analysis.card.three.tooltip": "Date that loans will be paid 100% off",
-  "dashboard.analysis.card.three.footer": "Original: ",
+  "dashboard.analysis.card.three.title": "Principal",
+  "dashboard.analysis.card.three.tooltip": "Monto principal adeudado actualmente",
+  "dashboard.analysis.card.three.footer": "Interés total original: ",
+
+  "dashboard.analysis.card.four.title": "Interés acumulado",
+  "dashboard.analysis.card.four.tooltip": "Total de intereses devengados durante la vida del préstamo",
+  "dashboard.analysis.card.four.footer": "Interés total original: ",
 
   "dashboard.analysis.toggleConsolidatedView": "Vista consolidada",
 

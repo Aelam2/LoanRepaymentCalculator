@@ -9,28 +9,51 @@ export const moneyRound = (amount, precision = 2) => {
   return Math.round(amount * factor) / factor;
 };
 
-export const consolidateSchedule = masterSchedule => {
-  let dateArr = [];
-  let schedule = [];
-  for (let payment of masterSchedule) {
-    payment.date = moment(payment.date).startOf("month").endOf("day").toISOString();
-    var index = dateArr.indexOf(payment.date);
+export const calcAlternativeSchedules = masterSchedule => {
+  let accumulatedSchedule = [];
+  let consolidatedSchedule = [];
 
-    // If first time reading date, add to
-    if (index == -1) {
-      dateArr.push(payment.date);
-      schedule.push({ ...payment, LoanID: 0, LoanName: "All Loans" });
-    } else {
-      // If we've read date once, add to exisiting properties
+  let uniqueDates = [...new Set(masterSchedule.map(p => moment(p.date).startOf("month").endOf("day").toISOString()))];
 
-      schedule[index].amount += payment.amount;
-      schedule[index].interest += payment.interest;
-      schedule[index].principal += payment.principal;
-      schedule[index].balance += payment.balance;
-    }
+  for (let d of uniqueDates) {
+    let accumulatedStart = { amount: 0, interest: 0, principal: 0, balance: 0 };
+    let accumulatedPayments = masterSchedule.filter(p => moment(d).isSameOrBefore(moment(p.date).startOf("month").endOf("day")));
+    let accumulatedTotals = accumulatedPayments.reduce((sums, month) => {
+      return {
+        amount: moneyRound((sums.amount += Number(month.amount)), 2),
+        interest: moneyRound((sums.interest += Number(month.interest)), 2),
+        principal: moneyRound((sums.principal += Number(month.principal)), 2),
+        balance: moneyRound((sums.balance += Number(month.balance)), 2)
+      };
+    }, accumulatedStart);
+
+    accumulatedSchedule.push({
+      LoanID: -1,
+      LoanName: "All Loans",
+      date: d,
+      ...accumulatedTotals
+    });
+
+    let consolidatedStart = { amount: 0, interest: 0, principal: 0, balance: 0 };
+    let consolidatedPayments = masterSchedule.filter(p => moment(d).isSame(moment(p.date).startOf("month").endOf("day")));
+    let consolidatedTotals = consolidatedPayments.reduce((sums, month) => {
+      return {
+        amount: moneyRound((sums.amount += Number(month.amount)), 2),
+        interest: moneyRound((sums.interest += Number(month.interest)), 2),
+        principal: moneyRound((sums.principal += Number(month.principal)), 2),
+        balance: moneyRound((sums.balance += Number(month.balance)), 2)
+      };
+    }, consolidatedStart);
+
+    consolidatedSchedule.push({
+      LoanID: 0,
+      LoanName: "All Loans",
+      date: d,
+      ...consolidatedTotals
+    });
   }
 
-  return schedule;
+  return { accumulatedSchedule, consolidatedSchedule };
 };
 
 export const calculateSchedule = async (loans, strategyType, payments) => {
@@ -61,26 +84,23 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
 
     let elapsedMonths = 0;
     while (hasBalance && elapsedMonths <= 480) {
+      let currentMonth = moment(firstPaymentDate).add(elapsedMonths, "month");
+
       // Sum of recurring yearly payments
       let yearlyPayments = payments
-        .filter(p => p.RecurringTypeID == 8 && firstPaymentDate.add(elapsedMonths, "month").isSame(moment(p.PaymentDate), "month"))
+        .filter(p => p.RecurringTypeID == 8 && currentMonth.month() === moment(p.PaymentDate).month())
         .map(p => Number(p.PaymentAmount))
         .reduce((a, b) => a + b, 0);
 
       // Sum of recurring monthly payments
       let monthlyPayments = payments
-        .filter(p => p.RecurringTypeID == 7 && firstPaymentDate.add(elapsedMonths, "month").isSameOrAfter(moment(p.PaymentDate), "month"))
+        .filter(p => p.RecurringTypeID == 7 && currentMonth.isSameOrAfter(moment(p.PaymentDate), "month"))
         .map(p => Number(p.PaymentAmount))
         .reduce((a, b) => a + b, 0);
 
       // Sum of one time payments for the current month
       let oneTimePayments = payments
-        .filter(
-          p =>
-            p.RecurringTypeID == 8 &&
-            firstPaymentDate.add(elapsedMonths, "month").isSame(moment(p.PaymentDate), "month") &&
-            firstPaymentDate.add(elapsedMonths, "month").isSame(moment(p.PaymentDate), "year")
-        )
+        .filter(p => p.RecurringTypeID == 6 && currentMonth.month() === moment(p.PaymentDate).month() && currentMonth.isSame(moment(p.PaymentDate), "year"))
         .map(p => Number(p.PaymentAmount))
         .reduce((a, b) => a + b, 0);
 
@@ -90,44 +110,44 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
       // Handle minimum payments
       for (let loan of loanOrder) {
         // Skip paid off loans
-        if (moneyRound(loan.LoanBalance, 0) > 0) {
+        if (loan.LoanBalance > 0) {
           let amount = Math.min(loan.LoanBalance, loan.PaymentMinimum);
           let interest = loan.LoanBalance * (loan.periodRate / 100);
           let principal = amount - interest;
 
           // If user started mid-month, check if minimum isn't due until next month
-          if (elapsedMonths == 0 && !moment(loan.PaymentStart).isSame(firstPaymentDate, "month")) {
+          if (elapsedMonths == 0 && moment(loan.PaymentStart).month() != firstPaymentDate.month()) {
             loan.schedule.push({
               LoanID: loan.LoanID,
               LoanName: loan.LoanName,
               date: firstPaymentDate.endOf("day").toISOString(),
               amount: 0,
               interest: 0,
-              principal: loan.LoanBalance,
+              principal: 0,
+              balance: loan.LoanBalance
+            });
+          } else {
+            loan.LoanBalance = loan.LoanBalance - principal;
+            loan.interest = loan.interest + interest;
+            available -= amount;
+
+            loan.schedule.push({
+              LoanID: loan.LoanID,
+              LoanName: loan.LoanName,
+              date: currentMonth.endOf("day").toISOString(),
+              amount: amount,
+              interest: interest,
+              principal: principal,
               balance: loan.LoanBalance
             });
           }
-
-          loan.LoanBalance = loan.LoanBalance - principal;
-          loan.interest = loan.interest + interest;
-          available -= amount;
-
-          loan.schedule.push({
-            LoanID: loan.LoanID,
-            LoanName: loan.LoanName,
-            date: moment(loan.PaymentStart).add(elapsedMonths, "month").endOf("day").toISOString(),
-            amount: amount,
-            interest: interest,
-            principal: principal,
-            balance: loan.LoanBalance
-          });
         }
       }
 
       // Handle extra money
       for (let loan of loanOrder) {
         // Skip paid off loans
-        if (moneyRound(loan.LoanBalance, 0) > 0) {
+        if (loan.LoanBalance > 0) {
           let amount = Math.min(loan.LoanBalance, available);
 
           loan.LoanBalance -= amount;
@@ -162,6 +182,8 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
       description: strategy.description,
       loans: loans.map(l => loanOrder.find(lo => lo.LoanID == l.LoanID)),
       masterSchedule: [],
+      consolidatedSchedule: [],
+      accumulatedSchedule: [],
       principal: 0,
       interest: 0,
       total: 0,
@@ -179,7 +201,10 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
       strategyResult.masterSchedule = [...strategyResult.masterSchedule, ...loan.schedule];
     }
 
-    strategyResult.consolidated = consolidateSchedule(_.cloneDeep(strategyResult.masterSchedule));
+    let { accumulatedSchedule, consolidatedSchedule } = calcAlternativeSchedules(_.cloneDeep(strategyResult.masterSchedule));
+    strategyResult.consolidatedSchedule = consolidatedSchedule;
+    strategyResult.accumulatedSchedule = accumulatedSchedule;
+
     strategyResult.principal = moneyRound(strategyResult.principal);
     strategyResult.interest = moneyRound(strategyResult.interest);
     strategyResult.total = moneyRound(strategyResult.total);

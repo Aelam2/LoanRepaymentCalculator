@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import constants from "utils/constants.js";
 import moment from "moment";
 import { Chart } from "@antv/g2";
 import { Col, Row, Card, Result, Button, Switch } from "antd";
 import PageLoading from "components/PageLoading";
 import { FormattedMessage, useIntl } from "react-intl";
-import DataSet from "@antv/data-set";
+import debounce from "lodash/debounce";
 import styles from "../DashboardPage.module.scss";
 
 const topColResponsiveProps = {
@@ -18,12 +18,11 @@ const ChartRow = React.memo(({ isMobile, refetchData, width, currency, data = []
   const chartContainer = React.createRef();
   const chartExtraContainer = React.createRef();
 
-  let cardHeight = isMobile ? 350 : 450;
-  let chartHeight = isMobile ? 325 : 450;
+  let cardHeight = isMobile ? 250 : 450;
+  let chartHeight = isMobile ? 225 : 450;
 
   useEffect(() => {
     if (data.length && chartContainer.current) {
-      let uniqueDates = [...new Set(data.map(d => d.date))];
       let maxYScale = Math.ceil(Math.max.apply(Math,data.map(d => d.balance)) / 2000) * 2000 //prettier-ignore
       let padding = [isMobile ? 35 : 30, !isMobile ? 20 : 7.5, isMobile ? 40 : 60, isMobile ? 7.5 : maxYScale > 10000 ? 60 : 50];
 
@@ -127,11 +126,24 @@ const ChartRow = React.memo(({ isMobile, refetchData, width, currency, data = []
         });
       }
 
+      chart.on("tooltip:change", e => {
+        setTimeout(() => {
+          let date = moment(e.title, "MMM, YYYY");
+          props.onChartTooltipHover(date.toISOString());
+        }, 5);
+      });
+
+      chart.on("tooltip:hide", e => {
+        setTimeout(() => {
+          props.onChartTooltipHover(null);
+        }, 5);
+      });
+
       chart.render();
 
       return () => chart.destroy();
     }
-  }, [data]);
+  }, [data.length || chartContainer.current]);
 
   return (
     <Row gutter={24} type="flex">

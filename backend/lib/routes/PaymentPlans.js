@@ -580,7 +580,7 @@ router
         where: { PaymentPlanID, UserID }
       });
 
-      if (result != 1) res.status(404).json({ status: "error", data: null, error: "Loan does not exist for user" });
+      if (result != 1) res.status(404).json({ status: "error", data: null, error: "Payment plan does not exist for user" });
 
       res.status(200).json({ status: "success", data: PaymentPlanID });
     } catch (err) {

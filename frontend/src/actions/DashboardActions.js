@@ -7,6 +7,7 @@ import { DASHBOARD_FETCH_LOANS_SUCCESS, DASHBOARD_FETCH_LOANS_LOADING, DASHBOARD
 import { DASHBOARD_CREATE_LOAN_SUCCESS, DASHBOARD_CREATE_LOAN_LOADING, DASHBOARD_CREATE_LOAN_ERROR } from "actions/DashboardActionTypes";
 import { DASHBOARD_UPDATE_LOAN_SUCCESS, DASHBOARD_UPDATE_LOAN_LOADING, DASHBOARD_UPDATE_LOAN_ERROR } from "actions/DashboardActionTypes";
 import { DASHBOARD_DELETE_LOAN_SUCCESS, DASHBOARD_DELETE_LOAN_LOADING, DASHBOARD_DELETE_LOAN_ERROR } from "actions/DashboardActionTypes";
+import { DASHBOARD_HIDE_LOAN_SUCCESS, DASHBOARD_UNHIDE_LOAN_SUCCESS } from "actions/DashboardActionTypes";
 
 import { DASHBOARD_FETCH_PAYMENT_PLANS_SUCCESS, DASHBOARD_FETCH_PAYMENT_PLANS_LOADING, DASHBOARD_FETCH_PAYMENT_PLANS_ERROR } from "actions/DashboardActionTypes.js"; //prettier-ignore
 import { DASHBOARD_CREATE_PAYMENT_PLANS_SUCCESS, DASHBOARD_CREATE_PAYMENT_PLANS_LOADING, DASHBOARD_CREATE_PAYMENT_PLANS_ERROR } from "actions/DashboardActionTypes"; //prettier-ignore
@@ -15,7 +16,7 @@ import { DASHBOARD_DELETE_PAYMENT_PLANS_SUCCESS, DASHBOARD_DELETE_PAYMENT_PLANS_
 import { DASHBOARD_TOGGLE_CURRENT_PAYMENT_PLAN_SUCCESS, DASHBOARD_TOGGLE_CURRENT_PAYMENT_PLAN_LOADING } from 'actions/DashboardActionTypes' //prettier-ignore
 
 import { DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_SUCCESS, DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_LOADING, DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_ERROR} from "actions/DashboardActionTypes"; //prettier-ignore
-import { DASHBOARD_ANALYTICS_TOGGLE_CONSOLIDATED_VIEW } from "actions/DashboardActionTypes"; //prettier-ignore
+import { DASHBOARD_ANALYTICS_TOGGLE_CONSOLIDATED_VIEW, DASHBOARD_ON_CHART_TOOLTIP_HOVER_SUCCESS } from "actions/DashboardActionTypes"; //prettier-ignore
 
 export const toggleListAccordion = (type, isOpen) => {
   return dispatch => {
@@ -148,6 +149,24 @@ export const deleteLoan = LoanID => {
 
       throw new Error("There was a problem deleting your loan!");
     }
+  };
+};
+
+export const hideLoan = LoanID => {
+  return dispatch => {
+    dispatch({
+      type: DASHBOARD_HIDE_LOAN_SUCCESS,
+      payload: LoanID
+    });
+  };
+};
+
+export const unHideLoan = LoanID => {
+  return dispatch => {
+    dispatch({
+      type: DASHBOARD_UNHIDE_LOAN_SUCCESS,
+      payload: LoanID
+    });
   };
 };
 
@@ -294,7 +313,7 @@ export const handleMobileTabChange = key => {
   };
 };
 
-export const fetchAmortizationSchedule = (consolidated = 0) => {
+export const fetchAmortizationSchedule = (hidden = []) => {
   return async dispatch => {
     try {
       dispatch({
@@ -302,7 +321,7 @@ export const fetchAmortizationSchedule = (consolidated = 0) => {
         payload: true
       });
 
-      const { data } = await axios.get(`/me/loans/amortization?${querystring.stringify({ consolidated: consolidated })}`);
+      const { data } = await axios.get(`/me/loans/amortization?${querystring.stringify({ hidden: hidden.join(",") })}`);
 
       dispatch({
         type: DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_SUCCESS,
@@ -324,6 +343,15 @@ export const toggleConsolidatedView = boolean => {
     dispatch({
       type: DASHBOARD_ANALYTICS_TOGGLE_CONSOLIDATED_VIEW,
       payload: boolean
+    });
+  };
+};
+
+export const onChartTooltipHover = date => {
+  return dispatch => {
+    dispatch({
+      type: DASHBOARD_ON_CHART_TOOLTIP_HOVER_SUCCESS,
+      payload: date
     });
   };
 };

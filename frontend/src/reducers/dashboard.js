@@ -1,9 +1,11 @@
+import moment from "moment";
 import { DASHBOARD_ADD_EDIT_DRAWER_TOGGLE, DASHBOARD_LIST_ACCORDION_TOGGLE, DASHBOARD_MOBILE_TAB_CHANGE } from "actions/DashboardActionTypes";
 
 import { DASHBOARD_FETCH_LOANS_SUCCESS, DASHBOARD_FETCH_LOANS_LOADING, DASHBOARD_FETCH_LOANS_ERROR } from "actions/DashboardActionTypes";
 import { DASHBOARD_CREATE_LOAN_SUCCESS, DASHBOARD_CREATE_LOAN_LOADING, DASHBOARD_CREATE_LOAN_ERROR } from "actions/DashboardActionTypes";
 import { DASHBOARD_UPDATE_LOAN_SUCCESS, DASHBOARD_UPDATE_LOAN_LOADING, DASHBOARD_UPDATE_LOAN_ERROR } from "actions/DashboardActionTypes";
 import { DASHBOARD_DELETE_LOAN_SUCCESS, DASHBOARD_DELETE_LOAN_LOADING, DASHBOARD_DELETE_LOAN_ERROR } from "actions/DashboardActionTypes";
+import { DASHBOARD_HIDE_LOAN_SUCCESS, DASHBOARD_UNHIDE_LOAN_SUCCESS } from "actions/DashboardActionTypes";
 
 import { DASHBOARD_FETCH_PAYMENT_PLANS_SUCCESS, DASHBOARD_FETCH_PAYMENT_PLANS_LOADING, DASHBOARD_FETCH_PAYMENT_PLANS_ERROR } from "actions/DashboardActionTypes"; //prettier-ignore
 import { DASHBOARD_CREATE_PAYMENT_PLANS_SUCCESS, DASHBOARD_CREATE_PAYMENT_PLANS_LOADING, DASHBOARD_CREATE_PAYMENT_PLANS_ERROR } from "actions/DashboardActionTypes"; //prettier-ignore
@@ -12,7 +14,7 @@ import { DASHBOARD_DELETE_PAYMENT_PLANS_SUCCESS, DASHBOARD_DELETE_PAYMENT_PLANS_
 import { DASHBOARD_TOGGLE_CURRENT_PAYMENT_PLAN_SUCCESS, DASHBOARD_TOGGLE_CURRENT_PAYMENT_PLAN_LOADING } from 'actions/DashboardActionTypes' //prettier-ignore
 
 import { DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_SUCCESS, DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_LOADING, DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_ERROR } from "actions/DashboardActionTypes"; //prettier-ignore
-import { DASHBOARD_ANALYTICS_TOGGLE_CONSOLIDATED_VIEW } from "actions/DashboardActionTypes";
+import { DASHBOARD_ANALYTICS_TOGGLE_CONSOLIDATED_VIEW, DASHBOARD_ON_CHART_TOOLTIP_HOVER_SUCCESS } from "actions/DashboardActionTypes";
 
 const DEFAULT_STATE = {
   drawer: {
@@ -49,7 +51,10 @@ const DEFAULT_STATE = {
       description: "",
       loans: [],
       masterSchedule: [],
-      consolidated: [],
+      consolidatedSchedule: [],
+      accumulatedSchedule: [],
+      minimumPlan: {},
+      selectedMonth: {},
       principal: 0,
       interest: 0,
       months: 0
@@ -201,6 +206,34 @@ export default (state = DEFAULT_STATE, action) => {
         loans: {
           ...state.loans,
           deleting: false
+        }
+      };
+
+    case DASHBOARD_HIDE_LOAN_SUCCESS:
+      return {
+        ...state,
+        loans: {
+          ...state.loans,
+          data: state.loans.data.map(l => {
+            if (l.LoanID === action.payload) {
+              return { ...l, hidden: true };
+            }
+            return l;
+          })
+        }
+      };
+
+    case DASHBOARD_UNHIDE_LOAN_SUCCESS:
+      return {
+        ...state,
+        loans: {
+          ...state.loans,
+          data: state.loans.data.map(l => {
+            if (l.LoanID === action.payload) {
+              return { ...l, hidden: false };
+            }
+            return l;
+          })
         }
       };
 
@@ -367,7 +400,10 @@ export default (state = DEFAULT_STATE, action) => {
         ...state,
         analytics: {
           ...state.analytics,
-          data: action.payload,
+          data: {
+            ...state.analytics.data,
+            ...action.payload
+          },
           loading: false,
           error: false,
           errorMessage: false
@@ -393,6 +429,22 @@ export default (state = DEFAULT_STATE, action) => {
           isConsolidatedView: action.payload
         }
       };
+
+    case DASHBOARD_ON_CHART_TOOLTIP_HOVER_SUCCESS:
+      return {
+        ...state,
+        analytics: {
+          ...state.analytics,
+          data: {
+            ...state.analytics.data,
+            selectedMonth:
+              state.analytics.data.accumulatedSchedule.find(
+                d => moment(d.date).month() == moment(action.payload).month() && moment(d.date).year() == moment(action.payload).year()
+              ) || {}
+          }
+        }
+      };
+
     default:
       return state;
   }

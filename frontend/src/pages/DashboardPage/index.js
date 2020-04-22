@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import * as actions from "actions/DashboardActions";
@@ -13,7 +13,9 @@ const { Sider } = Layout;
 class DashboardPage extends React.Component {
   componentDidMount = async () => {
     try {
-      await Promise.all([this.props.fetchLoans(), this.props.fetchPaymentPlans()]);
+      if (!this.props.loans.data.length && !this.props.paymentPlans.data.length) {
+        await Promise.all([this.props.fetchLoans(), this.props.fetchPaymentPlans()]);
+      }
     } catch (err) {
       return;
     }
@@ -28,6 +30,16 @@ class DashboardPage extends React.Component {
     await this.props.toggleListAccordion(type, isOpen);
   };
 
+  toggleHideLoan = async (LoanID, hidden) => {
+    if (!hidden) {
+      await this.props.hideLoan(LoanID);
+    } else {
+      await this.props.unHideLoan(LoanID);
+    }
+
+    await this.props.fetchAmortizationSchedule(this.props.loans.data.filter(l => l.hidden).map(l => l.LoanID));
+  };
+
   openDrawer = async (type, item) => {
     await this.props.toggleAddEditDrawer(true, null, null);
     await this.props.toggleAddEditDrawer(true, type, item);
@@ -39,7 +51,7 @@ class DashboardPage extends React.Component {
 
   toggleCurrentPlan = async (PaymentPlanID, IsCurrent) => {
     await this.props.toggleCurrentPlan(PaymentPlanID, IsCurrent);
-    await this.props.fetchAmortizationSchedule();
+    await this.props.fetchAmortizationSchedule(this.props.loans.data.filter(l => l.hidden).map(l => l.LoanID));
   };
 
   render() {
@@ -108,6 +120,7 @@ class DashboardPage extends React.Component {
                 headerClassName={styles.header}
                 bodyClassName={styles.body}
                 openDrawer={this.openDrawer}
+                toggleHideLoan={this.toggleHideLoan}
                 data={loans.data}
                 loading={loans.loading || paymentPlans.loading}
                 error={loans.error || paymentPlans.error}
@@ -167,6 +180,7 @@ class DashboardPage extends React.Component {
             <Loans
               isOpen={loans.isOpen}
               toggleListAccordion={this.toggleListAccordion}
+              toggleHideLoan={this.toggleHideLoan}
               openDrawer={this.openDrawer}
               data={loans.data}
               loading={loans.loading || paymentPlans.loading}

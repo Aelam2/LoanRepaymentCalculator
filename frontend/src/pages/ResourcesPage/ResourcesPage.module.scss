@@ -2,6 +2,7 @@
 
 .layout {
   min-height: calc(100vh - #{$layout-header-height}) !important;
+  margin-top: 64px;
 
   .sider {
     flex: 0 0 $layout-sider-default-width !important;

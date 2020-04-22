@@ -38,16 +38,23 @@ export default {
   "dashboard.drawer.paymentPlans.addPaymentBtn": "Add Payment",
 
   "dashboard.analysis.card.one.title": "Payoff Date",
-  "dashboard.analysis.card.one.tooltip": "Date that loans will be paid 100% off",
-  "dashboard.analysis.card.one.footer": "Original: ",
+  "dashboard.analysis.card.one.tooltip": "Date that loans will be 100% paid off",
+  "dashboard.analysis.card.one.daysLeft": "days left",
+  "dashboard.analysis.card.one.monthsFaster": "months faster",
+  "dashboard.analysis.card.one.percentQuicker": "% quicker",
+  "dashboard.analysis.card.one.footer": "Original Payoff: ",
 
-  "dashboard.analysis.card.two.title": "Principle Remaining",
-  "dashboard.analysis.card.two.tooltip": "Date that loans will be paid 100% off",
-  "dashboard.analysis.card.two.footer": "Original: ",
+  "dashboard.analysis.card.two.title": "Total Balance",
+  "dashboard.analysis.card.two.tooltip": "Total Balance = Principal + Accrued Interest",
+  "dashboard.analysis.card.two.footer": "Original Total: ",
 
-  "dashboard.analysis.card.three.title": "Daily Interest Accrued",
-  "dashboard.analysis.card.three.tooltip": "Date that loans will be paid 100% off",
-  "dashboard.analysis.card.three.footer": "Original: ",
+  "dashboard.analysis.card.three.title": "Principal",
+  "dashboard.analysis.card.three.tooltip": "Principal amount that is currently owed",
+  "dashboard.analysis.card.three.footer": "Original Total Interest: ",
+
+  "dashboard.analysis.card.four.title": "Accured Intrest",
+  "dashboard.analysis.card.four.tooltip": "Total interest accrued over the life of the loan",
+  "dashboard.analysis.card.four.footer": "Original Total Interest: ",
 
   "dashboard.analysis.toggleConsolidatedView": "Consolidated View",
 

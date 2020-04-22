@@ -31,7 +31,9 @@ const darkBlue = {
   "disabled-color": "rgba(0, 0, 0, 0.82)",
   "disabled-bg": "#bfbfbf85",
 
-  "select-item-selected-bg": "#fc5c9c"
+  "select-item-selected-bg": "#fc5c9c",
+
+  "table-header-bg": "#293a51"
 };
 
 let theme = darkBlue;

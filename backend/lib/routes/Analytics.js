@@ -86,7 +86,7 @@ let router = express.Router();
 router.route("/amortization").get(async (req, res) => {
   try {
     let { UserID } = req.user;
-    let { hidden = [] } = req.body;
+    let { hidden } = req.query;
 
     // Get all active loans for a user
     let currentLoans = await Loans.findAll({
@@ -104,20 +104,14 @@ router.route("/amortization").get(async (req, res) => {
     });
 
     // Loans that have not been hidden by user
-    let activeLoans = currentLoans
-      .map(l => l.toJSON())
-      .map(l => {
-        if (!hidden.includes(l.LoanID)) {
-          return l;
-        }
-      });
+    let activeLoans = currentLoans.map(l => l.toJSON()).filter(l => !(hidden.split(",") || []).some(hl => hl == l.LoanID));
 
     let AllocationMethodID = currentPlan && currentPlan.hasOwnProperty("AllocationMethodID") ? currentPlan.AllocationMethodID : 4;
     let payments = currentPlan && currentPlan.hasOwnProperty("Payments") ? currentPlan.Payments : [];
 
     let [planResult, minimumResult] = await Promise.all([
-      calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], _.cloneDeep(payments))
-      // calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], [])
+      calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], _.cloneDeep(payments)),
+      calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], [])
     ]);
 
     // Return loan information with array of scheduled payments
