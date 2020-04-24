@@ -59,7 +59,7 @@ class UserSignUpPage extends React.Component {
     this.setState({ passwordPopover: !passwordPopover });
 
     if (value.length < 6) {
-      return promise.reject("Must be atleast 6 charactersisMobile");
+      return promise.reject("Must be atleast 8 characters");
     }
 
     if (value && confirmDirty) {

@@ -1,6 +1,7 @@
 import React from "react";
 import { FormattedMessage } from "react-intl";
 import { Layout } from "antd";
+import { Link } from "react-router-dom";
 import { Textfit } from "react-textfit";
 
 import ThemeSelector from "components/ThemeProvider/ThemeSelector";
@@ -27,7 +28,7 @@ class LayoutUnAuthorized extends React.Component {
           <div className={styles.content}>
             <div className={styles.top}>
               <div className={styles.header}>
-                <Textfit className={styles.title} mode="single" max="32">
+                <Textfit className={styles.title} mode="single" max={32}>
                   <FormattedMessage id="application.title" defaultMessage="Loan Payoff Calculator" tagName="span" />
                 </Textfit>
               </div>
@@ -37,7 +38,14 @@ class LayoutUnAuthorized extends React.Component {
             </div>
             {children}
           </div>
-          {/* <DefaultFooter /> */}
+          <div className={`${styles.policy}`}>
+            <a href="https://www.iubenda.com/privacy-policy/50357273" className="iubenda-black iubenda-embed" title="Privacy Policy">
+              Privacy Policy
+            </a>
+            <Link className={`${styles.policyBtn}`} title="Terms and Conditions " to="/terms-and-conditions">
+              Terms and Conditions
+            </Link>
+          </div>
         </div>
       </Layout>
     );

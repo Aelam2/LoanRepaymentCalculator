@@ -21,6 +21,7 @@ import ResourcesPage from "pages/ResourcesPage";
 import UserProfilePage from "pages/UserProfilePage";
 import UserSignInPage from "pages/UserSignInPage";
 import UserSignUpPage from "pages/UserSignUpPage";
+import TermsAndConditions from "pages/Policies/TermsAndConditions";
 
 import "./App.scss";
 
@@ -61,6 +62,7 @@ class App extends React.Component {
               >
                 <Route path="/user/sign-in" component={UserSignInPage} />
                 <Route path="/user/sign-up" component={UserSignUpPage} />
+                <Route path="/terms-and-conditions" component={TermsAndConditions} exact />
               </LayoutUnAuthorized>
             );
           } else {
@@ -80,6 +82,7 @@ class App extends React.Component {
                 <Route path="/payment-schedule" component={PaymentSchedulePage} exact />
                 <Route path="/resources" component={ResourcesPage} exact />
                 <Route path="/user/profile" component={UserProfilePage} exact />
+                <Route path="/terms-and-conditions" component={TermsAndConditions} exact />
               </LayoutAuthorized>
             );
           }

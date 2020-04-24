@@ -115,3 +115,37 @@ $screen-xxs: 360px;
   color: $text-color-secondary;
   font-size: $font-size-base + 2px;
 }
+
+.policy {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.policyBtn {
+  background: #383838 url(//cdn.iubenda.com/icon_gray_mini.png) no-repeat;
+  background-size: auto 14px;
+  background-position: 7px 3px;
+  background-position-x: 6px;
+  background-position-y: 2px;
+
+  text-decoration: none;
+  color: #fff;
+  -webkit-box-shadow: 0 1px 0 #5b5c5c;
+  box-shadow: 0 1px 0 #5b5c5c;
+  -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+  border-color: transparent;
+
+  display: inline-block;
+  border: 1px;
+  border-radius: 3px;
+  font-size: 11px;
+  line-height: 18px;
+  font-weight: bold;
+
+  font-family: "Helvetica Neue", Helvetica, Arial, FreeSans, sans-serif;
+  padding: 0px 8px 0px 20px;
+}
