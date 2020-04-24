@@ -2,11 +2,13 @@ name: Build and deploy Node.js app to Azure Web App - loan-calculator-client-sta
 
 on:
   push:
-    branches: [ staging ]
+    branches: 
+      - staging
     paths: 
       - 'frontend/**'
   pull_request:
-    branches: [ staging ]
+    branches: 
+      - staging
     paths:
       - 'frontend/**'
 
