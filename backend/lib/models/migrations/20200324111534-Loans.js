@@ -21,8 +21,8 @@ module.exports = {
           type: Sequelize.STRING,
           allowNull: false
         },
-        LoanType: {
-          type: Sequelize.UUID,
+        LoanTypeID: {
+          type: Sequelize.INTEGER,
           allowNull: false,
           references: {
             model: { tableName: "CodeSets" },
@@ -57,7 +57,7 @@ module.exports = {
           }
         },
         StatusID: {
-          type: Sequelize.UUID,
+          type: Sequelize.INTEGER,
           allowNull: true,
           references: {
             model: { tableName: "CodeSets" },

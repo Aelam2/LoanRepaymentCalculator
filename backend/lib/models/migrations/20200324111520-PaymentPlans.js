@@ -19,8 +19,15 @@ module.exports = {
           allowNull: false
         },
         PlanName: {
-          type: Sequelize.INTEGER,
+          type: Sequelize.STRING,
           allowNull: false
+        },
+        AllocationMethodID: {
+          type: Sequelize.INTEGER,
+          references: {
+            model: { tableName: "CodeSets" },
+            key: "CodeValueID"
+          }
         },
         IsCurrent: {
           type: Sequelize.BOOLEAN,

@@ -15,6 +15,10 @@
  *            required: true
  *            format: int32
  *            description: Overlying payment plan that current payment is associated with.
+ *          PaymentName:
+ *            type: string
+ *            require: true
+ *            description: Name of Payment
  *          PaymentDate:
  *            type: string
  *            format: date-time
@@ -25,16 +29,11 @@
  *            format: float
  *            required: true
  *            description: Amount user's total loan balance will be reduced by after the payment date
- *          AllocationMethodID:
- *            type: integer
- *            format: uuid
- *            required: true
- *            description: How the payment is dispersed among the user's loans. (Snowball, avalanche, ect...)
- *          IsRecurring:
+ *          RecurringTypeID:
  *            type: integer
  *            format: int32
  *            required: true
- *            description: Whether the payment recurs every month or is a one-time lump sum payment.
+ *            description: Whether the payment recurs monthly, yearly, or never.
  *          DateCreated:
  *            type: string
  *            format: date-time
@@ -50,9 +49,10 @@
  *        example:
  *          PaymentID: 1
  *          PaymentPlanID: 1
+ *          PaymentName: Extra Monthly Payment
  *          PaymentDate: 2020-04-01
  *          PaymentAmount: 333.25
- *          AllocationMethodID: db7270f8-0601-46af-ba68-4c77523c7329
+ *          AllocationMethodID: 4
  *          IsRecurring: 1
  *          DateCreated: 2020-03-24 11:31:00.5230000 -05:00
  *          DateUpdated: 2020-03-24 13:00:00.6030000 -05:00
@@ -74,6 +74,10 @@ module.exports = (sequelize, DataTypes) => {
           key: "PaymentPlanID"
         }
       },
+      PaymentName: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
       PaymentDate: {
         type: DataTypes.DATE
       },
@@ -84,17 +88,12 @@ module.exports = (sequelize, DataTypes) => {
           min: 1
         }
       },
-      AllocationMethodID: {
+      RecurringTypeID: {
         type: DataTypes.UUID,
         references: {
           model: { tableName: "CodeSets" },
           key: "CodeValueID"
         }
-      },
-      IsRecurring: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: 1
       },
       DateCreated: {
         type: DataTypes.DATE
@@ -115,10 +114,16 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  Payments.associate = function(models) {
+  Payments.associate = function (models) {
     Payments.belongsTo(models.PaymentPlans, {
       foreignKey: "PaymentPlanID",
       targetKey: "PaymentPlanID"
+    });
+
+    Payments.belongsTo(models.CodeSets, {
+      foreignKey: "RecurringTypeID",
+      targetKey: "CodeValueID",
+      as: "RecurringType"
     });
   };
 

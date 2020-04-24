@@ -103,7 +103,7 @@ router.route("/sign-up").post(userSignUpRules(), validate, async (req, res) => {
     if (sequelizeError.status) {
       res.status(sequelizeError.status).json({ ...sequelizeError, status: "error" });
     } else {
-      res.status(500).json({ status: "error", result: null, error: "An unexpected error occurred" });
+      res.status(500).json({ status: "error", data: null, error: "An unexpected error occurred" });
     }
   }
 });
@@ -159,7 +159,7 @@ router.route("/oauth/google").post((req, res, next) => {
       if (sequelizeError.status) {
         res.status(sequelizeError.status).json({ ...sequelizeError, status: "error" });
       } else {
-        res.status(500).json({ status: "error", result: null, error: "An unexpected error occurred" });
+        res.status(500).json({ status: "error", data: null, error: "An unexpected error occurred" });
       }
     }
   })(req, res, next);
@@ -216,7 +216,7 @@ router.route("/oauth/facebook").post((req, res, next) => {
       if (sequelizeError.status) {
         res.status(sequelizeError.status).json({ ...sequelizeError, status: "error" });
       } else {
-        res.status(500).json({ status: "error", result: null, error: "An unexpected error occurred" });
+        res.status(500).json({ status: "error", data: null, error: "An unexpected error occurred" });
       }
     }
   })(req, res, next);
@@ -274,7 +274,7 @@ router.route("/sign-in").post(passport.authenticate("local", { session: false })
 
     res.status(200).json({ token });
   } catch (err) {
-    res.status(500).json({ status: "error", result: null, error: "An unexpected error occurred" });
+    res.status(500).json({ status: "error", data: null, error: "An unexpected error occurred" });
   }
 });
 

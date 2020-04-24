@@ -6,7 +6,7 @@ import { FormattedMessage, FormattedNumber } from "react-intl";
 import QueueAnim from "rc-queue-anim";
 import SimpleBar from "simplebar-react";
 import { Button, List, Spin, Result, Typography, Empty } from "antd";
-import { EditFilled, RightOutlined, FolderOpenOutlined } from "@ant-design/icons";
+import { EditFilled, RightOutlined, FolderOpenOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import styles from "./index.module.scss";
 
 const { Paragraph, Text, Title } = Typography;
@@ -15,7 +15,7 @@ class Loans extends React.Component {
   render() {
     let { openDrawer, currency, data, loading, error } = this.props;
     let { containerName, headerClassName, bodyClassName } = this.props;
-    let { isOpen, toggleListAccordion, isMobile } = this.props;
+    let { isOpen, toggleListAccordion, toggleHideLoan, isMobile } = this.props;
 
     return (
       <div className={`${styles.viewSection} ${containerName}`}>
@@ -30,11 +30,11 @@ class Loans extends React.Component {
             </Paragraph>
           </Button>
         </div>
-        <div className={`${styles.body} ${bodyClassName} ${isOpen ? styles.bodyOpen : styles.bodyClosed}`}>
+        <div className={`${styles.body} ${bodyClassName} ${isMobile || isOpen ? styles.bodyOpen : styles.bodyClosed}`}>
           <SimpleBar className={styles.list}>
             {(() => {
               if (error) {
-                return <Result status="warning" title="Error loading loans" />;
+                return <Result status="warning" title={<FormattedMessage id="dashboard.accordion.loans.error" defaultMessage="Error loading plans" />} />;
               }
 
               if (loading) {
@@ -45,7 +45,7 @@ class Loans extends React.Component {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      visibility: isOpen ? "visible" : "hidden"
+                      visibility: isMobile || isOpen ? "visible" : "hidden"
                     }}
                   >
                     <Spin />
@@ -56,15 +56,22 @@ class Loans extends React.Component {
               if (data && data.length) {
                 return (
                   <QueueAnim delay={150} id="loans-list">
-                    {data.map((loan) => {
+                    {data.map(loan => {
                       return (
                         <List.Item
                           key={loan.LoanID}
                           className={styles.listItemContainer}
                           actions={[
-                            <Text key="edit" type="secondary" onClick={() => openDrawer("loans", loan)}>
-                              edit
+                            <Text key="edit" onClick={() => openDrawer("loans", loan)}>
+                              {/* <FormattedMessage id="dashboard.accordion.loans.edit.button" defaultMessage="Edit" /> */}
                               <EditFilled style={{ marginLeft: "5px" }} />
+                            </Text>,
+                            <Text key="edit" type="secondary" onClick={() => toggleHideLoan(loan.LoanID, loan.hidden)}>
+                              {loan.hidden ? (
+                                <EyeInvisibleOutlined className={styles.activeIcon} style={{ marginLeft: "5px" }} />
+                              ) : (
+                                <EyeOutlined className={styles.deactiveIcon} style={{ marginLeft: "5px" }} />
+                              )}
                             </Text>
                           ]}
                         >
@@ -75,7 +82,6 @@ class Loans extends React.Component {
                             <Text>
                               <FormattedNumber
                                 value={loan.LoanBalance}
-                                cd
                                 style="currency"
                                 currency={currency}
                                 minimumFractionDigits={0}
@@ -120,7 +126,7 @@ class Loans extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     isMobile: state.site.isMobile,
     currency: state.site.currency,

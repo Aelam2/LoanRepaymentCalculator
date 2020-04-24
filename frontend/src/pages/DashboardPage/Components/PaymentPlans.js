@@ -7,7 +7,7 @@ import QueueAnim from "rc-queue-anim";
 import SimpleBar from "simplebar-react";
 
 import { Button, List, Spin, Result, Typography, Empty } from "antd";
-import { EditFilled, RightOutlined, ScheduleOutlined } from "@ant-design/icons";
+import { EditFilled, RightOutlined, ScheduleOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import styles from "./index.module.scss";
 
 const { Paragraph, Text, Title } = Typography;
@@ -20,7 +20,7 @@ class PaymentPlans extends React.Component {
   render() {
     let { openDrawer, currency, data, loading, error } = this.props;
     let { containerName, headerClassName, bodyClassName } = this.props;
-    let { isOpen, toggleListAccordion, isMobile, loansExist } = this.props;
+    let { isOpen, toggleListAccordion, isMobile, toggleCurrentPlan } = this.props;
 
     return (
       <div className={`${styles.viewSection} ${containerName}`}>
@@ -35,11 +35,13 @@ class PaymentPlans extends React.Component {
             </Paragraph>
           </Button>
         </div>
-        <div className={`${styles.body} ${bodyClassName} ${isOpen ? styles.bodyOpen : styles.bodyClosed}`}>
+        <div className={`${styles.body} ${bodyClassName} ${isMobile || isOpen ? styles.bodyOpen : styles.bodyClosed}`}>
           <SimpleBar className={styles.list}>
             {(() => {
               if (error) {
-                return <Result status="warning" title="Error loading loans" />;
+                return (
+                  <Result status="warning" title={<FormattedMessage id="dashboard.accordion.paymentPlans.error" defaultMessage="Error loading plans" />} />
+                );
               }
 
               if (loading) {
@@ -50,7 +52,7 @@ class PaymentPlans extends React.Component {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      visibility: isOpen ? "visible" : "hidden"
+                      visibility: isMobile || isOpen ? "visible" : "hidden"
                     }}
                   >
                     <Spin />
@@ -61,39 +63,28 @@ class PaymentPlans extends React.Component {
               if (data && data.length) {
                 return (
                   <QueueAnim delay={150} id="loans-list">
-                    {data.map((loan) => {
+                    {data.map(plan => {
                       return (
                         <List.Item
-                          key={loan.LoanID}
+                          key={plan.PaymentPlanID}
                           className={styles.listItemContainer}
                           actions={[
-                            <Text key="edit" type="secondary" onClick={() => openDrawer("loans", loan)}>
-                              edit
+                            <Text key="edit" type="secondary" onClick={() => openDrawer("paymentPlans", plan)}>
+                              {/* <FormattedMessage id="dashboard.accordion.paymentPlans.edit.button" defaultMessage="Edit" /> */}
                               <EditFilled style={{ marginLeft: "5px" }} />
+                            </Text>,
+                            <Text key="edit" type="secondary" onClick={() => toggleCurrentPlan(plan.PaymentPlanID, plan.IsCurrent == 1 ? 0 : 1)}>
+                              {/* <FormattedMessage id="dashboard.accordion.paymentPlans.edit.button" defaultMessage="Edit" /> */}
+                              <CheckCircleOutlined className={plan.IsCurrent ? styles.activeIcon : styles.deactiveIcon} style={{ marginLeft: "5px" }} />
                             </Text>
                           ]}
                         >
                           <div className={styles.listItemContent}>
                             <Title ellipsis className={styles.listItemTitle} level={4}>
-                              {loan.LoanName}
+                              {plan.PlanName}
                             </Title>
                             <Text>
-                              <FormattedNumber
-                                value={loan.LoanBalance}
-                                style="currency"
-                                currency={currency}
-                                minimumFractionDigits={0}
-                                maximumFractionDigits={0}
-                              />{" "}
-                              /{" "}
-                              <FormattedNumber
-                                value={loan.PaymentMinimum}
-                                style="currency"
-                                currency={currency}
-                                minimumFractionDigits={0}
-                                maximumFractionDigits={0}
-                              />{" "}
-                              / <FormattedNumber value={loan.InterestRate} style="percent" minimumFractionDigits={2} />
+                              {plan.AllocationMethod.CodeValueName} / {plan.Payments.length} {plan.Payments.length > 1 ? "payments" : "payment"}
                             </Text>
                           </div>
                         </List.Item>
@@ -124,7 +115,7 @@ class PaymentPlans extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     isMobile: state.site.isMobile,
     currency: state.site.currency,

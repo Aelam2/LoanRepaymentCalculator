@@ -1,11 +1,11 @@
 import { Sequelize } from "../models/models";
 
-const handleSequelizeError = (err) => {
+const handleSequelizeError = err => {
   let status = null;
   let error = "";
   let result = {
     codeName: "",
-    value: "",
+    value: ""
   };
 
   if (err instanceof Sequelize.UniqueConstraintError) {
@@ -13,19 +13,26 @@ const handleSequelizeError = (err) => {
     error = err.errors[0].message;
     result = {
       codeName: err.errors[0].path,
-      value: err.errors[0].value,
+      value: err.errors[0].value
     };
   } else if (err instanceof Sequelize.ValidationError) {
     status = 422;
     error = err.errors[0].message;
     result = {
       codeName: err.errors[0].path,
-      value: err.errors[0].value,
+      value: err.errors[0].value
     };
   }
   return { status, error, result };
 };
 
+/**
+ * @description Throws a constraint error if the Model contains a record where the requested field equals the requested value
+ * @param  {Object} model
+ * @param  {String} field
+ * @param  {String} value
+ * @param  {String} errMessage
+ */
 const isUnique = async (model, field, value, errMessage) => {
   try {
     // Check if model contains an object containing value
@@ -43,7 +50,7 @@ const isUnique = async (model, field, value, errMessage) => {
     if (err.message.includes("contains row with")) {
       throw new Sequelize.UniqueConstraintError({
         message: err.message,
-        errors: [{ path: field, value: value, message: errMessage || `${field} has already been taken` }],
+        errors: [{ path: field, value: value, message: errMessage || `${field} has already been taken` }]
       });
     }
 

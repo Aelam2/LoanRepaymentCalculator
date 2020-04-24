@@ -19,6 +19,11 @@
  *            type: string
  *            required: true
  *            description: User inputted name for payment plan.
+ *          AllocationMethodID:
+ *            type: integer
+ *            format: uuid
+ *            required: true
+ *            description: How the payment is dispersed among the user's loans. (Snowball, avalanche, ect...)
  *          IsCurrent:
  *            type: integer
  *            format: int32
@@ -64,8 +69,15 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       },
       PlanName: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
+      },
+      AllocationMethodID: {
+        type: DataTypes.UUID,
+        references: {
+          model: { tableName: "CodeSets" },
+          key: "CodeValueID"
+        }
       },
       IsCurrent: {
         type: DataTypes.BOOLEAN,
@@ -90,10 +102,21 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  PaymentPlans.associate = function(models) {
+  PaymentPlans.associate = function (models) {
     PaymentPlans.belongsTo(models.Users, {
       foreignKey: "UserID",
       targetKey: "UserID"
+    });
+
+    PaymentPlans.hasMany(models.Payments, {
+      foreignKey: "PaymentPlanID",
+      targetKey: "PaymentPlanID"
+    });
+
+    PaymentPlans.belongsTo(models.CodeSets, {
+      foreignKey: "AllocationMethodID",
+      targetKey: "CodeValueID",
+      as: "AllocationMethod"
     });
   };
 

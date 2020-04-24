@@ -1,8 +1,8 @@
 import axios from "axios";
-import { USER_SIGN_UP_SUCCESS, USER_SIGN_UP_LOADING, USER_SIGN_UP_ERROR } from "./types";
-import { USER_SIGN_IN_SUCCESS, USER_SIGN_IN_LOADING, USER_SIGN_IN_ERROR } from "./types";
-import { USER_SIGN_OUT_SUCCESS } from "./types";
-import { USER_CHANGE_LOCALE_SUCCESS, USER_CHANGE_THEME_SUCCESS } from "./types";
+import { USER_SIGN_UP_SUCCESS, USER_SIGN_UP_LOADING, USER_SIGN_UP_ERROR } from "actions/UserActionTypes";
+import { USER_SIGN_IN_SUCCESS, USER_SIGN_IN_LOADING, USER_SIGN_IN_ERROR } from "actions/UserActionTypes";
+import { USER_SIGN_OUT_SUCCESS } from "actions/UserActionTypes";
+import { USER_CHANGE_LOCALE_SUCCESS, USER_CHANGE_THEME_SUCCESS } from "actions/UserActionTypes";
 
 export const localSignUp = data => {
   return async dispatch => {

@@ -1,6 +1,7 @@
 @import "utils/variables.scss";
 
 .content-container {
+  position: relative;
   background-image: url(https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg);
   background-size: 100%;
   background-position: left 50px;
@@ -14,10 +15,9 @@
 }
 
 .main-content {
-  padding: 24px;
+  padding: 0px 24px 24px 24px;
   margin: 0;
   min-height: calc(100vh - 64px);
-  margin-top: $layout-header-height;
 }
 
 .ant-form-item-explain {
@@ -39,10 +39,77 @@
   left: 0 !important;
 }
 
+.ant-card-head {
+  border-bottom: 1px solid darken(#374d6b, 10%);
+
+  .ant-card-head-title {
+    padding: 0px !important;
+  }
+}
+
+.ant-card-body {
+  padding: 0px;
+}
+
 .ant-skeleton-paragraph {
   margin: 0px;
 }
 
 .secondary-text {
   color: #43dde6;
+}
+
+.ant-picker-cell-disabled {
+  .ant-picker-cell-inner {
+    text-decoration: line-through;
+    background-color: transparent;
+  }
+}
+
+@media (max-width: $isMobile) {
+  .am-tabs-tab-bar-wrap {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+  }
+
+  .am-tab-bar-item {
+    overflow: hidden;
+  }
+}
+
+.ant-switch {
+  &.ant-switch-checked {
+    background-color: $primary-color !important;
+  }
+  &:not(.ant-switch-checked) {
+    background-color: #5b5b5b !important;
+  }
+  &:after {
+    background-color: #fff !important;
+  }
+}
+
+.ant-card-extra {
+  padding: 0px !important;
+}
+
+.ant-list-item-action {
+  li {
+    font-size: 24px !important;
+  }
+}
+
+.ant-card-head-wrapper {
+  @media (max-width: 500px) {
+    flex-wrap: wrap !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+
+    .ant-card-extra {
+      float: none !important;
+      margin-left: initial !important;
+    }
+  }
 }

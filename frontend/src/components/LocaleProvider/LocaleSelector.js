@@ -9,7 +9,6 @@ const LocaleSelector = props => {
 
   const langMenu = (
     <Menu className={styles.dropDownMenu} selectedKeys={[selectedLocale]} onClick={onChange}>
-      {console.log(availableLanguages)}
       {availableLanguages.map(locale => (
         <Menu.Item key={locale.value}>{locale.name}</Menu.Item>
       ))}

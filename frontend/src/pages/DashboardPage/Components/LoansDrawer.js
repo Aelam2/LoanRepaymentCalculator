@@ -16,7 +16,7 @@ const formMap = {
     form: {
       id: "LoanName",
       name: "LoanName",
-      label: "Loan Name",
+      label: <FormattedMessage id="dashboard.drawer.loans.form.loanName" defaultMessage="Loan Name" />,
       rules: [{ required: true, message: "Loan name is required!", whitespace: true }]
     },
     input: {
@@ -27,7 +27,7 @@ const formMap = {
     form: {
       id: "LoanBalance",
       name: "LoanBalance",
-      label: "Starting Balance",
+      label: <FormattedMessage id="dashboard.drawer.loans.form.loanBalance" defaultMessage="Starting Balance" />,
       rules: [
         { required: true, type: "number", whitespace: true, message: "Balance must be a positive number" },
         { min: 1, type: "number", message: "Must be greater than 0" }
@@ -47,9 +47,20 @@ const formMap = {
     form: {
       id: "InterestRate",
       name: "InterestRate",
-      label: "Interest Rate",
+      label: <FormattedMessage id="dashboard.drawer.loans.form.intereRate" defaultMessage="Interest Rate" />,
       rules: [
-        { required: true, type: "number", whitespace: true, message: "Interest rate is required" },
+        {
+          required: true,
+          whitespace: true,
+          message: "Interest rate is required",
+          validator: (rule, value) => {
+            if (isNaN(value)) {
+              Promise.reject("Interest rate is required");
+            }
+
+            return Promise.resolve();
+          }
+        },
         { min: 0, type: "number", message: "Must be greater than or equal to 0", transform: value => value / 100 }
       ]
     },
@@ -68,7 +79,7 @@ const formMap = {
     form: {
       id: "PaymentMinimum",
       name: "PaymentMinimum",
-      label: "Minimum Payment",
+      label: <FormattedMessage id="dashboard.drawer.loans.form.paymentMinimum" defaultMessage="Minimum Payment" />,
       rules: [
         { required: true, type: "number", whitespace: true, message: "Min. payment is required" },
         { min: 0, type: "number", message: "Must be greater than 0" }
@@ -88,7 +99,7 @@ const formMap = {
     form: {
       id: "PaymentStart",
       name: "PaymentStart",
-      label: "Next Payment Date",
+      label: <FormattedMessage id="dashboard.drawer.loans.form.paymentStart" defaultMessage="Next Payment Date" />,
       rules: [{ required: true, type: "object", whitespace: true, message: "Start Date is required!" }]
     },
     input: {
@@ -100,12 +111,12 @@ const formMap = {
     }
   },
   StatusID: {
-    form: { id: "StatusID", name: "StatusID", label: "Status", rules: [] },
+    form: { id: "StatusID", name: "StatusID", label: <FormattedMessage id="dashboard.drawer.loans.form.statusID" defaultMessage="Status" />, rules: [] },
     input: { size: "large" }
   }
 };
 
-class DrawerPaymentPlans extends React.Component {
+class DrawerLoans extends React.Component {
   constructor(props) {
     super(props);
 
@@ -150,7 +161,7 @@ class DrawerPaymentPlans extends React.Component {
       this.formRef.current.setFieldsValue({
         LoanName: isExisting ? item.LoanName : null,
         LoanBalance: isExisting ? item.LoanBalance : null,
-        InterestRate: isExisting ? item.InterestRate * 100 : null,
+        InterestRate: isExisting ? Number(item.InterestRate * 100).toFixed(2) : null,
         PaymentMinimum: isExisting ? item.PaymentMinimum : null,
         PaymentStart: isExisting ? moment(item.PaymentStart) : null,
         StatusID: isExisting ? item.StatusID : null
@@ -167,21 +178,20 @@ class DrawerPaymentPlans extends React.Component {
       values.InterestRate = values.InterestRate / 100;
 
       if (isExisting) {
-        await this.props.updateExistingPaymentPlan({ LoanID: item.LoanID, ...values });
+        await this.props.updateLoan({ LoanID: item.LoanID, ...values });
       } else {
-        await this.props.createNewPaymentPlan(values);
+        await this.props.createLoan(values);
       }
-
-      await this.props.toggleAddEditDrawer(false, null);
+      await Promise.all([this.props.fetchAmortizationSchedule(), this.props.toggleAddEditDrawer(false, null)]);
     } catch (err) {
-      let errMessage = this.state.isExisting ? "There was a problem uppdating the selected Payment Plan." : "An unexpected error occured during plan creation";
+      let errMessage = this.state.isExisting ? "There was a problem uppdating the selected loan." : "An unexpected error occured during loan creation";
       notification.error({ duration: 3000, message: errMessage });
     }
   };
 
   onDelete = async LoanID => {
     try {
-      await this.props.deleteExistingPaymentPlan(LoanID);
+      await this.props.deleteLoan(LoanID);
 
       await this.props.toggleAddEditDrawer(false, null);
     } catch (err) {
@@ -206,12 +216,11 @@ class DrawerPaymentPlans extends React.Component {
             <Button
               type="primary"
               className={`${styles.btnSmall} ${isSaving && styles.btnLoading}`}
-              form="newLoan"
-              htmlType="submit"
+              onClick={() => this.formRef.current.submit()}
               loading={isSaving}
               disabled={isDeleting}
             >
-              Save
+              <FormattedMessage id="dashboard.drawer.header.save" defaultMessage="Save" />
             </Button>
             <Button
               type="danger"
@@ -220,7 +229,7 @@ class DrawerPaymentPlans extends React.Component {
               loading={isDeleting}
               disabled={isSaving}
             >
-              Delete
+              <FormattedMessage id="dashboard.drawer.header.delete" defaultMessage="Delete" />
             </Button>
           </div>
         </div>
@@ -234,8 +243,13 @@ class DrawerPaymentPlans extends React.Component {
             </Button>
           </h3>
           <div className={styles.actions}>
-            <Button type="primary" className={`${styles.btnSmall} ${isSaving && styles.btnLoading}`} form="newLoan" htmlType="submit" loading={isSaving}>
-              Save
+            <Button
+              type="primary"
+              className={`${styles.btnSmall} ${isSaving && styles.btnLoading}`}
+              onClick={() => this.formRef.current.submit()}
+              loading={isSaving}
+            >
+              <FormattedMessage id="dashboard.drawer.header.save" defaultMessage="Save" />
             </Button>
           </div>
         </div>
@@ -244,7 +258,8 @@ class DrawerPaymentPlans extends React.Component {
   };
 
   render() {
-    let { visible } = this.props;
+    let { loans, item, visible } = this.props;
+    let { isExisting } = this.state;
 
     if (!visible) {
       return null;
@@ -255,7 +270,30 @@ class DrawerPaymentPlans extends React.Component {
         {this.renderHeader()}
 
         <Form name="newLoan" className={styles.formContainer} ref={this.formRef} layout="vertical" onFinish={this.onFinish}>
-          <Form.Item {...formMap.LoanName.form}>
+          <Form.Item
+            {...formMap.LoanName.form}
+            rules={[
+              ...formMap.LoanName.form.rules,
+              {
+                //Unique Loan Name is Required
+                validator: async (rule, value) => {
+                  const promise = Promise;
+                  if (
+                    loans
+                      .map(l => {
+                        if (isExisting && item.LoanID === l.LoanID) return;
+
+                        return l.LoanName;
+                      })
+                      .includes(value)
+                  ) {
+                    return promise.reject("Loan name must be unique");
+                  }
+                  return promise.resolve();
+                }
+              }
+            ]}
+          >
             <Input {...formMap.LoanName.input} />
           </Form.Item>
 
@@ -283,4 +321,4 @@ class DrawerPaymentPlans extends React.Component {
   }
 }
 
-export default compose(connect(null, actions))(DrawerPaymentPlans);
+export default compose(connect(null, actions))(DrawerLoans);

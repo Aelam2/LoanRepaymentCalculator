@@ -72,7 +72,7 @@ router
    *            type: object
    *            required:
    *              - LoanName
-   *              - LoanType
+   *              - LoanTypeID
    *              - LoanTerm
    *              - StartingPrinciple
    *              - InterestRate
@@ -81,8 +81,8 @@ router
    *            properties:
    *              LoanName:
    *                $ref: '#/components/schemas/Loans/properties/LoanName'
-   *              LoanType:
-   *                $ref: '#/components/schemas/Loans/properties/LoanType'
+   *              LoanTypeID:
+   *                $ref: '#/components/schemas/Loans/properties/LoanTypeID'
    *              LoanTerm:
    *                $ref: '#/components/schemas/Loans/properties/LoanTerm'
    *              LoanBalance:
@@ -97,7 +97,7 @@ router
    *                $ref: '#/components/schemas/Loans/properties/StatusID'
    *    responses:
    *      '200':
-   *        description: New user account was successfully created
+   *        description: New loan was sucessfully added to user's account
    *        content:
    *          application/json:
    *            schema:
@@ -125,12 +125,12 @@ router
   .post(createLoanRules(), validate, async (req, res) => {
     try {
       let { UserID } = req.user;
-      let { LoanName, LoanType, LoanTerm, LoanBalance, InterestRate, PaymentMinimum, PaymentStart } = req.body;
+      let { LoanName, LoanTypeID, LoanTerm, LoanBalance, InterestRate, PaymentMinimum, PaymentStart } = req.body;
 
       let newLoan = await Loans.create({
         UserID,
         LoanName,
-        LoanType,
+        LoanTypeID,
         LoanTerm,
         LoanBalance,
         InterestRate,
@@ -171,8 +171,8 @@ router
    *            properties:
    *              LoanName:
    *                $ref: '#/components/schemas/Loans/properties/LoanName'
-   *              LoanType:
-   *                $ref: '#/components/schemas/Loans/properties/LoanType'
+   *              LoanTypeID:
+   *                $ref: '#/components/schemas/Loans/properties/LoanTypeID'
    *              LoanTerm:
    *                $ref: '#/components/schemas/Loans/properties/LoanTerm'
    *              LoanBalance:
@@ -187,7 +187,7 @@ router
    *                $ref: '#/components/schemas/Loans/properties/StatusID'
    *    responses:
    *      '200':
-   *        description: New user account was successfully created
+   *        description: Exisiting loan was successfully updated
    *        content:
    *          application/json:
    *            schema:
@@ -216,13 +216,13 @@ router
     try {
       let { UserID } = req.user;
       let { LoanID } = req.params;
-      let { LoanName, LoanType, LoanTerm, LoanBalance, InterestRate, PaymentMinimum, PaymentStart } = req.body;
+      let { LoanName, LoanTypeID, LoanTerm, LoanBalance, InterestRate, PaymentMinimum, PaymentStart } = req.body;
 
       // Update Loan via LoanID and UserID
       await Loans.update(
         {
           ...(LoanName && { LoanName }),
-          ...(LoanType && { LoanType }),
+          ...(LoanTypeID && { LoanTypeID }),
           ...(LoanTerm && { LoanTerm }),
           ...(LoanBalance && { LoanBalance }),
           ...(InterestRate && { InterestRate }),
@@ -255,12 +255,12 @@ router
    *      - in: path
    *        name: LoanID
    *        schema:
-   *          $ref: '#/components/schemas/Loans/properties/LoanName'
+   *          $ref: '#/components/schemas/Loans/properties/LoanID'
    *        required: true
    *        description: Numeric ID of the loan
    *    responses:
    *      '200':
-   *        description: New user account was successfully created
+   *        description: Loan was successfully deleted
    *        content:
    *          application/json:
    *            schema:
@@ -270,8 +270,8 @@ router
    *                  type: string
    *                  example: success
    *                data:
-   *                  type: object
-   *                  $ref: '#/components/schemas/Loans'
+   *                  type: integer
+   *                  $ref: '#/components/schemas/Loans/properties/LoanID'
    *      '422':
    *        description: Invalid input for a field
    *        content:

@@ -1,7 +1,12 @@
 import JWT from "jsonwebtoken";
 import { Users, Sequelize } from "../models/models";
 const Op = Sequelize.Op;
-
+/**
+ * @description Signs a JWT token via UserID
+ * @param  {Object} user
+ * @param {Number} user.UserID
+ * @returns {String} accessToken
+ */
 const signUserToken = user => {
   return JWT.sign(
     {

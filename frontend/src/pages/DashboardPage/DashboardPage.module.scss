@@ -19,7 +19,7 @@
     transition: 0.2s;
     margin-left: $layout-sider-default-width;
     margin-top: $layout-header-height;
-
+    min-height: 300px;
     padding: 24px;
   }
 }
@@ -44,82 +44,14 @@
   height: calc(100vh - #{$layout-header-height});
 }
 
-.salesCard {
-  .salesBar {
-    padding: 0 0 32px 32px;
+.dashboard {
+  @media (max-width: $isMobile) {
+    padding: 1em;
+    height: calc(100vh - 100px);
+    overflow: auto;
   }
-  .salesRank {
-    padding: 0 32px 32px 72px;
-  }
-  .ant-tabs-bar {
-    padding-left: 16px;
-    .ant-tabs-nav .ant-tabs-tab {
-      padding-top: 16px;
-      padding-bottom: 14px;
-      line-height: 24px;
-    }
-  }
-  .ant-tabs-extra-content {
-    padding-right: 24px;
-    line-height: 55px;
-  }
-  .ant-card-head {
-    position: relative;
-  }
-  .ant-card-head-title {
-    align-items: normal;
-  }
-}
-
-.horizontalScroll {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  margin-bottom: 24px;
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x mandatory;
-  scroll-padding: 50%;
-
-  .analysisCard {
-    flex: 0 0 auto;
-    margin-right: 24px;
-    width: 350px;
-    scroll-snap-align: center;
-  }
-}
-
-.analysisCard {
-  box-shadow: 0 2.5px 10px rgba(0, 0, 0, 0.096), 0 1.5px 3px rgba(0, 0, 0, 0.082);
 }
 
 .mobileTab {
-  margin-top: 64px;
-
-  &.loans {
-    .loansSection {
-      height: 100%;
-
-      .header {
-      }
-      .body {
-        height: 100%;
-      }
-    }
-  }
-
-  &.paymentPlans {
-    .paymentPlansSection {
-      height: 100%;
-
-      .header {
-      }
-      .body {
-        height: 100%;
-      }
-    }
-  }
-
-  &.dashboard {
-    padding: 12px;
-  }
+  position: relative;
 }
