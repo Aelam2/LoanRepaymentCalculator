@@ -7,12 +7,23 @@ import * as actions from "actions/UserActions";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import { Form, Input, Button, Checkbox, message } from "antd";
-import { FacebookOutlined, GoogleOutlined } from "@ant-design/icons";
+import { FacebookOutlined, GoogleOutlined, LoadingOutlined } from "@ant-design/icons";
 import LoginFields from "./FormMap";
 import styles from "./UserSignInPage.module.scss";
 
 class UserSignInPage extends React.Component {
+  state = {
+    googleLoading: false,
+    facebookLoading: false
+  };
+
   formRef = React.createRef();
+
+  setSocialLoading = (key, boolean) => {
+    this.setState({
+      [key]: boolean
+    });
+  };
 
   onFinish = async values => {
     // Start sign-in action
@@ -26,6 +37,8 @@ class UserSignInPage extends React.Component {
       let result = await this.props.oAuthGoogleSignIn(res.tokenObj.access_token);
       if (result) message.success("Sign in successful!");
     }
+
+    this.setSocialLoading("googleLoading", false);
   };
 
   onFacebookLogin = async res => {
@@ -34,11 +47,14 @@ class UserSignInPage extends React.Component {
       let result = await this.props.oAuthFacebookSignIn(res.accessToken);
       if (result) message.success("Sign in successful!");
     }
+
+    this.setSocialLoading("facebookLoading", false);
   };
 
   render() {
     let { intl } = this.props;
     let { loading } = this.props;
+    let { facebookLoading, googleLoading } = this.state;
 
     return (
       <div className={`${styles.main} ${styles.login}`}>
@@ -61,7 +77,7 @@ class UserSignInPage extends React.Component {
           </Form.Item>
           <Form.Item className={styles.submitContainer}>
             <Button size="large" className={styles.submit} type="primary" htmlType="submit" loading={loading}>
-              <FormattedMessage id="login.login" defaultMessage="Login" />
+              {!loading && <FormattedMessage id="login.login" defaultMessage="Login" />}
             </Button>
             <Link className={`${styles.register} secondary-text`} to="/user/sign-up">
               <FormattedMessage id="login.other.new" defaultMessage="Create New Account" />
@@ -78,7 +94,16 @@ class UserSignInPage extends React.Component {
                 cookiePolicy={"single_host_origin"}
                 autoLoad={false}
                 render={renderProps => (
-                  <Button size="large" className={styles.socialMediaBtn} icon={<GoogleOutlined />} block={true} onClick={renderProps.onClick}>
+                  <Button
+                    size="large"
+                    className={styles.socialMediaBtn}
+                    icon={!googleLoading ? <GoogleOutlined /> : <LoadingOutlined />}
+                    block={true}
+                    onClick={() => {
+                      this.setSocialLoading("googleLoading", true);
+                      renderProps.onClick();
+                    }}
+                  >
                     <span className={styles.socialMediaBtnInnerText}>
                       <FormattedMessage id="login.other.google" defaultMessage="Continue with Google" />
                     </span>
@@ -92,7 +117,16 @@ class UserSignInPage extends React.Component {
                 cookie={true}
                 isMobile={false}
                 render={renderProps => (
-                  <Button size="large" className={styles.socialMediaBtn} icon={<FacebookOutlined />} block={true} onClick={renderProps.onClick}>
+                  <Button
+                    size="large"
+                    className={styles.socialMediaBtn}
+                    icon={!facebookLoading ? <FacebookOutlined /> : <LoadingOutlined />}
+                    block={true}
+                    onClick={() => {
+                      this.setSocialLoading("facebookLoading", true);
+                      renderProps.onClick();
+                    }}
+                  >
                     <span className={styles.socialMediaBtnInnerText}>
                       <FormattedMessage id="login.other.facebook" defaultMessage="Continue with Facebook" />
                     </span>
