@@ -18,6 +18,11 @@ passport.use(
     },
     async (payload, done) => {
       try {
+        // If user's token doesn't not have a UserID
+        if (!payload.sub) {
+          return done(null, false);
+        }
+
         // Find the user specified in token
         const user = await Users.findOne({ where: { UserID: payload.sub } });
 

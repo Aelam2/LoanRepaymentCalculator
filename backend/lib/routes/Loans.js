@@ -255,7 +255,7 @@ router
    *      - in: path
    *        name: LoanID
    *        schema:
-   *          $ref: '#/components/schemas/Loans/properties/LoanName'
+   *          $ref: '#/components/schemas/Loans/properties/LoanID'
    *        required: true
    *        description: Numeric ID of the loan
    *    responses:
@@ -270,8 +270,8 @@ router
    *                  type: string
    *                  example: success
    *                data:
-   *                  type: object
-   *                  $ref: '#/components/schemas/Loans'
+   *                  type: integer
+   *                  $ref: '#/components/schemas/Loans/properties/LoanID'
    *      '422':
    *        description: Invalid input for a field
    *        content:
