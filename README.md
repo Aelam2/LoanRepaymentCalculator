@@ -70,3 +70,4 @@ REACT_APP_API_BASE_URL=http://localhost:5000:1337
 ### /style_guide
 
 1. Barebones ReactJS project that with example of application's style and components.
+   TEST
