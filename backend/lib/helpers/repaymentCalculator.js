@@ -9,53 +9,6 @@ export const moneyRound = (amount, precision = 2) => {
   return Math.round(amount * factor) / factor;
 };
 
-export const calcAlternativeSchedules = masterSchedule => {
-  let accumulatedSchedule = [];
-  let consolidatedSchedule = [];
-
-  let uniqueDates = [...new Set(masterSchedule.map(p => moment(p.date).startOf("month").endOf("day").toISOString()))];
-
-  for (let d of uniqueDates) {
-    let accumulatedStart = { amount: 0, interest: 0, principal: 0, balance: 0 };
-    let accumulatedPayments = masterSchedule.filter(p => moment(d).isSameOrBefore(moment(p.date).startOf("month").endOf("day")));
-    let accumulatedTotals = accumulatedPayments.reduce((sums, month) => {
-      return {
-        amount: moneyRound((sums.amount += Number(month.amount)), 2),
-        interest: moneyRound((sums.interest += Number(month.interest)), 2),
-        principal: moneyRound((sums.principal += Number(month.principal)), 2),
-        balance: moneyRound((sums.balance += Number(month.balance)), 2)
-      };
-    }, accumulatedStart);
-
-    accumulatedSchedule.push({
-      LoanID: -1,
-      LoanName: "All Loans",
-      date: d,
-      ...accumulatedTotals
-    });
-
-    let consolidatedStart = { amount: 0, interest: 0, principal: 0, balance: 0 };
-    let consolidatedPayments = masterSchedule.filter(p => moment(d).isSame(moment(p.date).startOf("month").endOf("day")));
-    let consolidatedTotals = consolidatedPayments.reduce((sums, month) => {
-      return {
-        amount: moneyRound((sums.amount += Number(month.amount)), 2),
-        interest: moneyRound((sums.interest += Number(month.interest)), 2),
-        principal: moneyRound((sums.principal += Number(month.principal)), 2),
-        balance: moneyRound((sums.balance += Number(month.balance)), 2)
-      };
-    }, consolidatedStart);
-
-    consolidatedSchedule.push({
-      LoanID: 0,
-      LoanName: "All Loans",
-      date: d,
-      ...consolidatedTotals
-    });
-  }
-
-  return { accumulatedSchedule, consolidatedSchedule };
-};
-
 export const calculateSchedule = async (loans, strategyType, payments) => {
   try {
     let hasBalance = true;
@@ -92,7 +45,7 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
         .map(p => Number(p.PaymentAmount))
         .reduce((a, b) => a + b, 0);
 
-      // Sum of recurring monthly payments
+      // Sum of recurring monthly payments... PaymentDate =< current >= PaymentDateEnd
       let monthlyPayments = payments
         .filter(p => p.RecurringTypeID == 7 && currentMonth.isSameOrAfter(moment(p.PaymentDate), "month"))
         .map(p => Number(p.PaymentAmount))
@@ -201,7 +154,7 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
       strategyResult.masterSchedule = [...strategyResult.masterSchedule, ...loan.schedule];
     }
 
-    let { accumulatedSchedule, consolidatedSchedule } = calcAlternativeSchedules(_.cloneDeep(strategyResult.masterSchedule));
+    let { accumulatedSchedule, consolidatedSchedule } = await calcAlternativeSchedules(_.cloneDeep(strategyResult.masterSchedule));
     strategyResult.consolidatedSchedule = consolidatedSchedule;
     strategyResult.accumulatedSchedule = accumulatedSchedule;
 
@@ -215,4 +168,70 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
   } catch (err) {
     throw new Error(err.message);
   }
+};
+
+export const calcAlternativeSchedules = async masterSchedule => {
+  try {
+    let [accumulatedSchedule, consolidatedSchedule] = await Promise.all([calcAccumulatedSchedule(masterSchedule), calcConsolidatedSchedule(masterSchedule)]);
+
+    return { accumulatedSchedule, consolidatedSchedule };
+  } catch (err) {
+    console.log(err.message);
+    return { accumulatedSchedule: [], consolidatedSchedule: [] };
+  }
+};
+
+export const calcAccumulatedSchedule = masterSchedule => {
+  let accumulatedSchedule = [];
+
+  let uniqueDates = [...new Set(masterSchedule.map(p => moment(p.date).startOf("month").endOf("day").toISOString()))];
+
+  for (let d of uniqueDates) {
+    let accumulatedStart = { amount: 0, interest: 0, principal: 0, balance: 0 };
+    let accumulatedPayments = masterSchedule.filter(p => moment(d).isSameOrBefore(moment(p.date).startOf("month").endOf("day")));
+    let accumulatedTotals = accumulatedPayments.reduce((sums, month) => {
+      return {
+        amount: moneyRound((sums.amount += Number(month.amount)), 2),
+        interest: moneyRound((sums.interest += Number(month.interest)), 2),
+        principal: moneyRound((sums.principal += Number(month.principal)), 2),
+        balance: moneyRound((sums.balance += Number(month.balance)), 2)
+      };
+    }, accumulatedStart);
+
+    accumulatedSchedule.push({
+      LoanID: -1,
+      LoanName: "All Loans",
+      date: d,
+      ...accumulatedTotals
+    });
+  }
+
+  return accumulatedSchedule;
+};
+
+export const calcConsolidatedSchedule = masterSchedule => {
+  let consolidatedSchedule = [];
+
+  let uniqueDates = [...new Set(masterSchedule.map(p => moment(p.date).startOf("month").endOf("day").toISOString()))];
+
+  for (let d of uniqueDates) {
+    let consolidatedStart = { amount: 0, interest: 0, principal: 0, balance: 0 };
+    let consolidatedPayments = masterSchedule.filter(p => moment(d).isSame(moment(p.date).startOf("month").endOf("day")));
+    let consolidatedTotals = consolidatedPayments.reduce((sums, month) => {
+      return {
+        amount: moneyRound((sums.amount += Number(month.amount)), 2),
+        interest: moneyRound((sums.interest += Number(month.interest)), 2),
+        principal: moneyRound((sums.principal += Number(month.principal)), 2),
+        balance: moneyRound((sums.balance += Number(month.balance)), 2)
+      };
+    }, consolidatedStart);
+
+    consolidatedSchedule.push({
+      LoanID: 0,
+      LoanName: "All Loans",
+      date: d,
+      ...consolidatedTotals
+    });
+  }
+  return consolidatedSchedule;
 };

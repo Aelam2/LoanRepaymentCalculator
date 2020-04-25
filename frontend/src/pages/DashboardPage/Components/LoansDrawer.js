@@ -220,7 +220,7 @@ class DrawerLoans extends React.Component {
               loading={isSaving}
               disabled={isDeleting}
             >
-              <FormattedMessage id="dashboard.drawer.header.save" defaultMessage="Save" />
+              {!isSaving && <FormattedMessage id="dashboard.drawer.header.save" defaultMessage="Save" />}
             </Button>
             <Button
               type="danger"
@@ -229,7 +229,7 @@ class DrawerLoans extends React.Component {
               loading={isDeleting}
               disabled={isSaving}
             >
-              <FormattedMessage id="dashboard.drawer.header.delete" defaultMessage="Delete" />
+              {!isDeleting && <FormattedMessage id="dashboard.drawer.header.delete" defaultMessage="Delete" />}
             </Button>
           </div>
         </div>
@@ -249,7 +249,7 @@ class DrawerLoans extends React.Component {
               onClick={() => this.formRef.current.submit()}
               loading={isSaving}
             >
-              <FormattedMessage id="dashboard.drawer.header.save" defaultMessage="Save" />
+              {!isSaving && <FormattedMessage id="dashboard.drawer.header.save" defaultMessage="Save" />}
             </Button>
           </div>
         </div>

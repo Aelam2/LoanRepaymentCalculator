@@ -35,8 +35,8 @@
 .editSection {
   height: calc(100vh - #{$layout-header-height});
 
-  @media (min-height: $isMobile) {
-    overflow: hidden;
+  @media (min-width: $isMobile) {
+    overflow: hidden !important;
   }
 
   .btnSmall {
@@ -249,4 +249,9 @@
   -moz-transition: color 0.25s ease-out;
   -o-transition: color 0.25s ease-out;
   transition: color 0.25s ease-out;
+}
+
+.totalSmall {
+  font-size: 12px;
+  float: right;
 }

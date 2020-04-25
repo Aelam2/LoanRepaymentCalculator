@@ -28,6 +28,7 @@ export default {
   "dashboard.drawer.paymentPlans.form.allocationMethodID": "Método de asignación",
   "dashboard.drawer.paymentPlans.form.paymentAmount": "Monto del pago",
   "dashboard.drawer.paymentPlans.form.paymentDate": "Fecha de inicio",
+  "dashboard.drawer.paymentPlans.form.PaymentDateEnd": "Última fecha de pago recurrente",
   "dashboard.drawer.paymentPlans.form.recurringTypeID": "¿Repetir?",
 
   "dashboard.drawer.paymentPlans.allocation.avalanche": "Avalancha: mayor interés primero",

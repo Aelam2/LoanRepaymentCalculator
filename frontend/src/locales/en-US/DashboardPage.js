@@ -29,6 +29,7 @@ export default {
   "dashboard.drawer.paymentPlans.form.allocationMethodID": "Allocation Method",
   "dashboard.drawer.paymentPlans.form.paymentAmount": "Payment Amount",
   "dashboard.drawer.paymentPlans.form.paymentDate": "Start Date",
+  "dashboard.drawer.paymentPlans.form.PaymentDateEnd": "Last Recurring Payment Date",
   "dashboard.drawer.paymentPlans.form.recurringTypeID": "Repeat?",
 
   "dashboard.drawer.paymentPlans.allocation.avalanche": "Avalanche - Highest Interest First",
@@ -42,19 +43,19 @@ export default {
   "dashboard.analysis.card.one.daysLeft": "days left",
   "dashboard.analysis.card.one.monthsFaster": "months faster",
   "dashboard.analysis.card.one.percentQuicker": "% quicker",
-  "dashboard.analysis.card.one.footer": "Original Payoff: ",
+  "dashboard.analysis.card.one.footer": "No Plan: ",
 
   "dashboard.analysis.card.two.title": "Total Balance",
   "dashboard.analysis.card.two.tooltip": "Total Balance = Principal + Accrued Interest",
-  "dashboard.analysis.card.two.footer": "Original Total: ",
+  "dashboard.analysis.card.two.footer": "No Plan: ",
 
   "dashboard.analysis.card.three.title": "Principal",
   "dashboard.analysis.card.three.tooltip": "Principal amount that is currently owed",
-  "dashboard.analysis.card.three.footer": "Original Total Interest: ",
+  "dashboard.analysis.card.three.footer": "No Plan: ",
 
   "dashboard.analysis.card.four.title": "Accured Intrest",
   "dashboard.analysis.card.four.tooltip": "Total interest accrued over the life of the loan",
-  "dashboard.analysis.card.four.footer": "Original Total Interest: ",
+  "dashboard.analysis.card.four.footer": "No Plan: ",
 
   "dashboard.analysis.toggleConsolidatedView": "Consolidated View",
 

@@ -137,6 +137,8 @@ router
    *                      $ref: '#/components/schemas/Payments/properties/PaymentName'
    *                    PaymentDate:
    *                      $ref: '#/components/schemas/Payments/properties/PaymentDate'
+   *                    PaymentDateEnd:
+   *                      $ref: '#/components/schemas/Payments/properties/PaymentDateEnd'
    *                    PaymentAmount:
    *                      $ref: '#/components/schemas/Payments/properties/PaymentAmount'
    *                    RecurringTypeID:
@@ -207,13 +209,14 @@ router
       let paymentCreationPromises = [];
 
       for (let payment of Payments) {
-        let { PaymentDate, PaymentName, PaymentAmount, RecurringTypeID } = payment;
+        let { PaymentDate, PaymentDateEnd, PaymentName, PaymentAmount, RecurringTypeID } = payment;
 
         paymentCreationPromises.push(
           PaymentsModel.create({
             PaymentPlanID: newPlan.PaymentPlanID,
             PaymentName,
             PaymentDate,
+            ...(PaymentDateEnd && { PaymentDateEnd }),
             PaymentAmount,
             RecurringTypeID
           })
@@ -472,13 +475,14 @@ router
       // CREATE PAYMENTS
       // Filter requested payments that have no PaymentID and create
       Payments.filter(p => !p.PaymentID).forEach(p => {
-        let { PaymentName, PaymentDate, PaymentAmount, RecurringTypeID } = p;
+        let { PaymentName, PaymentDate, PaymentDateEnd, PaymentAmount, RecurringTypeID } = p;
 
         dbPromises.push(
           PaymentsModel.create({
             PaymentPlanID,
             PaymentName,
             PaymentDate,
+            ...(PaymentDateEnd && { PaymentDateEnd }),
             PaymentAmount,
             RecurringTypeID
           })
@@ -488,13 +492,14 @@ router
       // UPDATE PAYMENTS
       // Filter Payments that have a PaymentID and make sure they previously existed
       Payments.filter(p1 => currentPayments.some(p2 => p2.PaymentID === p1.PaymentID)).forEach(p => {
-        let { PaymentID, PaymentName, PaymentDate, PaymentAmount, RecurringTypeID } = p;
+        let { PaymentID, PaymentName, PaymentDate, PaymentDateEnd, PaymentAmount, RecurringTypeID } = p;
 
         dbPromises.push(
           PaymentsModel.update(
             {
               ...(PaymentName && { PaymentName }),
               ...(PaymentDate && { PaymentDate }),
+              ...(PaymentDateEnd && { PaymentDateEnd }),
               ...(PaymentAmount && { PaymentAmount }),
               ...(RecurringTypeID && { RecurringTypeID })
             },

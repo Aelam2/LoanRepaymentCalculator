@@ -90,6 +90,22 @@ const formMap = {
     }
   },
 
+  PaymentDateEnd: {
+    form: {
+      id: "PaymentDateEnd",
+      name: "PaymentDateEnd",
+      label: <FormattedMessage id="dashboard.drawer.paymentPlans.form.PaymentDateEnd" defaultMessage="Last Monthly Payment" />,
+      rules: [],
+      style: { marginBottom: "5px" }
+    },
+    input: {
+      size: "default",
+      picker: "month",
+      disabledDate: current => current && current <= moment().endOf("day"),
+      allowClear: true
+    }
+  },
+
   RecurringTypeID: {
     form: {
       id: "RecurringTypeID",
@@ -158,6 +174,12 @@ class DrawerPaymentPlans extends React.Component {
         PlanName: item.PlanName,
         AllocationMethodID: `${item.AllocationMethodID}`
       });
+    } else {
+      // Pre-set Payment Plan Basic Fields
+      this.formRef.current.setFieldsValue({
+        PlanName: "New Plan",
+        AllocationMethodID: "5"
+      });
     }
   };
 
@@ -174,8 +196,8 @@ class DrawerPaymentPlans extends React.Component {
 
       await Promise.all([this.props.fetchAmortizationSchedule(), this.props.toggleAddEditDrawer(false, null)]);
     } catch (err) {
-      let errMessage = this.state.isExisting ? "There was a problem updating the selected Payment Plan." : "An unexpected error occured during plan creation";
-      notification.error({ duration: 3000, message: errMessage });
+      // let errMessage = this.state.isExisting ? "There was a problem updating the selected Payment Plan." : "An unexpected error occured during plan creation";
+      // notification.error({ duration: 3000, message: errMessage });
     }
   };
 
@@ -209,7 +231,7 @@ class DrawerPaymentPlans extends React.Component {
               loading={isSaving}
               disabled={isDeleting}
             >
-              <FormattedMessage id="dashboard.drawer.header.save" defaultMessage="Save" />
+              {!isSaving && <FormattedMessage id="dashboard.drawer.header.save" defaultMessage="Save" />}
             </Button>
             <Button
               type="danger"
@@ -218,7 +240,7 @@ class DrawerPaymentPlans extends React.Component {
               loading={isDeleting}
               disabled={isSaving}
             >
-              <FormattedMessage id="dashboard.drawer.header.delete" defaultMessage="Delete" />
+              {!isDeleting && <FormattedMessage id="dashboard.drawer.header.delete" defaultMessage="Delete" />}
             </Button>
           </div>
         </div>
@@ -238,7 +260,7 @@ class DrawerPaymentPlans extends React.Component {
               onClick={() => this.formRef.current.submit()}
               loading={isSaving}
             >
-              <FormattedMessage id="dashboard.drawer.header.save" defaultMessage="Save" />
+              {!isSaving && <FormattedMessage id="dashboard.drawer.header.save" defaultMessage="Save" />}
             </Button>
           </div>
         </div>
@@ -263,7 +285,7 @@ class DrawerPaymentPlans extends React.Component {
           </Form.Item>
 
           <Form.Item {...formMap.AllocationMethodID.form}>
-            <Select defaultValue="5">
+            <Select>
               <Option value="5">
                 <FormattedMessage id="dashboard.drawer.paymentPlans.allocation.avalanche" defaultMessage="Avalanche - Highest Interest First" />
               </Option>
@@ -349,14 +371,15 @@ class PaymentFormItems extends React.Component {
           PaymentName: p.PaymentName,
           RecurringTypeID: `${p.RecurringTypeID}`,
           PaymentAmount: p.PaymentAmount,
-          PaymentDate: moment(p.PaymentDate)
+          PaymentDate: moment(p.PaymentDate),
+          PaymentDateEnd: p.PaymentDateEnd ? moment(p.PaymentDateEnd) : null
         });
       });
     }
   };
 
   render() {
-    let { add, remove, fields, formRef } = this.props;
+    let { remove, fields, formRef } = this.props;
     let { getFieldsValue } = formRef;
 
     return (
@@ -364,8 +387,8 @@ class PaymentFormItems extends React.Component {
         {/* Dynamically remove and create payments related to payment plans */}
         {fields.map((field, index) => {
           let title = "Additional Payment";
+          let fields = getFieldsValue && getFieldsValue();
           if (getFieldsValue) {
-            let fields = getFieldsValue();
             if (fields.Payments && fields.Payments.length && fields.Payments[index]) {
               title = fields.Payments[index].PaymentName;
             }
@@ -417,6 +440,14 @@ class PaymentFormItems extends React.Component {
                       <Option key="8">Yearly</Option>
                     </Select>
                   </Form.Item>
+                  {/* <Form.Item
+                    {...formMap.PaymentDateEnd.form}
+                    name={[field.name, formMap.PaymentDateEnd.form.name]}
+                    fieldKey={[field.fieldKey, formMap.PaymentDateEnd.id]}
+                    style={{ display: fields.Payments && fields.Payments[index].RecurringTypeID == "7" ? "block" : "none" }}
+                  >
+                    <DatePicker {...formMap.PaymentDateEnd.input} />
+                  </Form.Item> */}
                 </Form.Item>
               </div>
             </Panel>

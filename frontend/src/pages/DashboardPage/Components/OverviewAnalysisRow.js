@@ -16,7 +16,7 @@ const calcDifferencePercent = (before, after) => {
   return Number(100 - percent).toFixed(2);
 };
 
-const StatisticsRow = ({ isMobile, width, data, loading, error, currency, selectedMonth, ...props }) => {
+const StatisticsRow = ({ isMobile, width, data, loading, error, currency, selectedMonth, selectedMinimumMonth, ...props }) => {
   const topColResponsiveProps = {
     ...(!isMobile && { xs: 24 }),
     ...(!isMobile && { sm: 24 }),
@@ -52,7 +52,7 @@ const StatisticsRow = ({ isMobile, width, data, loading, error, currency, select
           )}
           footer={
             <Field
-              label={<FormattedMessage id="dashboard.analysis.card.one.footer" defaultMessage="Original Payoff: " />}
+              label={<FormattedMessage id="dashboard.analysis.card.one.footer" defaultMessage="No Plan: " />}
               value={<FormattedDate value={moment(minimumPlan.finalPayment)} year="numeric" month="long" day="2-digit" />}
             />
           }
@@ -83,7 +83,7 @@ const StatisticsRow = ({ isMobile, width, data, loading, error, currency, select
           bordered={false}
           title={<FormattedMessage id="dashboard.analysis.card.two.title" defaultMessage="Total Balance" />}
           action={
-            <Tooltip title={<FormattedMessage id="dashboard.analysis.card.two.tooltip" defaultMessage="Introduce" />}>
+            <Tooltip title={<FormattedMessage id="dashboard.analysis.card.two.tooltip" defaultMessage="Total Balance = Principal + Accrued Interest" />}>
               <InfoCircleOutlined />
             </Tooltip>
           }
@@ -105,8 +105,22 @@ const StatisticsRow = ({ isMobile, width, data, loading, error, currency, select
           )}
           footer={
             <Field
-              label={<FormattedMessage id="dashboard.analysis.card.two.footer" defaultMessage="Daily Sales" />}
-              value={<FormattedNumber value={minimumPlan.total} style="currency" currency={currency} minimumFractionDigits={0} maximumFractionDigits={0} />}
+              label={<FormattedMessage id="dashboard.analysis.card.two.footer" defaultMessage="No Plan: " />}
+              value={
+                <TweenOne
+                  component="span"
+                  animation={{
+                    Children: {
+                      value: selectedMinimumMonth.amount || minimumPlan.total || 0,
+                      floatLength: 2,
+                      formatMoney: true
+                    },
+                    duration: isMobile ? 0 : selectedMonth.interest ? 250 : 750
+                  }}
+                >
+                  0
+                </TweenOne>
+              }
             />
           }
           contentHeight={46}
@@ -123,54 +137,98 @@ const StatisticsRow = ({ isMobile, width, data, loading, error, currency, select
       <Col {...topColResponsiveProps} lg={24} className={styles.col}>
         <ChartCard
           bordered={false}
-          title={<FormattedMessage id="dashboard.analysis.card.three.title" defaultMessage="Total Sales" />}
+          title={<FormattedMessage id="dashboard.analysis.card.three.title" defaultMessage="Principal" />}
           action={
-            <Tooltip title={<FormattedMessage id="dashboard.analysis.card.three.tooltip" defaultMessage="Introduce" />}>
+            <Tooltip title={<FormattedMessage id="dashboard.analysis.card.three.tooltip" defaultMessage="Principal amount that is currently owed" />}>
               <InfoCircleOutlined />
             </Tooltip>
           }
           loading={loading}
           total={() => (
-            <TweenOne
-              component="span"
-              animation={{
-                Children: {
-                  value: selectedMonth.principal || currentPlan.principal || 0,
-                  floatLength: 2,
-                  formatMoney: true
-                },
-                duration: isMobile ? 0 : selectedMonth.principal ? 250 : 750
-              }}
-            >
-              0
-            </TweenOne>
+            <div>
+              <TweenOne
+                component="span"
+                animation={{
+                  Children: {
+                    value: selectedMonth.principal || currentPlan.principal || 0,
+                    floatLength: 2,
+                    formatMoney: true
+                  },
+                  duration: isMobile ? 0 : selectedMonth.principal ? 250 : 750
+                }}
+              >
+                0
+              </TweenOne>
+
+              <Field
+                className={styles.totalSmall}
+                label={<FormattedMessage id="dashboard.analysis.card.three.footer" defaultMessage="No Plan: " />}
+                value={
+                  <TweenOne
+                    component="span"
+                    animation={{
+                      Children: {
+                        value: selectedMinimumMonth.principal || minimumPlan.principal || 0,
+                        floatLength: 2,
+                        formatMoney: true
+                      },
+                      duration: isMobile ? 0 : selectedMonth.interest ? 250 : 750
+                    }}
+                  >
+                    0
+                  </TweenOne>
+                }
+              />
+            </div>
           )}
           contentHeight={0}
           className={`${styles.analysisCard} ${styles.topRowCard} ${styles.splitColumn}`}
         ></ChartCard>
         <ChartCard
           bordered={false}
-          title={<FormattedMessage id="dashboard.analysis.card.four.title" defaultMessage="Total Sales" />}
+          title={<FormattedMessage id="dashboard.analysis.card.four.title" defaultMessage="Accured Intrest" />}
           action={
-            <Tooltip title={<FormattedMessage id="dashboard.analysis.card.four.tooltip" defaultMessage="Introduce" />}>
+            <Tooltip title={<FormattedMessage id="dashboard.analysis.card.four.tooltip" defaultMessage="Total interest accrued over the life of the loan" />}>
               <InfoCircleOutlined />
             </Tooltip>
           }
+          principal
           loading={loading}
           total={() => (
-            <TweenOne
-              component="span"
-              animation={{
-                Children: {
-                  value: selectedMonth.interest || currentPlan.interest || 0,
-                  floatLength: 2,
-                  formatMoney: true
-                },
-                duration: isMobile ? 0 : selectedMonth.interest ? 250 : 750
-              }}
-            >
-              0
-            </TweenOne>
+            <div>
+              <TweenOne
+                component="span"
+                animation={{
+                  Children: {
+                    value: selectedMonth.interest || currentPlan.interest || 0,
+                    floatLength: 2,
+                    formatMoney: true
+                  },
+                  duration: isMobile ? 0 : selectedMonth.interest ? 250 : 750
+                }}
+              >
+                0
+              </TweenOne>
+              <Field
+                className={styles.totalSmall}
+                label={<FormattedMessage id="dashboard.analysis.card.four.footer" defaultMessage="No Plan: " />}
+                value={
+                  <TweenOne
+                    component="span"
+                    animation={{
+                      Children: {
+                        value: selectedMinimumMonth.interest || minimumPlan.interest || 0,
+                        floatLength: 2,
+                        formatMoney: true
+                      },
+                      duration: isMobile ? 0 : selectedMonth.interest ? 250 : 750
+                    }}
+                  >
+                    0
+                  </TweenOne>
+                }
+              />
+            </div>
           )}
           contentHeight={0}
           className={`${styles.analysisCard} ${styles.topRowCard} ${styles.splitColumn}`}

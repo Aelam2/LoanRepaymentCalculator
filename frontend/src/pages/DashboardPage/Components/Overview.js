@@ -75,6 +75,7 @@ class Overview extends React.Component {
             error={analytics.error || loans.error || paymentPlans.error}
             data={analytics.data}
             selectedMonth={analytics.data.selectedMonth}
+            selectedMinimumMonth={analytics.data.selectedMinimumMonth}
             currentPlan={paymentPlans.currentPlan}
           />
         </QueueAnim>

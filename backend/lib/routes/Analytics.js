@@ -1,8 +1,8 @@
 import express from "express";
 import _ from "lodash";
-import { calculateSchedule } from "../helpers/repaymentCalculator";
+import { calculateSchedule, calcAlternativeSchedules } from "../helpers/repaymentCalculator";
 import { StrategyCodeValueIdMap } from "../helpers/repaymentStrategies";
-import { sequelize, Loans, PaymentPlans, Payments as PaymentsModel } from "../models/models";
+import { Loans, PaymentPlans, Payments as PaymentsModel } from "../models/models";
 
 let router = express.Router();
 

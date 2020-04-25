@@ -293,7 +293,7 @@ export const toggleCurrentPlan = (PaymentPlanID, IsCurrent) => {
       payload: true
     });
 
-    const { data } = await axios.post(`/me/payment-plans/${PaymentPlanID}/activate`, { IsCurrent: IsCurrent });
+    await axios.post(`/me/payment-plans/${PaymentPlanID}/activate`, { IsCurrent: IsCurrent });
 
     // Set currentPlan, update IsCurrent for all plans, and remove loading animations
     dispatch({

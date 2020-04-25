@@ -24,6 +24,9 @@ module.exports = {
         PaymentDate: {
           type: Sequelize.DATE
         },
+        PaymentDateEnd: {
+          type: Sequelize.DATE
+        },
         PaymentAmount: {
           type: Sequelize.FLOAT,
           allowNull: false,

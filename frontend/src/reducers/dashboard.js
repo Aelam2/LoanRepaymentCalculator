@@ -55,6 +55,7 @@ const DEFAULT_STATE = {
       accumulatedSchedule: [],
       minimumPlan: {},
       selectedMonth: {},
+      selectedMinimumMonth: {},
       principal: 0,
       interest: 0,
       months: 0
@@ -360,8 +361,7 @@ export default (state = DEFAULT_STATE, action) => {
           currentPlan: action.payload.IsCurrent ? state.paymentPlans.data.find(p => p.PaymentPlanID == action.payload.PaymentPlanID) : {}
         },
         analytics: {
-          ...state.analytics,
-          loading: false
+          ...state.analytics
         }
       };
 
@@ -439,6 +439,11 @@ export default (state = DEFAULT_STATE, action) => {
             ...state.analytics.data,
             selectedMonth:
               state.analytics.data.accumulatedSchedule.find(
+                d => moment(d.date).month() == moment(action.payload).month() && moment(d.date).year() == moment(action.payload).year()
+              ) || {},
+
+            selectedMinimumMonth:
+              state.analytics.data.minimumPlan.accumulatedSchedule.find(
                 d => moment(d.date).month() == moment(action.payload).month() && moment(d.date).year() == moment(action.payload).year()
               ) || {}
           }

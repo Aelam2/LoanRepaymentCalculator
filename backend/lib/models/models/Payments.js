@@ -24,6 +24,11 @@
  *            format: date-time
  *            required: true
  *            description: Date that payment will be dispersed among loans. Recurring payments wiill use this as reference for future months
+ *          PaymentDateEnd:
+ *            type: string
+ *            format: date-time
+ *            required: true
+ *            description: Date that that recurring monthly payments will end
  *          PaymentAmount:
  *            type: number
  *            format: float
@@ -79,6 +84,9 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       },
       PaymentDate: {
+        type: DataTypes.DATE
+      },
+      PaymentDateEnd: {
         type: DataTypes.DATE
       },
       PaymentAmount: {
