@@ -1,5 +1,5 @@
 export default {
-  "layout.authorized.title": "Calculadora de préstamo",
+  "layout.authorized.title": "Reembolso.dev",
   "layout.authorized.overview": "Tablero",
   "layout.authorized.paymentSchedule": "Calendario de pago",
   "layout.authorized.resources": "Recursos",

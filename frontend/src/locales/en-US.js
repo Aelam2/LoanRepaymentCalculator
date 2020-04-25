@@ -10,7 +10,7 @@ import UserPasswordReset from "./en-US/UserPasswordReset";
 
 export default {
   "navBar.lang": "Languages",
-  "application.title": "Loan Payoff Calculator",
+  "application.title": "Repayment.dev",
   "application.description": "Payoff Loans Smarter and Faster",
 
   ...Forms,

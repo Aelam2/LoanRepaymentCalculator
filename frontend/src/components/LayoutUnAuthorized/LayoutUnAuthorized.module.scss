@@ -80,11 +80,12 @@ $screen-xxs: 360px;
 
 .title {
   position: relative;
-  top: 2px;
+  top: 0px;
   color: $heading-color;
   font-weight: 600;
   font-size: 42px;
   font-family: Avenir, "Helvetica Neue", Arial, Helvetica, sans-serif;
+  margin-right: 0.75rem;
 
   span {
     &::before {
@@ -93,10 +94,8 @@ $screen-xxs: 360px;
       font-size: inherit;
       height: 0.5em;
       overflow: visible;
-      vertical-align: -0.125em;
-
-      /* fa-w-14 */
-      width: 0.5em;
+      vertical-align: -12px;
+      width: 24px;
 
       /* Icon */
       content: url("../../assets/DollarLogoColor.svg");
@@ -112,7 +111,7 @@ $screen-xxs: 360px;
 }
 
 .desc {
-  margin-top: 6px;
+  margin-top: 12px;
   margin-bottom: 40px;
   color: $text-color-secondary;
   font-size: $font-size-base + 2px;

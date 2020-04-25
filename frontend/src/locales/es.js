@@ -10,7 +10,7 @@ import UserPasswordReset from "./es/UserPasswordReset";
 
 export default {
   "navBar.lang": "Idiomas",
-  "application.title": "Calculadora de pago de préstamos",
+  "application.title": "Reembolso.dev",
   "application.description": "Préstamos de pago más inteligentes y rápidos",
 
   ...Forms,

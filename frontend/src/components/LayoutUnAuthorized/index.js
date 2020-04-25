@@ -28,7 +28,7 @@ class LayoutUnAuthorized extends React.Component {
           <div className={styles.content}>
             <div className={styles.top}>
               <div className={styles.header}>
-                <Textfit className={styles.title} mode="single" max={32}>
+                <Textfit className={styles.title} mode="single" max={48}>
                   <FormattedMessage id="application.title" defaultMessage="Loan Payoff Calculator" tagName="span" />
                 </Textfit>
               </div>

@@ -1,6 +1,6 @@
 export default {
   "dashboard.overview.empty.title": "Getting Started!",
-  "dashboard.overview.empty.paragraphOne": 'Welcome to the Loan Repayment Calculator. To get started add your loans under "My Loans".',
+  "dashboard.overview.empty.paragraphOne": 'Welcome to the Repayment.dev Loan Calculator. To get started add your loans under "My Loans".',
   "dashboard.overview.empty.paragraphTwo":
     'Next create a new Payment Plan under "My Plans" that fits your current budget. Create as many plans as you want and easily switch between them to view how it affects the repayment dashboard',
 
@@ -53,7 +53,7 @@ export default {
   "dashboard.analysis.card.three.tooltip": "Principal amount that is currently owed",
   "dashboard.analysis.card.three.footer": "No Plan: ",
 
-  "dashboard.analysis.card.four.title": "Accured Intrest",
+  "dashboard.analysis.card.four.title": "Accrued Interest",
   "dashboard.analysis.card.four.tooltip": "Total interest accrued over the life of the loan",
   "dashboard.analysis.card.four.footer": "No Plan: ",
 
