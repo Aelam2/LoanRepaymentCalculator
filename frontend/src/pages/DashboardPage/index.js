@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import * as actions from "actions/DashboardActions";
+import debounce from "lodash/debounce";
 import { TabBar } from "antd-mobile";
 import { Layout, Drawer } from "antd";
 import { FolderOpenOutlined, FallOutlined, ScheduleOutlined } from "@ant-design/icons";
@@ -37,8 +38,17 @@ class DashboardPage extends React.Component {
       await this.props.unHideLoan(LoanID);
     }
 
-    await this.props.fetchAmortizationSchedule(this.props.loans.data.filter(l => l.hidden).map(l => l.LoanID));
+    this.fetchAmortizationSchedule();
   };
+
+  toggleCurrentPlan = async (PaymentPlanID, IsCurrent) => {
+    await this.props.toggleCurrentPlan(PaymentPlanID, IsCurrent);
+    this.fetchAmortizationSchedule();
+  };
+
+  fetchAmortizationSchedule = debounce(async () => {
+    await this.props.fetchAmortizationSchedule(this.props.loans.data.filter(l => l.hidden).map(l => l.LoanID));
+  }, 750);
 
   openDrawer = async (type, item) => {
     await this.props.toggleAddEditDrawer(true, null, null);
@@ -47,11 +57,6 @@ class DashboardPage extends React.Component {
 
   closeDrawer = async () => {
     await this.props.toggleAddEditDrawer(false, null, null);
-  };
-
-  toggleCurrentPlan = async (PaymentPlanID, IsCurrent) => {
-    await this.props.toggleCurrentPlan(PaymentPlanID, IsCurrent);
-    await this.props.fetchAmortizationSchedule(this.props.loans.data.filter(l => l.hidden).map(l => l.LoanID));
   };
 
   render() {
@@ -92,28 +97,30 @@ class DashboardPage extends React.Component {
             selected={mobileTab === "loans"}
           >
             <div className={`${styles.mobileTab} ${styles.loans}`}>
-              <Drawer
-                className={styles.mobileAddItemDrawer}
-                title={null}
-                placement="left"
-                visible={drawer.visible}
-                onClose={this.closeDrawer}
-                closable={false}
-                getContainer={false}
-                width={width}
-                zIndex={10}
-                bodyStyle={{ height: "100vh", padding: "0px" }}
-                drawerStyle={{ posiiton: "relative" }}
-              >
-                <LoansDrawer
-                  closeDrawer={this.closeDrawer}
-                  item={drawer.item}
+              {drawer.visible && (
+                <Drawer
+                  className={styles.mobileAddItemDrawer}
+                  title={null}
+                  placement="left"
                   visible={drawer.visible}
-                  isSaving={loans.creating || loans.updating}
-                  isDeleting={loans.deleting}
-                  loans={loans.data}
-                />
-              </Drawer>
+                  onClose={this.closeDrawer}
+                  closable={false}
+                  getContainer={false}
+                  width={width}
+                  zIndex={10}
+                  bodyStyle={{ height: "100vh", padding: "0px" }}
+                  drawerStyle={{ posiiton: "relative" }}
+                >
+                  <LoansDrawer
+                    closeDrawer={this.closeDrawer}
+                    item={drawer.item}
+                    visible={drawer.visible}
+                    isSaving={loans.creating || loans.updating}
+                    isDeleting={loans.deleting}
+                    loans={loans.data}
+                  />
+                </Drawer>
+              )}
 
               <Loans
                 containerName={styles.loansSection}
@@ -137,27 +144,29 @@ class DashboardPage extends React.Component {
             selected={mobileTab === "plans"}
           >
             <div className={`${styles.mobileTab} ${styles.paymentPlans}`}>
-              <Drawer
-                className={styles.mobileAddItemDrawer}
-                title={null}
-                placement="left"
-                visible={drawer.visible}
-                onClose={this.closeDrawer}
-                closable={false}
-                getContainer={false}
-                width={width}
-                zIndex={10}
-                bodyStyle={{ height: "100vh", padding: "0px" }}
-                drawerStyle={{ posiiton: "relative" }}
-              >
-                <PaymentPlansDrawer
-                  closeDrawer={this.closeDrawer}
-                  item={drawer.item}
+              {drawer.visible && (
+                <Drawer
+                  className={styles.mobileAddItemDrawer}
+                  title={null}
+                  placement="left"
                   visible={drawer.visible}
-                  isSaving={paymentPlans.creating || paymentPlans.updating}
-                  isDeleting={paymentPlans.deleting}
-                />
-              </Drawer>
+                  onClose={this.closeDrawer}
+                  closable={false}
+                  getContainer={false}
+                  width={width}
+                  zIndex={10}
+                  bodyStyle={{ height: "100vh", padding: "0px" }}
+                  drawerStyle={{ posiiton: "relative" }}
+                >
+                  <PaymentPlansDrawer
+                    closeDrawer={this.closeDrawer}
+                    item={drawer.item}
+                    visible={drawer.visible}
+                    isSaving={paymentPlans.creating || paymentPlans.updating}
+                    isDeleting={paymentPlans.deleting}
+                  />
+                </Drawer>
+              )}
 
               <PaymentPlans
                 toggleCurrentPlan={this.toggleCurrentPlan}

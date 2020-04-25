@@ -40,8 +40,8 @@
 }
 
 .mobileAddItemDrawer {
-  margin-top: $layout-header-height;
   height: calc(100vh - #{$layout-header-height});
+  position: relative;
 }
 
 .dashboard {

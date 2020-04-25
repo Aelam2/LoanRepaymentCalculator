@@ -111,6 +111,7 @@ export const signOutUser = () => {
   return dispatch => {
     localStorage.removeItem("JWT_TOKEN");
     dispatch({ type: USER_SIGN_OUT_SUCCESS, payload: "" });
+    dispatch({ type: "CLEAR_STORE" });
     return true;
   };
 };

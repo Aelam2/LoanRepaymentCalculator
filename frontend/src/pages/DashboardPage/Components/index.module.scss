@@ -34,7 +34,10 @@
 
 .editSection {
   height: calc(100vh - #{$layout-header-height});
-  overflow: hidden;
+
+  @media (min-height: $isMobile) {
+    overflow: hidden;
+  }
 
   .btnSmall {
     margin: 0px 7.5px;
@@ -214,17 +217,17 @@
 }
 
 .horizontalScroll {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
   scroll-snap-type: x mandatory;
-  scroll-padding: 50%;
+  scroll-padding-top: 150px;
+  -webkit-overflow-scrolling: touch !important;
 
   .topRowCard {
     flex: 0 0 auto;
     width: calc(100vw - 60px);
-    scroll-snap-align: center;
+    scroll-snap-align: start;
   }
 }
 
