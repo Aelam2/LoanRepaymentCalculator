@@ -4,8 +4,9 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import * as DashActions from "actions/DashboardActions";
 import * as ScheduleActions from "actions/PaymentScheduleActions";
+import { FormattedNumber } from "react-intl";
 import QueueAnim from "rc-queue-anim";
-import { Table, Card, Select } from "antd";
+import { Table, Card, Select, Spin } from "antd";
 import styles from "./PaymentSchedulePage.module.scss";
 
 const { Option } = Select;
@@ -37,7 +38,7 @@ class PaymentSchedulePage extends React.Component {
   };
 
   render() {
-    let { groupBy, schedule, loading, error } = this.props;
+    let { groupBy, schedule, loading, error, currency } = this.props;
 
     let columns = [
       {
@@ -45,6 +46,8 @@ class PaymentSchedulePage extends React.Component {
         title: groupBy == "month" ? "Loan" : "Date",
         dataIndex: groupBy == "month" ? "LoanName" : "date",
         key: groupBy == "month" ? "LoanName" : "date",
+        fixed: "left",
+        width: 100,
         render: val => {
           return groupBy == "month" ? val : moment(val).format("MMM DD, YYYY");
         }
@@ -53,40 +56,36 @@ class PaymentSchedulePage extends React.Component {
         title: "Total Payment",
         dataIndex: "amount",
         key: "amount",
-        render: val => {
-          return Number(val).toFixed(2);
-        }
+        width: 125,
+        render: val => <FormattedNumber value={val} style="currency" currency={currency} minimumFractionDigits={0} maximumFractionDigits={0} />
       },
       {
         title: "Towards Principal",
         dataIndex: "principal",
         key: "principal",
-        render: val => {
-          return Number(val).toFixed(2);
-        }
+        width: 125,
+        render: val => <FormattedNumber value={val} style="currency" currency={currency} minimumFractionDigits={0} maximumFractionDigits={0} />
       },
       {
         title: "Towards Interest",
         dataIndex: "interest",
         key: "interest",
-        render: val => {
-          return Number(val).toFixed(2);
-        }
+        width: 125,
+        render: val => <FormattedNumber value={val} style="currency" currency={currency} minimumFractionDigits={0} maximumFractionDigits={0} />
       },
       {
         title: "Remaining Balance",
         dataIndex: "balance",
         key: "balance",
-        render: val => {
-          return Number(val).toFixed(2);
-        }
+        width: 125,
+        render: val => <FormattedNumber value={val} style="currency" currency={currency} minimumFractionDigits={0} maximumFractionDigits={0} />
       }
     ];
 
     if (loading) {
       return (
         <div className={styles.layout}>
-          <div className={styles.groupByHeader}>
+          <div className={`${styles.groupByHeader} ant-menu ant-menu-horizontal`}>
             <span className={styles.groupByTitle}>Grouped by:</span>
             <Select
               value={groupBy}
@@ -103,21 +102,20 @@ class PaymentSchedulePage extends React.Component {
               </Option>
             </Select>
           </div>
-          <div className="main-content">
-            <Card>
-              <Table loading={loading} columns={columns} />
-            </Card>
+          <div className="main-content" style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "250px" }}>
+            <Spin />
           </div>
         </div>
       );
     }
 
     if (error) {
+      return null;
     }
 
     return (
       <div className={styles.layout}>
-        <div className={styles.groupByHeader}>
+        <div className={`${styles.groupByHeader} ant-menu ant-menu-horizontal`}>
           <span className={styles.groupByTitle}>Grouped by:</span>
           <Select value={groupBy} onChange={this.handleGroupByChange} bordered={false} className={styles.select}>
             <Option value="month" key="month">
@@ -133,7 +131,7 @@ class PaymentSchedulePage extends React.Component {
             {schedule.map(s => {
               return (
                 <Card className={styles.scheduleCard} title={s.title}>
-                  <Table columns={columns} dataSource={s.payments} pagination={false} size="small" />
+                  <Table columns={columns} dataSource={s.payments} pagination={false} size="small" scroll={{ x: 500 }} />
                 </Card>
               );
             })}
@@ -146,6 +144,7 @@ class PaymentSchedulePage extends React.Component {
 
 const mapStateToProps = state => {
   return {
+    currency: state.site.currency,
     paymentPlans: state.dashboard.paymentPlans,
     analytics: state.dashboard.analytics,
     groupBy: state.paymentSchedule.groupBy,

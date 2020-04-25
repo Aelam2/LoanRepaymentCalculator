@@ -2,7 +2,10 @@
 
 .layout {
   min-height: calc(100vh - #{$layout-header-height}) !important;
-  margin-top: 64px;
+
+  @media (min-width: $isMobile) {
+    margin-top: 64px;
+  }
 
   .sider {
     flex: 0 0 $layout-sider-default-width !important;
@@ -13,7 +16,7 @@
 }
 
 .groupByHeader {
-  margin-bottom: 12px;
+  margin-bottom: 12px !important;
   height: 60px;
   width: 100%;
   background-color: lighten($layout-sider-background-light, 5%);
@@ -46,5 +49,9 @@
   & > div:first-of-type {
     padding: 12px 24px !important;
     font-size: 18px !important;
+  }
+
+  & > div:nth-of-type(2) {
+    padding: 0px !important;
   }
 }

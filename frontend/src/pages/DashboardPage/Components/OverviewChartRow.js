@@ -29,7 +29,7 @@ const ChartRow = React.memo(({ isMobile, refetchData, width, currency, data = []
       const chart = new Chart({
         container: chartContainer.current,
         height: chartHeight,
-        width: chartContainer.current.clientWidth,
+        width: chartContainer.current.clientWidth ? chartContainer.current.clientWidth : width - 28,
         padding: padding,
         theme: "light"
       });
@@ -123,6 +123,55 @@ const ChartRow = React.memo(({ isMobile, refetchData, width, currency, data = []
                     <span class='g2-tooltip-value' style='display: inline-block; float: right; margin-left: 10px; color: red;'>{amount}</span>
                   </li>
                 `
+        });
+      } else {
+        chart.tooltip({
+          showContent: false,
+          showCrosshairs: true,
+          crosshairs: {
+            type: "xy",
+            text: (type, defaultText, items) => {
+              const color = items[0].color;
+              if (type === "x") {
+                return {
+                  offset: 5,
+                  content: `${intl.formatDate(moment(defaultText), { month: "short" })}\n${intl.formatDate(moment(defaultText), { year: "numeric" })}`,
+
+                  position: "start",
+                  style: {
+                    textAlign: "center",
+                    textBaseline: "top",
+                    fill: "#fc5c9c",
+                    fontSize: 14,
+                    fontWeight: "bold",
+                    stroke: "#333",
+                    lineWidth: 2
+                  }
+                };
+              }
+              return {
+                offset: 0,
+                content: intl.formatNumber(defaultText, { style: "currency", currency: currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }),
+                position: "end",
+
+                style: {
+                  textAlign: "end",
+                  fill: "#fc5c9c",
+                  fontSize: 14,
+                  fontWeight: "bold",
+                  stroke: "#333",
+                  lineWidth: 2
+                }
+              };
+            },
+            textBackground: null
+          },
+          itemTpl:
+            '<li class="g2-tooltip-list-item" data-index={index} style="margin-bottom:4px;">' +
+            '<span style="background-color:{color};" class="g2-tooltip-marker"></span>' +
+            "{name}<br/>" +
+            "{value}" +
+            "</li>"
         });
       }
 
