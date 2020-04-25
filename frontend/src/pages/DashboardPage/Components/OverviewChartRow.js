@@ -234,8 +234,8 @@ const ChartRow = React.memo(({ isMobile, refetchData, width, currency, data = []
 
               return (
                 <div className={styles.miniChart} style={{ height: cardHeight, overflowX: "auto" }}>
-                  <div className={styles.chartContent}>
-                    {cardHeight > 0 && <div ref={chartContainer}></div>}
+                  <div className={styles.chartContent} style={{ overflow: "hidden" }}>
+                    {cardHeight > 0 && <div ref={chartContainer} style={{ overflow: "hidden" }}></div>}
                     {cardHeight > 0 && <div ref={chartExtraContainer}></div>}
                   </div>
                 </div>
