@@ -3,6 +3,9 @@ import { USER_SIGN_UP_SUCCESS, USER_SIGN_UP_LOADING, USER_SIGN_UP_ERROR } from "
 import { USER_SIGN_IN_SUCCESS, USER_SIGN_IN_LOADING, USER_SIGN_IN_ERROR } from "actions/UserActionTypes";
 import { USER_SIGN_OUT_SUCCESS } from "actions/UserActionTypes";
 import { USER_CHANGE_LOCALE_SUCCESS, USER_CHANGE_THEME_SUCCESS } from "actions/UserActionTypes";
+import { USER_SEND_PASSWORD_RESET_SUCCESS, USER_SEND_PASSWORD_RESET_LOADING, USER_SEND_PASSWORD_RESET_ERROR } from "actions/UserActionTypes";
+import { USER_FETCH_RESET_DETAILS_SUCCESS, USER_FETCH_RESET_DETAILS_LOADING, USER_FETCH_RESET_DETAILS_ERROR } from "actions/UserActionTypes";
+import { USER_SET_NEW_PASSWORD_SUCCESS, USER_SET_NEW_PASSWORD_LOADING, USER_SET_NEW_PASSWORD_ERROR } from "actions/UserActionTypes";
 
 export const localSignUp = data => {
   return async dispatch => {
@@ -125,5 +128,84 @@ export const changeSiteTheme = theme => {
     localStorage.setItem("SITE_THEME", theme);
     dispatch({ type: USER_CHANGE_THEME_SUCCESS, payload: theme });
     return true;
+  };
+};
+
+export const sendPasswordReset = ({ Email }) => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: USER_SEND_PASSWORD_RESET_LOADING,
+        payload: true
+      });
+
+      const { data } = await axios.post(`/password-reset`, { Email }, { handlerEnabled: false });
+
+      dispatch({
+        type: USER_SEND_PASSWORD_RESET_SUCCESS,
+        payload: data.data
+      });
+    } catch (err) {
+      console.log(err, err.response);
+      dispatch({
+        type: USER_SEND_PASSWORD_RESET_ERROR,
+        payload: {
+          error: true,
+          message: err.response.data.error
+        }
+      });
+    }
+  };
+};
+
+export const getPasswordResetDetails = token => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: USER_FETCH_RESET_DETAILS_LOADING,
+        payload: true
+      });
+
+      const { data } = await axios.get(`/password-reset/${token}`, { handlerEnabled: false });
+
+      dispatch({
+        type: USER_FETCH_RESET_DETAILS_SUCCESS,
+        payload: data.data
+      });
+    } catch (err) {
+      dispatch({
+        type: USER_FETCH_RESET_DETAILS_ERROR,
+        payload: {
+          error: true,
+          errorMessage: err.response.data.error || "An unexpected error occured"
+        }
+      });
+    }
+  };
+};
+
+export const setNewPassword = (token, { Email, Password }) => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: USER_SET_NEW_PASSWORD_SUCCESS,
+        payload: true
+      });
+
+      await axios.post(`/password-reset/${token}`, { Email, Password }, { handlerEnabled: false });
+
+      dispatch({
+        type: USER_SET_NEW_PASSWORD_LOADING,
+        payload: null
+      });
+    } catch (err) {
+      dispatch({
+        type: USER_SET_NEW_PASSWORD_ERROR,
+        payload: {
+          error: true,
+          errorMessage: err.response.data.error || "An unexpected error occured"
+        }
+      });
+    }
   };
 };

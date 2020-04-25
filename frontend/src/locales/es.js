@@ -6,6 +6,7 @@ import ResourcesPage from "./es/ResourcesPage";
 import UserProfilePage from "./es/UserProfilePage";
 import UserSignInPage from "./es/UserSignInPage";
 import UserSignUpPage from "./es/UserSignUpPage";
+import UserPasswordReset from "./es/UserPasswordReset";
 
 export default {
   "navBar.lang": "Idiomas",
@@ -19,5 +20,6 @@ export default {
   ...ResourcesPage,
   ...UserProfilePage,
   ...UserSignInPage,
-  ...UserSignUpPage
+  ...UserSignUpPage,
+  ...UserPasswordReset
 };

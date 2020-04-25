@@ -102,7 +102,7 @@ class DashboardPage extends React.Component {
                 getContainer={false}
                 width={width}
                 zIndex={10}
-                bodyStyle={{ padding: "0px" }}
+                bodyStyle={{ height: "100vh", padding: "0px" }}
                 drawerStyle={{ posiiton: "relative" }}
               >
                 <LoansDrawer
@@ -147,7 +147,7 @@ class DashboardPage extends React.Component {
                 getContainer={false}
                 width={width}
                 zIndex={10}
-                bodyStyle={{ padding: "0px" }}
+                bodyStyle={{ height: "100vh", padding: "0px" }}
                 drawerStyle={{ posiiton: "relative" }}
               >
                 <PaymentPlansDrawer
@@ -206,8 +206,8 @@ class DashboardPage extends React.Component {
             getContainer={false}
             width={450}
             zIndex={10}
-            bodyStyle={{ padding: "0px" }}
             drawerStyle={{ posiiton: "relative" }}
+            bodyStyle={{ height: "100vh", padding: "0px" }}
           >
             {drawer.type == "loans" && (
               <LoansDrawer

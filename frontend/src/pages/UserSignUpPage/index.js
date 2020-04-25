@@ -36,7 +36,7 @@ class UserSignUpPage extends React.Component {
     if (value && value.length > 12) {
       return "ok";
     }
-    if (value && value.length > 8) {
+    if (value && value.length >= 8) {
       return "pass";
     }
     return "poor";
@@ -93,7 +93,7 @@ class UserSignUpPage extends React.Component {
           status={SignUpMaps.passwordProgress[passwordStatus]}
           className={styles.progress}
           strokeWidth={6}
-          percent={value.length * 10 > 100 ? 100 : value.length * 10}
+          percent={value.length * 7.5}
           showInfo={false}
         />
       </div>

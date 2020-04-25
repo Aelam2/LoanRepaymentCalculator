@@ -174,6 +174,20 @@ module.exports = (sequelize, DataTypes) => {
           } catch (err) {
             throw new Error(err);
           }
+        },
+        beforeBulkUpdate: async (User, one, two) => {
+          try {
+            // if password is being updated
+            if (User.attributes.Password) {
+              // Generate salt
+              const salt = await bcrypt.genSalt(10);
+
+              // Hash password - Salt + Password
+              User.attributes.Password = await bcrypt.hash(User.attributes.Password, salt);
+            }
+          } catch (err) {
+            throw new Error(err);
+          }
         }
       },
 

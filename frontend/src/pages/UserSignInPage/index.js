@@ -71,9 +71,10 @@ class UserSignInPage extends React.Component {
                 <FormattedMessage id="login.remember.me" defaultMessage="Remember me" />
               </Checkbox>
             </Form.Item>
-            <a style={{ float: "right" }} className="secondary-text">
-              <FormattedMessage id="login.forgot.password" defaultMessage="Forgot password" />
-            </a>
+
+            <Link className={`secondary-text`} style={{ float: "right" }} to="/user/password-reset">
+              <FormattedMessage id="login.forgot.password" defaultMessage="Forgot Password" />
+            </Link>
           </Form.Item>
           <Form.Item className={styles.submitContainer}>
             <Button size="large" className={styles.submit} type="primary" htmlType="submit" loading={loading}>

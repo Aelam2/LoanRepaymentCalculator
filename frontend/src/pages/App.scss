@@ -113,3 +113,8 @@
     }
   }
 }
+
+.ant-input[disabled] {
+  color: rgba(255, 255, 255, 0.64);
+  background-color: #41414163;
+}

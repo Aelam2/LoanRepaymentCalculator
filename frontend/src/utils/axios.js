@@ -81,6 +81,10 @@ axios.interceptors.response.use(
       if (response && response.status) {
         const { status } = response;
 
+        if (status === "401") {
+          localStorage.removeItem("JWT_TOKEN");
+        }
+
         const errorTitle = codeTitles[status] || `Error ${status}`;
         // If error message is provided by server otherwise use generic message
         const errorText = response.data.error || codeMessages[status] || "An unexpected error occured";

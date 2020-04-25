@@ -1,10 +1,14 @@
 import express from "express";
 import passport from "passport";
+import moment from "moment";
+import { v1 } from "uuid";
+import nodemailer from "nodemailer";
 import validate, { userSignUpRules } from "../middleware/route-validator";
-import { Users } from "../models/models";
+import { Users, UserPasswordResets, Sequelize } from "../models/models";
 import { signUserToken } from "../helpers/userHelper";
 import { isUnique, handleSequelizeError } from "../helpers/errorHelper";
 let router = express.Router();
+let Op = Sequelize.Op;
 
 /**
  * @swagger
@@ -275,6 +279,130 @@ router.route("/sign-in").post(passport.authenticate("local", { session: false })
     res.status(200).json({ token });
   } catch (err) {
     res.status(500).json({ status: "error", data: null, error: "An unexpected error occurred" });
+  }
+});
+
+router.route("/password-reset").post(async (req, res) => {
+  try {
+    let { Email } = req.body;
+
+    // Find user associated to email requesting password reset
+    let user = await Users.findOne({
+      where: { Email }
+    });
+
+    // If there is no user associated to the email
+    if (!user) {
+      res.status(404).json({ status: "not-found", data: null, error: "Email is not associated to any accounts." });
+    }
+
+    // If the user was created via social OAuth
+    // There password needs to be reset on that platform
+    if (user.CreationMethod != "local") {
+      res.status(403).json({ status: "forbidden", data: null, error: "Account was created via Google/Facebook and is unable to be reset." });
+    }
+
+    let token = v1();
+
+    // Create unique token that is sent to the user.
+    // They have one to reset their password via the token
+    await UserPasswordResets.create({
+      Email,
+      ResetToken: token,
+      IsUsed: false,
+      DateExpires: moment().add(1, "hour").toISOString()
+    });
+
+    // Token is used a url param and must be visited with in hour of request
+    // https://www.repayment.dev/user/password-reset/${token}
+    let smtpTransport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.SITE_EMAIL,
+        pass: process.env.SITE_EMAIL_PASSWORD
+      }
+    });
+
+    let mailOptions = {
+      to: user.Email,
+      from: "no-reply@repayment.dev",
+      subject: "Repayment.dev Password Reset",
+      text:
+        "You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
+        "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
+        `https://www.repayment.dev/user/password-reset/${token}` +
+        "\n\n" +
+        "If you did not request this, please ignore this email and your password will remain unchanged.\n"
+    };
+
+    await smtpTransport.sendMail(mailOptions);
+
+    res.status(200).json({ status: "success", data: `Password reset email was successfully sent to ${user.Email}.` });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ status: "error", data: null, error: "An unexpected error occurred." });
+  }
+});
+
+router.route("/password-reset/:token").get(async (req, res) => {
+  try {
+    let { token } = req.params;
+
+    let resetAttempt = await UserPasswordResets.findOne({
+      where: {
+        ResetToken: token,
+        IsUsed: false,
+        DateExpires: { [Op.gt]: moment() }
+      }
+    });
+
+    if (!resetAttempt) {
+      res.status(404).json({ status: "not-found", data: null, error: "Password reset link has expired. Please request a new email." });
+    }
+
+    res.status(200).json({ status: "success", data: resetAttempt });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ status: "error", data: null, error: "An unexpected error occurred." });
+  }
+});
+
+router.route("/password-reset/:token").post(async (req, res) => {
+  try {
+    let { token } = req.params;
+    let { Email, Password } = req.body;
+
+    let resetAttempt = await UserPasswordResets.findOne({
+      where: {
+        Email,
+        ResetToken: token,
+        IsUsed: false,
+        DateExpires: { [Op.gt]: moment() }
+      }
+    });
+
+    if (!resetAttempt) {
+      res.status(404).json({ status: "not-found", data: null, error: "Password reset link has expired. Please request a new email." });
+    }
+
+    let [update] = await Users.update(
+      {
+        Password
+      },
+      {
+        where: { Email }
+      }
+    );
+
+    if (update) {
+      resetAttempt.IsUsed = true;
+      resetAttempt.save();
+    }
+
+    res.status(200).json({ status: "success", data: `Passwor was successfully reset for ${Email}` });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ status: "error", data: null, error: "An unexpected error occurred." });
   }
 });
 
