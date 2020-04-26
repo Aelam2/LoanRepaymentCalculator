@@ -31,12 +31,14 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
       availableMinimumFunds += loan.PaymentMinimum;
     }
 
-    let firstPaymentDate = moment.min(loans.map(l => moment(l.PaymentStart)));
+    let consolidatedSchedule = [];
 
-    payments.map(p => Number(p.PaymentAmount)).reduce((a, b) => a + b, 0);
+    let firstPaymentDate = moment.min(loans.map(l => moment(l.PaymentStart)));
 
     let elapsedMonths = 0;
     while (hasBalance && elapsedMonths <= 480) {
+      let consolidatedStart = { amount: 0, interest: 0, principal: 0, balance: 0 };
+
       let currentMonth = moment(firstPaymentDate).add(elapsedMonths, "month");
 
       // Sum of recurring yearly payments
@@ -69,7 +71,8 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
           let principal = amount - interest;
 
           // If user started mid-month, check if minimum isn't due until next month
-          if (elapsedMonths == 0 && moment(loan.PaymentStart).month() != firstPaymentDate.month()) {
+          let startNextMonth = elapsedMonths == 0 && moment(loan.PaymentStart).month() != firstPaymentDate.month();
+          if (startNextMonth) {
             loan.schedule.push({
               LoanID: loan.LoanID,
               LoanName: loan.LoanName,
@@ -94,6 +97,12 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
               balance: loan.LoanBalance
             });
           }
+
+          // Add up running totals for all loans this month
+          consolidatedStart.balance += loan.LoanBalance;
+          consolidatedStart.amount += startNextMonth ? 0 : amount;
+          consolidatedStart.interest += startNextMonth ? 0 : interest;
+          consolidatedStart.principal += startNextMonth ? 0 : principal;
         }
       }
 
@@ -114,6 +123,11 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
           loan.schedule[pos].principal = (loan.schedule[pos].principal || 0) + amount;
           loan.schedule[pos].balance = loan.LoanBalance;
 
+          // Adjust running totals for all loans this month
+          consolidatedStart.amount += amount;
+          consolidatedStart.principal += amount;
+          consolidatedStart.balance -= amount;
+
           // Check if all the extra money is spent
           if (available <= 0) {
             break;
@@ -125,6 +139,13 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
           return moneyRound(l.LoanBalance, 2) > 0;
         });
       }
+
+      consolidatedSchedule.push({
+        LoanID: 0,
+        LoanName: "All Loans",
+        date: currentMonth.endOf("day").toISOString(),
+        ...consolidatedStart
+      });
 
       elapsedMonths += 1;
     }
@@ -154,9 +175,8 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
       strategyResult.masterSchedule = [...strategyResult.masterSchedule, ...loan.schedule];
     }
 
-    let { accumulatedSchedule, consolidatedSchedule } = await calcAlternativeSchedules(_.cloneDeep(strategyResult.masterSchedule));
     strategyResult.consolidatedSchedule = consolidatedSchedule;
-    strategyResult.accumulatedSchedule = accumulatedSchedule;
+    strategyResult.accumulatedSchedule = calcAccumulatedSchedule(consolidatedSchedule);
 
     strategyResult.principal = moneyRound(strategyResult.principal);
     strategyResult.interest = moneyRound(strategyResult.interest);
@@ -170,25 +190,14 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
   }
 };
 
-export const calcAlternativeSchedules = async masterSchedule => {
-  try {
-    let [accumulatedSchedule, consolidatedSchedule] = await Promise.all([calcAccumulatedSchedule(masterSchedule), calcConsolidatedSchedule(masterSchedule)]);
-
-    return { accumulatedSchedule, consolidatedSchedule };
-  } catch (err) {
-    console.log(err.message);
-    return { accumulatedSchedule: [], consolidatedSchedule: [] };
-  }
-};
-
-export const calcAccumulatedSchedule = masterSchedule => {
+export const calcAccumulatedSchedule = consolidatedSchedule => {
   let accumulatedSchedule = [];
 
-  let uniqueDates = [...new Set(masterSchedule.map(p => moment(p.date).startOf("month").endOf("day").toISOString()))];
+  let uniqueDates = [...new Set(consolidatedSchedule.map(p => moment(p.date).startOf("month").endOf("day").toISOString()))];
 
   for (let d of uniqueDates) {
     let accumulatedStart = { amount: 0, interest: 0, principal: 0, balance: 0 };
-    let accumulatedPayments = masterSchedule.filter(p => moment(d).isSameOrBefore(moment(p.date).startOf("month").endOf("day")));
+    let accumulatedPayments = consolidatedSchedule.filter(p => moment(d).isSameOrBefore(moment(p.date).startOf("month").endOf("day")));
     let accumulatedTotals = accumulatedPayments.reduce((sums, month) => {
       return {
         amount: moneyRound((sums.amount += Number(month.amount)), 2),
@@ -207,31 +216,4 @@ export const calcAccumulatedSchedule = masterSchedule => {
   }
 
   return accumulatedSchedule;
-};
-
-export const calcConsolidatedSchedule = masterSchedule => {
-  let consolidatedSchedule = [];
-
-  let uniqueDates = [...new Set(masterSchedule.map(p => moment(p.date).startOf("month").endOf("day").toISOString()))];
-
-  for (let d of uniqueDates) {
-    let consolidatedStart = { amount: 0, interest: 0, principal: 0, balance: 0 };
-    let consolidatedPayments = masterSchedule.filter(p => moment(d).isSame(moment(p.date).startOf("month").endOf("day")));
-    let consolidatedTotals = consolidatedPayments.reduce((sums, month) => {
-      return {
-        amount: moneyRound((sums.amount += Number(month.amount)), 2),
-        interest: moneyRound((sums.interest += Number(month.interest)), 2),
-        principal: moneyRound((sums.principal += Number(month.principal)), 2),
-        balance: moneyRound((sums.balance += Number(month.balance)), 2)
-      };
-    }, consolidatedStart);
-
-    consolidatedSchedule.push({
-      LoanID: 0,
-      LoanName: "All Loans",
-      date: d,
-      ...consolidatedTotals
-    });
-  }
-  return consolidatedSchedule;
 };

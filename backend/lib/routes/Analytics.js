@@ -109,10 +109,16 @@ router.route("/amortization").get(async (req, res) => {
     let AllocationMethodID = currentPlan && currentPlan.hasOwnProperty("AllocationMethodID") ? currentPlan.AllocationMethodID : 4;
     let payments = currentPlan && currentPlan.hasOwnProperty("Payments") ? currentPlan.Payments : [];
 
-    let [planResult, minimumResult] = await Promise.all([
-      calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], _.cloneDeep(payments)),
-      calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], [])
+    let [minimumResult, planResult] = await Promise.all([
+      calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], []),
+      currentPlan && calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], _.cloneDeep(payments))
     ]);
+
+    // If no payment plan is active
+    if (!currentPlan) {
+      // Minimum payments is the current plan result
+      planResult = minimumResult;
+    }
 
     // Return loan information with array of scheduled payments
     res.status(200).json({ status: "success", data: { ...planResult, minimumPlan: minimumResult } });
