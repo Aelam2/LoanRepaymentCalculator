@@ -1,5 +1,6 @@
 import express from "express";
 import validate, { createLoanRules, updateLoanRules, deleteLoanRules } from "../middleware/route-validator";
+import { getRouteCache, clearCacheCascade } from "../middleware/cache";
 import { Loans } from "../models/models";
 
 let router = express.Router();
@@ -43,7 +44,7 @@ router
    *             schema:
    *               $ref: '#/components/schemas/FiveHundredError'
    */
-  .get(async (req, res) => {
+  .get(getRouteCache(0), async (req, res) => {
     try {
       let { UserID } = req.user;
 
@@ -51,7 +52,7 @@ router
         where: { UserID }
       });
 
-      res.status(200).json({ status: "success", data: activeLoans });
+      res.status(200).json({ status: "success", data: activeLoans.map(l => l.toJSON()) });
     } catch (err) {
       res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
     }
@@ -122,7 +123,7 @@ router
    *             schema:
    *               $ref: '#/components/schemas/FiveHundredError'
    */
-  .post(createLoanRules(), validate, async (req, res) => {
+  .post(createLoanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/loans"), async (req, res) => {
     try {
       let { UserID } = req.user;
       let { LoanName, LoanTypeID, LoanTerm, LoanBalance, InterestRate, PaymentMinimum, PaymentStart } = req.body;
@@ -212,7 +213,7 @@ router
    *             schema:
    *               $ref: '#/components/schemas/FiveHundredError'
    */
-  .put(updateLoanRules(), validate, async (req, res) => {
+  .put(updateLoanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/loans"), async (req, res) => {
     try {
       let { UserID } = req.user;
       let { LoanID } = req.params;
@@ -285,7 +286,7 @@ router
    *             schema:
    *               $ref: '#/components/schemas/FiveHundredError'
    */
-  .delete(deleteLoanRules(), validate, async (req, res) => {
+  .delete(deleteLoanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/loans"), async (req, res) => {
     try {
       let { UserID } = req.user;
       let { LoanID } = req.params;

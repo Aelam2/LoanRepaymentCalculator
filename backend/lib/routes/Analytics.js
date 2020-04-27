@@ -1,6 +1,7 @@
 import express from "express";
 import _ from "lodash";
-import { calculateSchedule, calcAlternativeSchedules } from "../helpers/repaymentCalculator";
+import { calculateSchedule } from "../helpers/repaymentCalculator";
+import { getRouteCache, getCachedKey, setCachedKey, removeCachedKey } from "../middleware/cache";
 import { StrategyCodeValueIdMap } from "../helpers/repaymentStrategies";
 import { Loans, PaymentPlans, Payments as PaymentsModel } from "../models/models";
 
@@ -86,7 +87,7 @@ let router = express.Router();
 router.route("/amortization").get(async (req, res) => {
   try {
     let { UserID } = req.user;
-    let { hidden } = req.query;
+    let { hidden = [] } = req.query;
 
     // Get all active loans for a user
     let currentLoans = await Loans.findAll({
@@ -109,19 +110,38 @@ router.route("/amortization").get(async (req, res) => {
     let AllocationMethodID = currentPlan && currentPlan.hasOwnProperty("AllocationMethodID") ? currentPlan.AllocationMethodID : 4;
     let payments = currentPlan && currentPlan.hasOwnProperty("Payments") ? currentPlan.Payments : [];
 
-    let [minimumResult, planResult] = await Promise.all([
-      calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], []),
-      currentPlan && calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], _.cloneDeep(payments))
+    // check if user has cached versions of their analytics
+    let cacheMinimumKey = `amortization:${req.user.UserID}:minimum:hidden=${hidden.split(",")}`;
+    let cacheCurrentKey = currentPlan ? `amortization:${req.user.UserID}:current:${currentPlan.PaymentPlanID}:hidden=${hidden.split(",")}` : undefined;
+    let [cachedMinimumAnalytics, cachedCurrentAnalytics] = await Promise.all([getCachedKey(cacheMinimumKey), getCachedKey(cacheCurrentKey)]);
+
+    // calculate non-cached analytics / schedules
+    let [minimumAnalytics, currentAnalytics] = await Promise.all([
+      !cachedMinimumAnalytics && calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], []),
+      !cachedCurrentAnalytics && currentPlan && calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], _.cloneDeep(payments))
     ]);
 
-    // If no payment plan is active
-    if (!currentPlan) {
-      // Minimum payments is the current plan result
-      planResult = minimumResult;
+    // if cache existed, set result to cache
+    if (cachedMinimumAnalytics) {
+      minimumAnalytics = cachedMinimumAnalytics;
+    } else {
+      // if cache did not exist, set cache to calculated result
+      setCachedKey(cacheMinimumKey, minimumAnalytics);
+    }
+
+    // if cache existed, set result to cache
+    if (cachedCurrentAnalytics) {
+      currentAnalytics = cachedCurrentAnalytics;
+    } else if (!currentPlan) {
+      // if no cache and no current plan existed, return minimum plan as the current
+      currentAnalytics = minimumAnalytics;
+    } else {
+      // if cache did not exist, set cache to calculated result
+      setCachedKey(cacheCurrentKey, currentAnalytics);
     }
 
     // Return loan information with array of scheduled payments
-    res.status(200).json({ status: "success", data: { ...planResult, minimumPlan: minimumResult } });
+    res.status(200).json({ status: "success", data: { ...currentAnalytics, minimumPlan: minimumAnalytics } });
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });

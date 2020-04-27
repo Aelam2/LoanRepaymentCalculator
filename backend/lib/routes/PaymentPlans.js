@@ -6,6 +6,7 @@ import validate, {
   updatePaymentPlanRules,
   deletePaymentPlanRules
 } from "../middleware/route-validator";
+import { getRouteCache, clearCacheCascade } from "../middleware/cache";
 import { PaymentPlans as PaymentPlansModel, Payments as PaymentsModel, CodeSets as CodeSetsModel } from "../models/models";
 import { Sequelize } from "../models/models";
 
@@ -71,7 +72,7 @@ router
    *             schema:
    *               $ref: '#/components/schemas/FiveHundredError'
    */
-  .get(getPaymentPlanRules(), validate, async (req, res) => {
+  .get(getPaymentPlanRules(), validate, getRouteCache(0), async (req, res) => {
     try {
       let { UserID } = req.user;
 
@@ -96,7 +97,7 @@ router
         ]
       });
 
-      res.status(200).json({ status: "success", data: paymentPlans });
+      res.status(200).json({ status: "success", data: paymentPlans.map(p => p.toJSON()) });
     } catch (err) {
       console.log("/payment-plans", err.message);
       res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
@@ -180,7 +181,7 @@ router
    *             schema:
    *               $ref: '#/components/schemas/FiveHundredError'
    */
-  .post(createPaymentPlanRules(), validate, async (req, res) => {
+  .post(createPaymentPlanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/payment-plans"), async (req, res) => {
     try {
       let { UserID } = req.user;
       let { PlanName, AllocationMethodID, IsCurrent = 0, Payments } = req.body;
@@ -309,45 +310,47 @@ router
  *             schema:
  *               $ref: '#/components/schemas/FiveHundredError'
  */
-router.route("/payment-plans/:PaymentPlanID/activate").post(activatePaymentPlanRules(), validate, async (req, res) => {
-  try {
-    let { UserID } = req.user;
-    let { PaymentPlanID } = req.params;
-    let { IsCurrent = 1 } = req.body;
+router
+  .route("/payment-plans/:PaymentPlanID/activate")
+  .post(activatePaymentPlanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/payment-plans"), async (req, res) => {
+    try {
+      let { UserID } = req.user;
+      let { PaymentPlanID } = req.params;
+      let { IsCurrent = 1 } = req.body;
 
-    // Set all other plans to IsCurrent = 0
-    await PaymentPlansModel.update(
-      {
-        IsCurrent: 0
-      },
-      {
-        where: {
-          UserID
-        }
-      }
-    );
-
-    // Set requested payment plan to requested status
-    await PaymentPlansModel.update(
-      {
-        IsCurrent
-      },
-      {
-        where: {
-          UserID,
-          PaymentPlanID
+      // Set all other plans to IsCurrent = 0
+      await PaymentPlansModel.update(
+        {
+          IsCurrent: 0
         },
-        returning: true,
-        plain: true
-      }
-    );
+        {
+          where: {
+            UserID
+          }
+        }
+      );
 
-    res.status(200).json({ status: "success", data: PaymentPlanID });
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
-  }
-});
+      // Set requested payment plan to requested status
+      await PaymentPlansModel.update(
+        {
+          IsCurrent
+        },
+        {
+          where: {
+            UserID,
+            PaymentPlanID
+          },
+          returning: true,
+          plain: true
+        }
+      );
+
+      res.status(200).json({ status: "success", data: PaymentPlanID });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
+    }
+  });
 
 router
   .route("/payment-plans/:PaymentPlanID")
@@ -434,7 +437,7 @@ router
    *             schema:
    *               $ref: '#/components/schemas/FiveHundredError'
    */
-  .put(updatePaymentPlanRules(), validate, async (req, res) => {
+  .put(updatePaymentPlanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/payment-plans"), async (req, res) => {
     try {
       let { UserID } = req.user;
       let { PaymentPlanID } = req.params;
@@ -576,7 +579,7 @@ router
    *        required: true
    *        description: Numeric ID of the PaymentPlan
    */
-  .delete(deletePaymentPlanRules(), validate, async (req, res) => {
+  .delete(deletePaymentPlanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/payment-plans"), async (req, res) => {
     try {
       let { UserID } = req.user;
       let { PaymentPlanID } = req.params;
