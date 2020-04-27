@@ -24,8 +24,8 @@ export const getRouteCache = duration => {
 export const clearCacheCascade = key => {
   return (req, res, next) => {
     let cacheKeys = appCache.keys().filter(k => k.includes(key));
-    let result = appCache.del(cacheKeys);
-    console.log(cacheKeys, result);
+    appCache.del(cacheKeys);
+
     return next();
   };
 };
@@ -34,13 +34,12 @@ export const getCachedKey = key => {
   if (!key) return undefined;
 
   let data = appCache.get(key);
-  console.log(key, data != undefined);
+
   return data;
 };
 
 export const setCachedKey = (key, data) => {
   let result = appCache.set(key, data);
-  console.log(key, result != undefined);
 
   return result;
 };

@@ -1,3 +1,4 @@
+import logger from "./logging";
 import express from "express";
 import bodyParser from "body-parser";
 import passport from "passport";
@@ -30,6 +31,8 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
+
+// app.use(logger);
 
 //Non-Authenticated routes
 app.use("/", userNonAuthenticated);

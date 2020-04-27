@@ -321,7 +321,11 @@ export const fetchAmortizationSchedule = (hidden = []) => {
         payload: true
       });
 
-      const { data } = await axios.get(`/me/loans/amortization?${querystring.stringify({ hidden: hidden.join(",") })}`);
+      const { data } = await axios.get(
+        `/me/loans/amortization?${querystring.stringify({
+          ...(hidden && { hidden: hidden.join(",") })
+        })}`
+      );
 
       dispatch({
         type: DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_SUCCESS,

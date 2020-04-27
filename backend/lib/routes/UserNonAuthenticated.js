@@ -1,6 +1,7 @@
 import express from "express";
 import passport from "passport";
 import moment from "moment";
+import logger from "../logging";
 import { v1 } from "uuid";
 import nodemailer from "nodemailer";
 import validate, { userSignUpRules } from "../middleware/route-validator";
@@ -273,6 +274,7 @@ router.route("/oauth/facebook").post((req, res, next) => {
  *               $ref: '#/components/schemas/FiveHundredError'
  */
 router.route("/sign-in").post(passport.authenticate("local", { session: false }), (req, res) => {
+  // logger.info();
   try {
     const token = signUserToken(req.user.toJSON());
 
