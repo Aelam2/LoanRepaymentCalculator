@@ -88,9 +88,9 @@ let Op = Sequelize.Op;
  *               $ref: '#/components/schemas/FiveHundredError'
  */
 router.route("/sign-up").post(userSignUpRules(), validate, async (req, res) => {
-  try {
-    let { UserName, Password, FirstName, LastName, Email } = req.body;
+  let { UserName, Password, FirstName, LastName, Email } = req.body;
 
+  try {
     // Check if UserName or Email already exists in database
     await isUnique(Users, "UserName", UserName);
     await isUnique(Users, "Email", Email);
@@ -102,8 +102,11 @@ router.route("/sign-up").post(userSignUpRules(), validate, async (req, res) => {
     const token = signUserToken(newUser);
 
     // Response with Token
+    logger.info("User Sign Up Success", { UserName, FirstName, LastName, Email });
     res.status(200).json({ token });
   } catch (error) {
+    logger.error(`User Sign Up Failed with exception ${err.message}`, { UserName, FirstName, LastName, Email });
+
     let sequelizeError = handleSequelizeError(error);
     if (sequelizeError.status) {
       res.status(sequelizeError.status).json({ ...sequelizeError, status: "error" });
@@ -158,8 +161,11 @@ router.route("/oauth/google").post((req, res, next) => {
 
       const token = signUserToken(user);
 
+      logger.info("User Google Sign In Success", { ...user });
       res.status(200).json({ token });
     } catch (err) {
+      logger.error(`User Google Sign In Failed with exception ${err.message}`, { ...user });
+
       let sequelizeError = handleSequelizeError(err);
       if (sequelizeError.status) {
         res.status(sequelizeError.status).json({ ...sequelizeError, status: "error" });
@@ -215,8 +221,11 @@ router.route("/oauth/facebook").post((req, res, next) => {
 
       const token = signUserToken(user);
 
+      logger.info("User Facebook Sign In Success", { ...user });
       res.status(200).json({ token });
     } catch (err) {
+      logger.error(`User Facebook Sign In Failed with exception ${err.message}`, { ...user });
+
       let sequelizeError = handleSequelizeError(err);
       if (sequelizeError.status) {
         res.status(sequelizeError.status).json({ ...sequelizeError, status: "error" });
@@ -274,20 +283,21 @@ router.route("/oauth/facebook").post((req, res, next) => {
  *               $ref: '#/components/schemas/FiveHundredError'
  */
 router.route("/sign-in").post(passport.authenticate("local", { session: false }), (req, res) => {
-  // logger.info();
   try {
     const token = signUserToken(req.user.toJSON());
 
+    logger.info("User Local Sign In Success", { ...req.user.toJSON() });
     res.status(200).json({ token });
   } catch (err) {
+    logger.error(`User Local Sign In Failed with exception ${err.message}`, { ...req.user.toJSON() });
     res.status(500).json({ status: "error", data: null, error: "An unexpected error occurred" });
   }
 });
 
 router.route("/password-reset").post(async (req, res) => {
-  try {
-    let { Email } = req.body;
+  let { Email } = req.body;
 
+  try {
     // Find user associated to email requesting password reset
     let user = await Users.findOne({
       where: { Email }
@@ -339,17 +349,18 @@ router.route("/password-reset").post(async (req, res) => {
 
     await smtpTransport.sendMail(mailOptions);
 
+    logger.info("Send Password Reset Email Success", { Email });
     res.status(200).json({ status: "success", data: `Password reset email was successfully sent to ${user.Email}.` });
   } catch (err) {
-    console.log(err.message);
+    logger.error(`Send Password Reset Email Failed with exception ${err.message}`, { Email });
     res.status(500).json({ status: "error", data: null, error: "An unexpected error occurred." });
   }
 });
 
 router.route("/password-reset/:token").get(async (req, res) => {
-  try {
-    let { token } = req.params;
+  let { token } = req.params;
 
+  try {
     let resetAttempt = await UserPasswordResets.findOne({
       where: {
         ResetToken: token,
@@ -359,21 +370,23 @@ router.route("/password-reset/:token").get(async (req, res) => {
     });
 
     if (!resetAttempt) {
+      logger.info("Get Password Reset Token Warning: Token Expired", { token });
       res.status(404).json({ status: "not-found", data: null, error: "Password reset link has expired. Please request a new email." });
     }
 
+    logger.info("Get Password Reset Token Success", { token });
     res.status(200).json({ status: "success", data: resetAttempt });
   } catch (err) {
-    console.log(err.message);
+    logger.error(`Get Password Reset Token Failed with exception ${err.message}`, { token });
     res.status(500).json({ status: "error", data: null, error: "An unexpected error occurred." });
   }
 });
 
 router.route("/password-reset/:token").post(async (req, res) => {
-  try {
-    let { token } = req.params;
-    let { Email, Password } = req.body;
+  let { token } = req.params;
+  let { Email, Password } = req.body;
 
+  try {
     let resetAttempt = await UserPasswordResets.findOne({
       where: {
         Email,
@@ -384,6 +397,7 @@ router.route("/password-reset/:token").post(async (req, res) => {
     });
 
     if (!resetAttempt) {
+      logger.warning("Complete Password Reset Warning: Token has expired", { token, Email });
       res.status(404).json({ status: "not-found", data: null, error: "Password reset link has expired. Please request a new email." });
     }
 
@@ -401,9 +415,10 @@ router.route("/password-reset/:token").post(async (req, res) => {
       resetAttempt.save();
     }
 
+    logger.info("Complete Password Reset Success", { token, Email });
     res.status(200).json({ status: "success", data: `Passwor was successfully reset for ${Email}` });
   } catch (err) {
-    console.log(err.message);
+    logger.error(`Complete Password Reset Failed with exception ${err.message}`, { token, Email });
     res.status(500).json({ status: "error", data: null, error: "An unexpected error occurred." });
   }
 });

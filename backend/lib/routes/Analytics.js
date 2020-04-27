@@ -1,7 +1,8 @@
 import express from "express";
 import _ from "lodash";
+import logger from "../logging";
+import { getCachedKey, setCachedKey } from "../middleware/cache";
 import { calculateSchedule } from "../helpers/repaymentCalculator";
-import { getRouteCache, getCachedKey, setCachedKey, removeCachedKey } from "../middleware/cache";
 import { StrategyCodeValueIdMap } from "../helpers/repaymentStrategies";
 import { Loans, PaymentPlans, Payments as PaymentsModel } from "../models/models";
 
@@ -85,10 +86,10 @@ let router = express.Router();
  *               $ref: '#/components/schemas/FiveHundredError'
  */
 router.route("/amortization").get(async (req, res) => {
-  try {
-    let { UserID } = req.user;
-    let { hidden = "" } = req.query;
+  let { UserID } = req.user;
+  let { hidden = "" } = req.query;
 
+  try {
     // Get all active loans for a user
     let currentLoans = await Loans.findAll({
       where: { UserID }
@@ -143,9 +144,10 @@ router.route("/amortization").get(async (req, res) => {
     }
 
     // Return loan information with array of scheduled payments
+    logger.info("Loan Analytics Success", { UserID, hidden });
     res.status(200).json({ status: "success", data: { ...currentAnalytics, minimumPlan: minimumAnalytics } });
   } catch (err) {
-    console.log(err.message);
+    logger.error(`Loan Analytics Failed with exception ${err.message}`, { UserID, hidden });
     res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
   }
 });

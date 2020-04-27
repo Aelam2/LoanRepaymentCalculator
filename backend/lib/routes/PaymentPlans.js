@@ -1,4 +1,5 @@
 import express from "express";
+import logger from "../logging";
 import validate, {
   getPaymentPlanRules,
   createPaymentPlanRules,
@@ -73,9 +74,9 @@ router
    *               $ref: '#/components/schemas/FiveHundredError'
    */
   .get(getPaymentPlanRules(), validate, getRouteCache(0), async (req, res) => {
-    try {
-      let { UserID } = req.user;
+    let { UserID } = req.user;
 
+    try {
       let paymentPlans = await PaymentPlansModel.findAll({
         where: { UserID },
         include: [
@@ -96,10 +97,11 @@ router
           }
         ]
       });
+      logger.info("Get Payment Plans", { UserID });
 
       res.status(200).json({ status: "success", data: paymentPlans.map(p => p.toJSON()) });
     } catch (err) {
-      console.log("/payment-plans", err.message);
+      logger.error(`Get Payment Plans Failed with exception ${err.message}`, { UserID }); //prettier-ignore
       res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
     }
   })
@@ -182,10 +184,10 @@ router
    *               $ref: '#/components/schemas/FiveHundredError'
    */
   .post(createPaymentPlanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/payment-plans"), async (req, res) => {
-    try {
-      let { UserID } = req.user;
-      let { PlanName, AllocationMethodID, IsCurrent = 0, Payments } = req.body;
+    let { UserID } = req.user;
+    let { PlanName, AllocationMethodID, IsCurrent = 0, Payments } = req.body;
 
+    try {
       let currentPlan = await PaymentPlansModel.findOne({
         where: {
           UserID,
@@ -249,9 +251,10 @@ router
         ]
       });
 
+      logger.info("Create Payment Plans Success", { UserID, PlanName, AllocationMethodID, IsCurrent, Payments });
       res.status(200).json({ status: "success", data: finalizedPlan });
     } catch (err) {
-      console.log(err.message);
+      logger.error(`Create Payment Plan Failed with exception ${err.message}`, { UserID, PlanName, AllocationMethodID, IsCurrent, Payments });
       res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
     }
   });
@@ -313,11 +316,11 @@ router
 router
   .route("/payment-plans/:PaymentPlanID/activate")
   .post(activatePaymentPlanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/payment-plans"), async (req, res) => {
-    try {
-      let { UserID } = req.user;
-      let { PaymentPlanID } = req.params;
-      let { IsCurrent = 1 } = req.body;
+    let { UserID } = req.user;
+    let { PaymentPlanID } = req.params;
+    let { IsCurrent = 1 } = req.body;
 
+    try {
       // Set all other plans to IsCurrent = 0
       await PaymentPlansModel.update(
         {
@@ -345,9 +348,10 @@ router
         }
       );
 
+      logger.info("Activate Payment Plan Success", { UserID, PaymentPlanID, IsCurrent });
       res.status(200).json({ status: "success", data: PaymentPlanID });
     } catch (err) {
-      console.log(err.message);
+      logger.error(`Activate Payment Plan Failed with exception ${err.message}`, { UserID, PaymentPlanID, IsCurrent });
       res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
     }
   });
@@ -438,11 +442,11 @@ router
    *               $ref: '#/components/schemas/FiveHundredError'
    */
   .put(updatePaymentPlanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/payment-plans"), async (req, res) => {
-    try {
-      let { UserID } = req.user;
-      let { PaymentPlanID } = req.params;
-      let { PlanName, AllocationMethodID, Payments = [] } = req.body;
+    let { UserID } = req.user;
+    let { PaymentPlanID } = req.params;
+    let { PlanName, AllocationMethodID, Payments = [] } = req.body;
 
+    try {
       // Array of promises for executing db commands
       let dbPromises = [];
 
@@ -557,9 +561,10 @@ router
         ]
       });
 
+      logger.info("Update Payment Plans Success", { UserID, PaymentPlanID, PlanName, AllocationMethodID, Payments });
       res.status(200).json({ status: "success", data: updatedPlan });
     } catch (err) {
-      console.log(err.message);
+      logger.error(`Update Payment Plans Failed with exception ${err.message}`, { UserID, PaymentPlanID, PlanName, AllocationMethodID, Payments });
       res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
     }
   })
@@ -580,19 +585,20 @@ router
    *        description: Numeric ID of the PaymentPlan
    */
   .delete(deletePaymentPlanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/payment-plans"), async (req, res) => {
-    try {
-      let { UserID } = req.user;
-      let { PaymentPlanID } = req.params;
+    let { UserID } = req.user;
+    let { PaymentPlanID } = req.params;
 
+    try {
       let result = await PaymentPlansModel.destroy({
         where: { PaymentPlanID, UserID }
       });
 
       if (result != 1) res.status(404).json({ status: "error", data: null, error: "Payment plan does not exist for user" });
 
+      logger.info("Delete Payment Plan Success", { UserID, PaymentPlanID });
       res.status(200).json({ status: "success", data: PaymentPlanID });
     } catch (err) {
-      console.log(err.message);
+      logger.error(`Delete Payment Plan Failed with exception ${err.message}`, { UserID, PaymentPlanID });
       res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
     }
   });

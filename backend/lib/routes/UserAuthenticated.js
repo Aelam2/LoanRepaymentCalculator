@@ -1,4 +1,5 @@
 import express from "express";
+import logger from "../logging";
 import { Users } from "../models/models";
 let router = express.Router();
 
@@ -155,12 +156,5 @@ router
       res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
     }
   });
-
-router.route("/password-reset").post((req, res) => {
-  try {
-  } catch (err) {
-    res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
-  }
-});
 
 export default router;
