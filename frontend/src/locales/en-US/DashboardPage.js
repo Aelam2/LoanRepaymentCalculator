@@ -59,5 +59,8 @@ export default {
 
   "dashboard.analysis.toggleConsolidatedView": "Consolidated View",
 
-  "dashboard.chart.title": "Minimum Payment Outlook"
+  "dashboard.chart.title": "Minimum Payment Outlook",
+  "dashboard.chart.error": "Uhhh Ohh! There was a problem fetching your repayment data",
+  "dashboard.analytics.notEnoughInfoTitle": "Not Enough Data",
+  "dashboard.analytics.notEnoughInfoSubTitle": "Unable to generate amortization schedule for less than two months worth of payments"
 };

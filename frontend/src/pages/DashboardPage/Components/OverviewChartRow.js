@@ -15,15 +15,13 @@ const topColResponsiveProps = {
 
 const ChartRow = React.memo(({ isMobile, refetchData, width, currency, data = [], loading, error, currentPlan, ...props }) => {
   // useTraceUpdate({ isMobile, refetchData, width, currency, data, loading, error, currentPlan, ...props });
-
   const intl = useIntl();
   const chartContainer = React.createRef();
-
   let cardHeight = isMobile ? 250 : 450;
   let chartHeight = isMobile ? 225 : 450;
 
   useEffect(() => {
-    if (chartContainer.current) {
+    if (!data.length <= 0 && chartContainer.current) {
       let maxYScale = Math.ceil(Math.max.apply(Math,data.map(d => d.balance)) / 2000) * 2000 //prettier-ignore
       let padding = [isMobile ? 35 : 30, !isMobile ? 20 : 7.5, isMobile ? 40 : 60, isMobile ? 7.5 : maxYScale > 10000 ? 60 : 50];
 
@@ -224,11 +222,38 @@ const ChartRow = React.memo(({ isMobile, refetchData, width, currency, data = []
                 return <PageLoading style={{ height: cardHeight }} />;
               }
 
+              if (data.length <= 0) {
+                return (
+                  <Row gutter={24} type="flex">
+                    <Col {...topColResponsiveProps}>
+                      <Card
+                        bordered={false}
+                        bodyStyle={{ padding: 0, height: cardHeight, paddingTop: "15px" }}
+                        headStyle={{ padding: "12px" }}
+                        className={styles.analysisCard}
+                      >
+                        <Result
+                          status="info"
+                          title={intl.formatMessage({ id: "dashboard.analytics.notEnoughInfoTitle", defaultMessage: "Not Enough Data" })}
+                          subTitle={intl.formatMessage({
+                            id: "dashboard.analytics.notEnoughInfoSubTitle",
+                            defaultMessage: "Unable to generate amortization schedule for less than two months worth of payments"
+                          })}
+                        />
+                      </Card>
+                    </Col>
+                  </Row>
+                );
+              }
+
               if (error) {
                 return (
                   <Result
                     status="warning"
-                    title="Uhhh Ohh! There was a problem fetching your repayment data"
+                    title={intl.formatMessage({
+                      id: "dashboard.chart.error",
+                      defaultMessage: "Uhhh Ohh! There was a problem fetching your repayment data"
+                    })}
                     extra={<Button onClick={refetchData}>Reload Chart</Button>}
                   />
                 );

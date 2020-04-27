@@ -52,8 +52,8 @@ app.listen(port, () => {
 });
 
 process.on("uncaughtException", function handleError(error) {
-  console.log("Uncaught Exception");
-  console.error(error);
+  console.error(new Date().toUTCString() + " uncaughtException:", error.message);
+  console.error(error.stack);
 });
 
 export default app;

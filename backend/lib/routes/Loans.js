@@ -126,7 +126,7 @@ router
    *             schema:
    *               $ref: '#/components/schemas/FiveHundredError'
    */
-  .post(createLoanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/loans"), async (req, res) => {
+  .post(createLoanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("loans"), async (req, res) => {
     let { UserID } = req.user;
     let { LoanName, LoanTypeID, LoanTerm, LoanBalance, InterestRate, PaymentMinimum, PaymentStart } = req.body;
 
@@ -217,7 +217,7 @@ router
    *             schema:
    *               $ref: '#/components/schemas/FiveHundredError'
    */
-  .put(updateLoanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/loans"), async (req, res) => {
+  .put(updateLoanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("loans"), async (req, res) => {
     let { UserID } = req.user;
     let { LoanID } = req.params;
     let { LoanName, LoanTypeID, LoanTerm, LoanBalance, InterestRate, PaymentMinimum, PaymentStart } = req.body;
@@ -292,7 +292,7 @@ router
    *             schema:
    *               $ref: '#/components/schemas/FiveHundredError'
    */
-  .delete(deleteLoanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/loans"), async (req, res) => {
+  .delete(deleteLoanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("loans"), async (req, res) => {
     let { UserID } = req.user;
     let { LoanID } = req.params;
 

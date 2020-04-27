@@ -1,20 +1,30 @@
 import NodeCache from "node-cache";
+import logger from "../../logging";
 
 const appCache = new NodeCache();
 
 export const getRouteCache = duration => {
   return (req, res, next) => {
-    let key = `${req.originalUrl || req.url}:${req.user.UserID}`;
-    let data = appCache.get(key);
-    if (data) {
-      res.status(200).json(data);
-      return;
-    } else {
-      res.sendResponse = res.json;
-      res.json = body => {
-        appCache.set(key, body, duration);
-        res.sendResponse(body);
-      };
+    try {
+      let key = `${req.originalUrl || req.url}:${req.user.UserID}`;
+      let data = appCache.get(key);
+
+      // If cache data exists for route
+      if (data) {
+        return res.status(200).json(data);
+      } else {
+        // If no route cache data,
+        // Create cache data for route right before sending reponse to client
+        res.sendResponse = res.json;
+        res.json = body => {
+          appCache.set(key, body, duration);
+          return res.sendResponse(body);
+        };
+
+        return next();
+      }
+    } catch (err) {
+      logger.error(`Route Cache exception occured: ${err.message}`);
       return next();
     }
   };

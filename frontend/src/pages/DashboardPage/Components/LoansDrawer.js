@@ -196,7 +196,10 @@ class DrawerLoans extends React.Component {
     try {
       await this.props.deleteLoan(LoanID);
 
-      await this.props.toggleAddEditDrawer(false, null);
+      await Promise.all([
+        this.props.fetchAmortizationSchedule(this.props.loans.filter(l => l.hidden).map(l => l.LoanID)),
+        this.props.toggleAddEditDrawer(false, null)
+      ]);
     } catch (err) {
       let errMessage = "Loan was unable to be deleted";
       notification.error({ duration: 3000, message: errMessage });

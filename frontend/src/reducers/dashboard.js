@@ -396,14 +396,13 @@ export default (state = DEFAULT_STATE, action) => {
       };
 
     case DASHBOARD_FETCH_ANALYTICS_AMORTIZATION_SUCCESS:
+      let data = { ...state.analytics.data, ...action.payload };
+
       return {
         ...state,
         analytics: {
           ...state.analytics,
-          data: {
-            ...state.analytics.data,
-            ...action.payload
-          },
+          data,
           loading: false,
           error: false,
           errorMessage: false

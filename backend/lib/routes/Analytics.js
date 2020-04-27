@@ -110,8 +110,6 @@ router.route("/amortization").get(async (req, res) => {
     // Loans that have not been hidden by user
     let activeLoans = currentLoans.map(l => l.toJSON()).filter(l => !hiddenLoans.some(hl => hl == l.LoanID));
 
-    if (!activeLoans.length) res.status(200).json({ status: "success", data: {} });
-
     let AllocationMethodID = currentPlan && currentPlan.hasOwnProperty("AllocationMethodID") ? currentPlan.AllocationMethodID : 4;
     let payments = currentPlan && currentPlan.hasOwnProperty("Payments") ? currentPlan.Payments : [];
 

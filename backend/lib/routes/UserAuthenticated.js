@@ -152,7 +152,6 @@ router
       // Return user information
       res.status(200).json({ status: "success", data: user.toJSON() });
     } catch (err) {
-      console.log(err.message);
       res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
     }
   });

@@ -183,7 +183,7 @@ router
    *             schema:
    *               $ref: '#/components/schemas/FiveHundredError'
    */
-  .post(createPaymentPlanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/payment-plans"), async (req, res) => {
+  .post(createPaymentPlanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("payment-plans"), async (req, res) => {
     let { UserID } = req.user;
     let { PlanName, AllocationMethodID, IsCurrent = 0, Payments } = req.body;
 
@@ -313,7 +313,7 @@ router
  *             schema:
  *               $ref: '#/components/schemas/FiveHundredError'
  */
-router.route("/payment-plans/:PaymentPlanID/activate").post(activatePaymentPlanRules(), validate, clearCacheCascade("/payment-plans"), async (req, res) => {
+router.route("/payment-plans/:PaymentPlanID/activate").post(activatePaymentPlanRules(), validate, clearCacheCascade("payment-plans"), async (req, res) => {
   let { UserID } = req.user;
   let { PaymentPlanID } = req.params;
   let { IsCurrent = 1 } = req.body;
@@ -439,7 +439,7 @@ router
    *             schema:
    *               $ref: '#/components/schemas/FiveHundredError'
    */
-  .put(updatePaymentPlanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/payment-plans"), async (req, res) => {
+  .put(updatePaymentPlanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("payment-plans"), async (req, res) => {
     let { UserID } = req.user;
     let { PaymentPlanID } = req.params;
     let { PlanName, AllocationMethodID, Payments = [] } = req.body;
@@ -582,7 +582,7 @@ router
    *        required: true
    *        description: Numeric ID of the PaymentPlan
    */
-  .delete(deletePaymentPlanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/payment-plans"), async (req, res) => {
+  .delete(deletePaymentPlanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("payment-plans"), async (req, res) => {
     let { UserID } = req.user;
     let { PaymentPlanID } = req.params;
 

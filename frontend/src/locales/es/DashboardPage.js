@@ -58,5 +58,8 @@ export default {
 
   "dashboard.analysis.toggleConsolidatedView": "Vista consolidada",
 
-  "dashboard.chart.title": "Perspectiva de pago mínimo"
+  "dashboard.chart.title": "Perspectiva de pago mínimo",
+  "dashboard.chart.error": "Uhhh Ohh! Se produjo un problema al recuperar los datos de pago.",
+  "dashboard.analytics.notEnoughInfoTitle": "No hay suficientes datos",
+  "dashboard.analytics.notEnoughInfoSubTitle": "Incapaz de generar un cronograma de amortización por menos de dos meses de pagos"
 };
