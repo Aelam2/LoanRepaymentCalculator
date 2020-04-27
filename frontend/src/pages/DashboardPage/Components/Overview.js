@@ -14,7 +14,7 @@ import styles from "pages/DashboardPage/Components/index.module.scss";
 class Overview extends React.Component {
   componentDidMount = () => {
     if (!this.props.analytics.data.masterSchedule.length) {
-      this.props.fetchAmortizationSchedule();
+      this.props.fetchAmortizationSchedule(this.props.loans.data.filter(l => l.hidden).map(l => l.LoanID));
     }
   };
 

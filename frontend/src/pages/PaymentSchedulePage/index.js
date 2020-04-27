@@ -16,7 +16,7 @@ class PaymentSchedulePage extends React.Component {
     let { schedule, analytics } = this.props;
 
     if (!analytics.data.masterSchedule.length) {
-      this.props.fetchAmortizationSchedule();
+      this.props.fetchAmortizationSchedule(this.props.loans.data.filter(l => l.hidden).map(l => l.LoanID));
       this.props.handleSchedulePivot(this.props.groupBy, this.props.analytics.data.masterSchedule);
     } else if (!schedule.length) {
       this.props.handleSchedulePivot(this.props.groupBy, this.props.analytics.data.masterSchedule);
@@ -146,6 +146,7 @@ const mapStateToProps = state => {
   return {
     currency: state.site.currency,
     paymentPlans: state.dashboard.paymentPlans,
+    paymentPlans: state.dashboard.loans,
     analytics: state.dashboard.analytics,
     groupBy: state.paymentSchedule.groupBy,
     schedule: state.paymentSchedule.schedule,

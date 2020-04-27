@@ -194,7 +194,10 @@ class DrawerPaymentPlans extends React.Component {
         await this.props.createPaymentPlan(values);
       }
 
-      await Promise.all([this.props.fetchAmortizationSchedule(), this.props.toggleAddEditDrawer(false, null)]);
+      await Promise.all([
+        this.props.fetchAmortizationSchedule(this.props.loans.filter(l => l.hidden).map(l => l.LoanID)),
+        this.props.toggleAddEditDrawer(false, null)
+      ]);
     } catch (err) {
       // let errMessage = this.state.isExisting ? "There was a problem updating the selected Payment Plan." : "An unexpected error occured during plan creation";
       // notification.error({ duration: 3000, message: errMessage });

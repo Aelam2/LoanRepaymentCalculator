@@ -182,7 +182,10 @@ class DrawerLoans extends React.Component {
       } else {
         await this.props.createLoan(values);
       }
-      await Promise.all([this.props.fetchAmortizationSchedule(), this.props.toggleAddEditDrawer(false, null)]);
+      await Promise.all([
+        this.props.fetchAmortizationSchedule(this.props.loans.filter(l => l.hidden).map(l => l.LoanID)),
+        this.props.toggleAddEditDrawer(false, null)
+      ]);
     } catch (err) {
       let errMessage = this.state.isExisting ? "There was a problem uppdating the selected loan." : "An unexpected error occured during loan creation";
       notification.error({ duration: 3000, message: errMessage });

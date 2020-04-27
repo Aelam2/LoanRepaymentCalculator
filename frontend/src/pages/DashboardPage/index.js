@@ -114,6 +114,7 @@ class DashboardPage extends React.Component {
                   <LoansDrawer
                     closeDrawer={this.closeDrawer}
                     item={drawer.item}
+                    loans={loans.data}
                     visible={drawer.visible}
                     isSaving={loans.creating || loans.updating}
                     isDeleting={loans.deleting}
@@ -161,6 +162,7 @@ class DashboardPage extends React.Component {
                   <PaymentPlansDrawer
                     closeDrawer={this.closeDrawer}
                     item={drawer.item}
+                    loans={loans.data}
                     visible={drawer.visible}
                     isSaving={paymentPlans.creating || paymentPlans.updating}
                     isDeleting={paymentPlans.deleting}
@@ -222,16 +224,17 @@ class DashboardPage extends React.Component {
               <LoansDrawer
                 closeDrawer={this.closeDrawer}
                 item={drawer.item}
+                loans={loans.data}
                 visible={drawer.visible}
                 isSaving={loans.creating || loans.updating}
                 isDeleting={loans.deleting}
-                loans={loans.data}
               />
             )}
             {drawer.type == "paymentPlans" && (
               <PaymentPlansDrawer
                 closeDrawer={this.closeDrawer}
                 item={drawer.item}
+                loans={loans.data}
                 visible={drawer.visible}
                 isSaving={paymentPlans.creating || paymentPlans.updating}
                 isDeleting={paymentPlans.deleting}
