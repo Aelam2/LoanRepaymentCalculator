@@ -1,5 +1,6 @@
 import moment from "moment";
 import strategyDefinitions from "./repaymentStrategies";
+import { eventLoopQueue } from "./utilities";
 import _ from "lodash";
 
 const paymentsPerYear = 12;
@@ -37,6 +38,7 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
 
     let elapsedMonths = 0;
     while (hasBalance && elapsedMonths <= 480) {
+      await eventLoopQueue();
       let consolidatedStart = { amount: 0, interest: 0, principal: 0, balance: 0 };
 
       let currentMonth = moment(firstPaymentDate).add(elapsedMonths, "month");
