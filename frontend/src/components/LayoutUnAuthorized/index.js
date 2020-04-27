@@ -8,8 +8,6 @@ import ThemeSelector from "components/ThemeProvider/ThemeSelector";
 import LocaleSelector from "components/LocaleProvider/LocaleSelector";
 import styles from "./LayoutUnAuthorized.module.scss";
 
-const { Header, Content, Sider } = Layout;
-
 class LayoutUnAuthorized extends React.Component {
   render() {
     let { children } = this.props;

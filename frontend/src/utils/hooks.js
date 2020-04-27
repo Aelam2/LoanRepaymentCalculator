@@ -1,3 +1,5 @@
+import { useRef, useEffect } from "react";
+
 export const useTraceUpdate = props => {
   const prev = useRef(props);
   useEffect(() => {
@@ -12,4 +14,12 @@ export const useTraceUpdate = props => {
     }
     prev.current = props;
   });
+};
+
+export const usePrevious = value => {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
 };

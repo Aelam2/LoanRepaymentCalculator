@@ -192,7 +192,6 @@ const StatisticsRow = ({ isMobile, width, data, loading, error, currency, select
               <InfoCircleOutlined />
             </Tooltip>
           }
-          principal
           loading={loading}
           total={() => (
             <div>

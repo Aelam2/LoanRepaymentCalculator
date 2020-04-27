@@ -4,14 +4,12 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { FormattedMessage } from "react-intl";
 import QueueAnim from "rc-queue-anim";
-import { Card, Typography } from "antd";
+import { Card } from "antd";
 import * as actions from "actions/DashboardActions";
 import GridContent from "components/GridContent";
 import PageLoading from "components/PageLoading";
 import { OverviewAnalysisRow, OverviewChartRow } from "pages/DashboardPage/Components";
-import { visitData } from "__tests__/mockData/charts";
 import styles from "pages/DashboardPage/Components/index.module.scss";
-let { Paragraph } = Typography;
 
 class Overview extends React.Component {
   componentDidMount = () => {

@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import constants from "utils/constants.js";
 import moment from "moment";
 import { Chart } from "@antv/g2";
 import { Col, Row, Card, Result, Button, Switch } from "antd";
 import PageLoading from "components/PageLoading";
 import { FormattedMessage, useIntl } from "react-intl";
-import debounce from "lodash/debounce";
+import { usePrevious } from "utils/hooks";
 import styles from "../DashboardPage.module.scss";
 
 const topColResponsiveProps = {
@@ -17,12 +17,13 @@ const ChartRow = React.memo(({ isMobile, refetchData, width, currency, data = []
   const intl = useIntl();
   const chartContainer = React.createRef();
   const chartExtraContainer = React.createRef();
+  const prevData = usePrevious(data);
 
   let cardHeight = isMobile ? 250 : 450;
   let chartHeight = isMobile ? 225 : 450;
 
   useEffect(() => {
-    if (data.length && chartContainer.current) {
+    if (true && chartContainer.current) {
       let maxYScale = Math.ceil(Math.max.apply(Math,data.map(d => d.balance)) / 2000) * 2000 //prettier-ignore
       let padding = [isMobile ? 35 : 30, !isMobile ? 20 : 7.5, isMobile ? 40 : 60, isMobile ? 7.5 : maxYScale > 10000 ? 60 : 50];
 
@@ -37,7 +38,8 @@ const ChartRow = React.memo(({ isMobile, refetchData, width, currency, data = []
       // X-AXIS
       chart.axis("date", {
         label: {
-          formatter: val => `${intl.formatDate(moment(val), { month: "short" })}\n${intl.formatDate(moment(val), { year: "numeric" })}`,
+          formatter: val =>
+            `${intl.formatDate(moment(val, "MMM, YYYY"), { month: "short" })}\n${intl.formatDate(moment(val, "MMM, YYYY"), { year: "numeric" })}`,
           style: { fill: "#fff" },
           offset: 25,
           autoRotate: false,
@@ -192,7 +194,7 @@ const ChartRow = React.memo(({ isMobile, refetchData, width, currency, data = []
 
       return () => chart.destroy();
     }
-  }, [data.length || chartContainer.current]);
+  }, [data.length, chartContainer.current]);
 
   return (
     <Row gutter={24} type="flex">
