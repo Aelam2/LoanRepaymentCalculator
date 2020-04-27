@@ -7,7 +7,8 @@ dotenv.config();
 
 apm.start({
   serverUrl: process.env.APM_URL,
-  secretToken: process.env.APM_SECRET_TOKEN
+  secretToken: process.env.APM_SECRET_TOKEN,
+  environment: process.env.NODE_ENV === "production" ? "production" : "development"
 });
 
 const esTransportOpts = {

@@ -87,7 +87,7 @@ let router = express.Router();
 router.route("/amortization").get(async (req, res) => {
   try {
     let { UserID } = req.user;
-    let { hidden = [] } = req.query;
+    let { hidden = "" } = req.query;
 
     // Get all active loans for a user
     let currentLoans = await Loans.findAll({
@@ -106,6 +106,8 @@ router.route("/amortization").get(async (req, res) => {
 
     // Loans that have not been hidden by user
     let activeLoans = currentLoans.map(l => l.toJSON()).filter(l => !(hidden.split(",") || []).some(hl => hl == l.LoanID));
+
+    if (!activeLoans.length) res.status(200).json({ status: "success", data: {} });
 
     let AllocationMethodID = currentPlan && currentPlan.hasOwnProperty("AllocationMethodID") ? currentPlan.AllocationMethodID : 4;
     let payments = currentPlan && currentPlan.hasOwnProperty("Payments") ? currentPlan.Payments : [];
@@ -147,7 +149,5 @@ router.route("/amortization").get(async (req, res) => {
     res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
   }
 });
-
-router.route("/aggregate-analytics").get((req, res) => {});
 
 export default router;

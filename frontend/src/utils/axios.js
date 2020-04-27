@@ -55,6 +55,8 @@ const mergeCustomErrorCodeMessages = (config = {}) => {
 // Always attempt to add JWT_TOKEN to request headers
 axios.interceptors.request.use(
   reqConfig => {
+    if (!reqConfig.url) return;
+
     reqConfig.headers.authorization = localStorage.getItem("JWT_TOKEN");
     return reqConfig;
   },

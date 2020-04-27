@@ -323,7 +323,7 @@ export const fetchAmortizationSchedule = (hidden = []) => {
 
       const { data } = await axios.get(
         `/me/loans/amortization?${querystring.stringify({
-          ...(hidden && { hidden: hidden.join(",") })
+          ...(hidden.length && { hidden: hidden.join(",") })
         })}`
       );
 
