@@ -143,8 +143,13 @@ router.route("/amortization").get(async (req, res) => {
       setCachedKey(cacheCurrentKey, currentAnalytics);
     }
 
+    logger.info("Loan Analytics Success", {
+      UserID,
+      hidden,
+      cache: { current: cachedMinimumAnalytics ? true : false, minimum: cachedCurrentAnalytics ? true : false }
+    });
+
     // Return loan information with array of scheduled payments
-    logger.info("Loan Analytics Success", { UserID, hidden });
     res.status(200).json({ status: "success", data: { ...currentAnalytics, minimumPlan: minimumAnalytics } });
   } catch (err) {
     logger.error(`Loan Analytics Failed with exception ${err.message}`, { UserID, hidden });
