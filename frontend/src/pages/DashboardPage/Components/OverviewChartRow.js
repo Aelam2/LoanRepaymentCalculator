@@ -5,7 +5,7 @@ import { Chart } from "@antv/g2";
 import { Col, Row, Card, Result, Button, Switch } from "antd";
 import PageLoading from "components/PageLoading";
 import { FormattedMessage, useIntl } from "react-intl";
-import { usePrevious } from "utils/hooks";
+import { useTraceUpdate } from "utils/hooks";
 import styles from "../DashboardPage.module.scss";
 
 const topColResponsiveProps = {
@@ -14,16 +14,16 @@ const topColResponsiveProps = {
 };
 
 const ChartRow = React.memo(({ isMobile, refetchData, width, currency, data = [], loading, error, currentPlan, ...props }) => {
+  // useTraceUpdate({ isMobile, refetchData, width, currency, data, loading, error, currentPlan, ...props });
+
   const intl = useIntl();
   const chartContainer = React.createRef();
-  const chartExtraContainer = React.createRef();
-  const prevData = usePrevious(data);
 
   let cardHeight = isMobile ? 250 : 450;
   let chartHeight = isMobile ? 225 : 450;
 
   useEffect(() => {
-    if (true && chartContainer.current) {
+    if (chartContainer.current) {
       let maxYScale = Math.ceil(Math.max.apply(Math,data.map(d => d.balance)) / 2000) * 2000 //prettier-ignore
       let padding = [isMobile ? 35 : 30, !isMobile ? 20 : 7.5, isMobile ? 40 : 60, isMobile ? 7.5 : maxYScale > 10000 ? 60 : 50];
 
@@ -238,7 +238,6 @@ const ChartRow = React.memo(({ isMobile, refetchData, width, currency, data = []
                 <div className={styles.miniChart} style={{ height: cardHeight, overflowX: "auto" }}>
                   <div className={styles.chartContent} style={{ overflow: "hidden" }}>
                     {cardHeight > 0 && <div ref={chartContainer} style={{ overflow: "hidden" }}></div>}
-                    {cardHeight > 0 && <div ref={chartExtraContainer}></div>}
                   </div>
                 </div>
               );
