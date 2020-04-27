@@ -6,7 +6,6 @@ export const getRouteCache = duration => {
   return (req, res, next) => {
     let key = `${req.originalUrl || req.url}:${req.user.UserID}`;
     let data = appCache.get(key);
-
     if (data) {
       res.status(200).json(data);
       return;

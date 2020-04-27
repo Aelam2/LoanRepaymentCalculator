@@ -23,7 +23,6 @@ const esTransportOpts = {
     log: "info"
   },
   transformer: logData => {
-    console.log(logData);
     return {
       "@timestamp": new Date().getTime(),
       severity: logData.level,

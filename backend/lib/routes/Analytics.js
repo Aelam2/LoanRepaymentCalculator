@@ -90,6 +90,8 @@ router.route("/amortization").get(async (req, res) => {
   let { hidden = "" } = req.query;
 
   try {
+    let hiddenLoans = hidden.split(",");
+
     // Get all active loans for a user
     let currentLoans = await Loans.findAll({
       where: { UserID }
@@ -106,7 +108,7 @@ router.route("/amortization").get(async (req, res) => {
     });
 
     // Loans that have not been hidden by user
-    let activeLoans = currentLoans.map(l => l.toJSON()).filter(l => !(hidden.split(",") || []).some(hl => hl == l.LoanID));
+    let activeLoans = currentLoans.map(l => l.toJSON()).filter(l => !hiddenLoans.some(hl => hl == l.LoanID));
 
     if (!activeLoans.length) res.status(200).json({ status: "success", data: {} });
 
@@ -114,8 +116,8 @@ router.route("/amortization").get(async (req, res) => {
     let payments = currentPlan && currentPlan.hasOwnProperty("Payments") ? currentPlan.Payments : [];
 
     // check if user has cached versions of their analytics
-    let cacheMinimumKey = `amortization:${req.user.UserID}:minimum:hidden=${hidden.split(",")}`;
-    let cacheCurrentKey = currentPlan ? `amortization:${req.user.UserID}:current:${currentPlan.PaymentPlanID}:hidden=${hidden.split(",")}` : undefined;
+    let cacheMinimumKey = `amortization:minimum:${req.user.UserID}:hidden=${hiddenLoans}`;
+    let cacheCurrentKey = currentPlan ? `amortization:current:${currentPlan.PaymentPlanID}:hidden=${hiddenLoans}` : undefined;
     let [cachedMinimumAnalytics, cachedCurrentAnalytics] = await Promise.all([getCachedKey(cacheMinimumKey), getCachedKey(cacheCurrentKey)]);
 
     // calculate non-cached analytics / schedules

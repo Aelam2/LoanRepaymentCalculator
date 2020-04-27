@@ -313,48 +313,46 @@ router
  *             schema:
  *               $ref: '#/components/schemas/FiveHundredError'
  */
-router
-  .route("/payment-plans/:PaymentPlanID/activate")
-  .post(activatePaymentPlanRules(), validate, clearCacheCascade("amortization"), clearCacheCascade("/payment-plans"), async (req, res) => {
-    let { UserID } = req.user;
-    let { PaymentPlanID } = req.params;
-    let { IsCurrent = 1 } = req.body;
+router.route("/payment-plans/:PaymentPlanID/activate").post(activatePaymentPlanRules(), validate, clearCacheCascade("/payment-plans"), async (req, res) => {
+  let { UserID } = req.user;
+  let { PaymentPlanID } = req.params;
+  let { IsCurrent = 1 } = req.body;
 
-    try {
-      // Set all other plans to IsCurrent = 0
-      await PaymentPlansModel.update(
-        {
-          IsCurrent: 0
-        },
-        {
-          where: {
-            UserID
-          }
+  try {
+    // Set all other plans to IsCurrent = 0
+    await PaymentPlansModel.update(
+      {
+        IsCurrent: 0
+      },
+      {
+        where: {
+          UserID
         }
-      );
+      }
+    );
 
-      // Set requested payment plan to requested status
-      await PaymentPlansModel.update(
-        {
-          IsCurrent
+    // Set requested payment plan to requested status
+    await PaymentPlansModel.update(
+      {
+        IsCurrent
+      },
+      {
+        where: {
+          UserID,
+          PaymentPlanID
         },
-        {
-          where: {
-            UserID,
-            PaymentPlanID
-          },
-          returning: true,
-          plain: true
-        }
-      );
+        returning: true,
+        plain: true
+      }
+    );
 
-      logger.info("Activate Payment Plan Success", { UserID, PaymentPlanID, IsCurrent });
-      res.status(200).json({ status: "success", data: PaymentPlanID });
-    } catch (err) {
-      logger.error(`Activate Payment Plan Failed with exception ${err.message}`, { UserID, PaymentPlanID, IsCurrent });
-      res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
-    }
-  });
+    logger.info("Activate Payment Plan Success", { UserID, PaymentPlanID, IsCurrent });
+    res.status(200).json({ status: "success", data: PaymentPlanID });
+  } catch (err) {
+    logger.error(`Activate Payment Plan Failed with exception ${err.message}`, { UserID, PaymentPlanID, IsCurrent });
+    res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
+  }
+});
 
 router
   .route("/payment-plans/:PaymentPlanID")
