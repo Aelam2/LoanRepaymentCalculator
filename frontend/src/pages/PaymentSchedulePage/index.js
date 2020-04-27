@@ -96,7 +96,7 @@ class PaymentSchedulePage extends React.Component {
       return null;
     }
 
-    if (schedule.length <= 0) {
+    if (schedule.length < 3) {
       return (
         <div style={{ display: "flex", justifyContent: "center", marginTop: "150px" }}>
           <Result
@@ -105,7 +105,7 @@ class PaymentSchedulePage extends React.Component {
             subTitle={
               <FormattedMessage
                 id="dashboard.analytics.notEnoughInfoSubTitle"
-                defaultMessage="Unable to generate amortization schedule for less than two months worth of payments"
+                defaultMessage="Unable to generate amortization schedule for less than three months worth of payments"
               />
             }
           />

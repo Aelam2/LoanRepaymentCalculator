@@ -21,7 +21,7 @@ const ChartRow = React.memo(({ isMobile, refetchData, width, currency, data = []
   let chartHeight = isMobile ? 225 : 450;
 
   useEffect(() => {
-    if (!data.length <= 0 && chartContainer.current) {
+    if (!data.length < 3 && chartContainer.current) {
       let maxYScale = Math.ceil(Math.max.apply(Math,data.map(d => d.balance)) / 2000) * 2000 //prettier-ignore
       let padding = [isMobile ? 35 : 30, !isMobile ? 20 : 7.5, isMobile ? 40 : 60, isMobile ? 7.5 : maxYScale > 10000 ? 60 : 50];
 
@@ -222,7 +222,7 @@ const ChartRow = React.memo(({ isMobile, refetchData, width, currency, data = []
                 return <PageLoading style={{ height: cardHeight }} />;
               }
 
-              if (data.length <= 0) {
+              if (data.length < 3) {
                 return (
                   <Row gutter={24} type="flex">
                     <Col {...topColResponsiveProps}>
@@ -237,7 +237,7 @@ const ChartRow = React.memo(({ isMobile, refetchData, width, currency, data = []
                           title={intl.formatMessage({ id: "dashboard.analytics.notEnoughInfoTitle", defaultMessage: "Not Enough Data" })}
                           subTitle={intl.formatMessage({
                             id: "dashboard.analytics.notEnoughInfoSubTitle",
-                            defaultMessage: "Unable to generate amortization schedule for less than two months worth of payments"
+                            defaultMessage: "Unable to generate amortization schedule for less than three months worth of payments"
                           })}
                         />
                       </Card>
