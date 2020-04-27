@@ -81,8 +81,9 @@ axios.interceptors.response.use(
       if (response && response.status) {
         const { status } = response;
 
-        if (status === "401") {
+        if (status == "401") {
           localStorage.removeItem("JWT_TOKEN");
+          window.location.assign("/user/sign-in");
         }
 
         const errorTitle = codeTitles[status] || `Error ${status}`;
