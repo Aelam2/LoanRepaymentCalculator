@@ -105,7 +105,7 @@ router.route("/sign-up").post(userSignUpRules(), validate, async (req, res) => {
     logger.info("User Sign Up Success", { UserName, FirstName, LastName, Email });
     res.status(200).json({ token });
   } catch (error) {
-    logger.error(`User Sign Up Failed with exception ${err.message}`, { UserName, FirstName, LastName, Email });
+    logger.error(`User Sign Up Failed with exception ${error.message}`, { UserName, FirstName, LastName, Email });
 
     let sequelizeError = handleSequelizeError(error);
     if (sequelizeError.status) {
