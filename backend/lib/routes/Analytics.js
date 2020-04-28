@@ -1,8 +1,6 @@
 import express from "express";
-import _ from "lodash";
+import { Worker, isMainThread, parentPort, workerData } from "worker_threads";
 import logger from "../logging";
-import { getCachedKey, setCachedKey } from "../middleware/cache";
-import { calculateSchedule } from "../helpers/repaymentCalculator";
 import { StrategyCodeValueIdMap } from "../helpers/repaymentStrategies";
 import { Loans, PaymentPlans, Payments as PaymentsModel } from "../models/models";
 
@@ -109,48 +107,47 @@ router.route("/amortization").get(async (req, res) => {
 
     // Loans that have not been hidden by user
     let activeLoans = currentLoans.map(l => l.toJSON()).filter(l => !hiddenLoans.some(hl => hl == l.LoanID));
-
     let AllocationMethodID = currentPlan && currentPlan.hasOwnProperty("AllocationMethodID") ? currentPlan.AllocationMethodID : 4;
-    let payments = currentPlan && currentPlan.hasOwnProperty("Payments") ? currentPlan.Payments : [];
+    let payments = currentPlan && currentPlan.hasOwnProperty("Payments") ? currentPlan.Payments.map(p => p.toJSON()) : [];
 
-    // check if user has cached versions of their analytics
+    // Cache Keys to check for
     let cacheMinimumKey = `amortization:minimum:${req.user.UserID}:hidden=${hiddenLoans}`;
     let cacheCurrentKey = currentPlan ? `amortization:current:${currentPlan.PaymentPlanID}:hidden=${hiddenLoans}` : undefined;
-    let [cachedMinimumAnalytics, cachedCurrentAnalytics] = await Promise.all([getCachedKey(cacheMinimumKey), getCachedKey(cacheCurrentKey)]);
 
-    // calculate non-cached analytics / schedules
-    let [minimumAnalytics, currentAnalytics] = await Promise.all([
-      !cachedMinimumAnalytics && calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], []),
-      !cachedCurrentAnalytics && currentPlan && calculateSchedule(_.cloneDeep(activeLoans), StrategyCodeValueIdMap[AllocationMethodID], _.cloneDeep(payments))
-    ]);
-
-    // if cache existed, set result to cache
-    if (cachedMinimumAnalytics) {
-      minimumAnalytics = cachedMinimumAnalytics;
-    } else {
-      // if cache did not exist, set cache to calculated result
-      setCachedKey(cacheMinimumKey, minimumAnalytics);
-    }
-
-    // if cache existed, set result to cache
-    if (cachedCurrentAnalytics) {
-      currentAnalytics = cachedCurrentAnalytics;
-    } else if (!currentPlan) {
-      // if no cache and no current plan existed, return minimum plan as the current
-      currentAnalytics = minimumAnalytics;
-    } else {
-      // if cache did not exist, set cache to calculated result
-      setCachedKey(cacheCurrentKey, currentAnalytics);
-    }
-
-    logger.info("Loan Analytics Success", {
-      UserID,
-      hidden,
-      cache: { current: cachedMinimumAnalytics ? true : false, minimum: cachedCurrentAnalytics ? true : false }
+    // Start Analytic Calculations in seperate process
+    const worker = new Worker("./dist/workers/analyticsCalculator.js", {
+      workerData: {
+        loans: activeLoans,
+        strategyType: StrategyCodeValueIdMap[AllocationMethodID],
+        payments: payments,
+        currentPlan: currentPlan ? currentPlan.toJSON() : null,
+        cacheMinimumKey,
+        cacheCurrentKey
+      }
     });
 
-    // Return loan information with array of scheduled payments
-    res.status(200).json({ status: "success", data: { ...currentAnalytics, minimumPlan: minimumAnalytics } });
+    // Retrieve calculations on process finish
+    worker.on("message", analytics => {
+      let { minimumAnalytics, currentAnalytics, cachedMinimumAnalytics, cachedCurrentAnalytics } = analytics;
+
+      logger.info("Loan Analytics Success", {
+        UserID,
+        hidden,
+        cache: {
+          current: cachedMinimumAnalytics ? true : false,
+          minimum: cachedCurrentAnalytics ? true : false
+        }
+      });
+
+      // Return loan information with array of scheduled payments
+      res.status(200).json({ status: "success", data: { ...currentAnalytics, minimumPlan: minimumAnalytics } });
+    });
+
+    worker.on("error", err => {
+      console.log("here");
+      logger.error(`Loan Analytics Failed with exception ${err.message}`, { UserID, hidden });
+      res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
+    });
   } catch (err) {
     logger.error(`Loan Analytics Failed with exception ${err.message}`, { UserID, hidden });
     res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });

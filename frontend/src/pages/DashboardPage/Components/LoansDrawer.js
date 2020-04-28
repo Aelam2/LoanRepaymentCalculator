@@ -317,10 +317,10 @@ class DrawerLoans extends React.Component {
               <DatePicker {...formMap.PaymentStart.input} style={{ width: "100%" }} />
             </Form.Item>
           </Form.Item>
-
+          {/* 
           <Form.Item {...formMap.StatusID.form}>
             <Input {...formMap.StatusID.input} />
-          </Form.Item>
+          </Form.Item> */}
         </Form>
       </div>
     );

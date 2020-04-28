@@ -1,10 +1,8 @@
 import moment from "moment";
 import strategyDefinitions from "./repaymentStrategies";
-import { eventLoopQueue } from "./utilities";
 import _ from "lodash";
 
 const paymentsPerYear = 12;
-
 export const moneyRound = (amount, precision = 2) => {
   var factor = Math.pow(10, precision);
   return Math.round(amount * factor) / factor;
@@ -12,11 +10,26 @@ export const moneyRound = (amount, precision = 2) => {
 
 export const calculateSchedule = async (loans, strategyType, payments) => {
   try {
-    let hasBalance = true;
-
     let strategy = strategyDefinitions[strategyType];
-    let loanOrder = strategy.sorter(loans);
 
+    if (!loans.length) {
+      return {
+        type: strategy.type,
+        name: strategy.name,
+        description: strategy.description,
+        loans: loans.map(l => loanOrder.find(lo => lo.LoanID == l.LoanID)),
+        masterSchedule: [],
+        consolidatedSchedule: [],
+        accumulatedSchedule: [],
+        principal: 0,
+        interest: 0,
+        total: 0,
+        payments: 0
+      };
+    }
+
+    let hasBalance = true;
+    let loanOrder = strategy.sorter(loans);
     let availableMinimumFunds = 0;
 
     for (let loan of loanOrder) {
@@ -38,7 +51,6 @@ export const calculateSchedule = async (loans, strategyType, payments) => {
 
     let elapsedMonths = 0;
     while (hasBalance && elapsedMonths <= 480) {
-      await eventLoopQueue();
       let consolidatedStart = { amount: 0, interest: 0, principal: 0, balance: 0 };
 
       let currentMonth = moment(firstPaymentDate).add(elapsedMonths, "month");
