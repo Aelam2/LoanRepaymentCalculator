@@ -6,6 +6,8 @@ import { Loans, PaymentPlans, Payments as PaymentsModel } from "../models/models
 
 let router = express.Router();
 
+let workerFile = process.env.NODE_ENV === "production" ? "./workers/analyticsCalculator.js" : "./dist/workers/analyticsCalculator.js";
+
 /**
  * @swagger
  * tags:
@@ -115,7 +117,7 @@ router.route("/amortization").get(async (req, res) => {
     let cacheCurrentKey = currentPlan ? `amortization:current:${currentPlan.PaymentPlanID}:hidden=${hiddenLoans}` : undefined;
 
     // Start Analytic Calculations in seperate process
-    const worker = new Worker("./dist/workers/analyticsCalculator.js", {
+    const worker = new Worker(workerFile, {
       workerData: {
         loans: activeLoans,
         strategyType: StrategyCodeValueIdMap[AllocationMethodID],
@@ -130,21 +132,13 @@ router.route("/amortization").get(async (req, res) => {
     worker.on("message", analytics => {
       let { minimumAnalytics, currentAnalytics, cachedMinimumAnalytics, cachedCurrentAnalytics } = analytics;
 
-      logger.info("Loan Analytics Success", {
-        UserID,
-        hidden,
-        cache: {
-          current: cachedMinimumAnalytics ? true : false,
-          minimum: cachedCurrentAnalytics ? true : false
-        }
-      });
+      logger.info("Loan Analytics Success", { UserID, hidden });
 
       // Return loan information with array of scheduled payments
       res.status(200).json({ status: "success", data: { ...currentAnalytics, minimumPlan: minimumAnalytics } });
     });
 
     worker.on("error", err => {
-      console.log("here");
       logger.error(`Loan Analytics Failed with exception ${err.message}`, { UserID, hidden });
       res.status(500).json({ status: "error", data: null, error: "an unexpected error occured" });
     });
