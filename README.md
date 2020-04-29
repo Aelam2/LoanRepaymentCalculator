@@ -29,6 +29,16 @@ DB_PORT= YOUR_KEY
 DB_INSTANCE_NAME= YOUR_KEY
 DB_USERNAME= YOUR_KEY
 DB_PASSWORD= YOUR_KEY
+
+SITE_EMAIL=repayment.dev@gmail.com
+SITE_EMAIL_PASSWORD=AL3x3lam15$
+
+APM_URL=https://f8feaea9b54f40f08a249f4ac7b164d2.apm.eastus2.azure.elastic-cloud.com
+APM_SECRET_TOKEN=Sw4WA7Vbj9qLNsEgdT
+
+ELASTIC_URL=https://aaa436a72f0d4f34965c0664f7660a90.eastus2.azure.elastic-cloud.com:9243
+ELASTIC_USERNAME=elastic
+ELASTIC_PASSWORD=hfxVUiVGayE9jj9bWc5etUot
 ```
 
 4. Run the commnad "npm run db:migrate" to initiallize you're database.
