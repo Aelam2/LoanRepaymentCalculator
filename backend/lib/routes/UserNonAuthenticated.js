@@ -397,7 +397,7 @@ router.route("/password-reset/:token").post(async (req, res) => {
     });
 
     if (!resetAttempt) {
-      logger.warning("Complete Password Reset Warning: Token has expired", { token, Email });
+      logger.warn("Complete Password Reset Warning: Token has expired", { token, Email });
       res.status(404).json({ status: "not-found", data: null, error: "Password reset link has expired. Please request a new email." });
     }
 

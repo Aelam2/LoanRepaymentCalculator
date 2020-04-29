@@ -302,7 +302,7 @@ router
       });
 
       if (result != 1) {
-        logger.warning("Delete Loan Warning, does not exist", { UserID, LoanID });
+        logger.warn("Delete Loan Warning, does not exist", { UserID, LoanID });
         res.status(404).json({ status: "error", data: null, error: "Loan does not exist for user" });
       }
 
